@@ -73,7 +73,7 @@ class ApiClient {
     return await invokeAPI(
         request.basePath,
         request.method.enumValue,
-        request.queryParams.mapEntries((k, v) => QueryParam(k, v)),
+        request.queryParams.mapEntries((k, v) => QueryParam(k, v?.toString())),
         request.body,
         request.headerParams,
         request.formParams,
@@ -92,7 +92,7 @@ class ApiClient {
       Map<String, String> formParams,
       String contentType,
       List<String> authNames) async {
-    await _updateParamsForAuth(authNames, queryParams, headerParams);
+    await _updateParamsForAuth(authNames, [...?queryParams], headerParams);
 
     var ps = queryParams
         .where((p) => p.value != null)

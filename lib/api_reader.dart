@@ -4,7 +4,7 @@ typedef Deserializer = dynamic Function(dynamic input);
 
 abstract class ApiReader {
   Deserializer getReader(final input, String targetType);
-  dynamic parameterToString(input);
+  String parameterToString(input);
 }
 
 const _delimiters = const {'csv': ',', 'ssv': ' ', 'tsv': '\t', 'pipes': '|'};

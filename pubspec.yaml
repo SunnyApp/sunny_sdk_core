@@ -1,5 +1,5 @@
 name: sunny_sdk_core
-version: 1.0.0+2
+READ: 1.0.0+2
 description: Core libraries for swagger-generated sdks
 environment: 
   sdk: '>=2.9.0 <3.0.0'

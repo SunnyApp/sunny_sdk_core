@@ -163,7 +163,7 @@ class BadRequestException extends ApiResponseException {
   }
 
   /// Parses all validation errors
-  static List<ValidationError> _parseErrors(String message) {
+  static List<ValidationError> parseErrors(String message) {
     try {
       final decoded = json.decode(message);
       final Map<String, dynamic> errors =
