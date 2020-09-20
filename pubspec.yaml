@@ -1,16 +1,12 @@
 name: sunny_sdk_core
-version: 1.0.0+1
+version: 1.0.0+2
 description: Core libraries for swagger-generated sdks
 environment: 
   sdk: '>=2.9.0 <3.0.0'
-  flutter: ">=1.17.0 <3.0.0"
+  flutter: '>=1.17.0 <3.0.0'
 dependencies: 
   sunny_dart: ^0.5.8+2
-  flutter:
-    sdk: flutter
   logging: ^0.11.4
-
   http: ^0.12.2
-#dependency_overrides:
-#  sunny_dart:
-#    path: ../sunny_dart
+  flutter: 
+    sdk: flutter
