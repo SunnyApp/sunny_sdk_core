@@ -93,7 +93,7 @@ packages:
     source: hosted
     version: "0.10.11"
   flutter:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -147,7 +147,7 @@ packages:
     source: hosted
     version: "1.0.1"
   logging:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: logging
       url: "https://pub.dartlang.org"
@@ -252,9 +252,9 @@ packages:
   sunny_dart:
     dependency: "direct main"
     description:
-      path: "../sunny_dart"
-      relative: true
-    source: path
+      name: sunny_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.5.8+2"
   term_glyph:
     dependency: transitive
