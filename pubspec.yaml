@@ -1,14 +1,12 @@
 name: sunny_sdk_core
-version: 1.0.0
+version: 1.0.0+1
 description: Core libraries for sdks
-environment:
+environment: 
   sdk: '>=2.9.0 <3.0.0'
-
-dependencies:
-  sunny_dart: any
+  flutter: ">=1.17.0 <3.0.0"
+dependencies: 
+  sunny_dart: ^0.5.8+2
   http: ^0.12.2
-
-dependency_overrides:
-  sunny_dart:
-    path: ../sunny_dart
-
+#dependency_overrides:
+#  sunny_dart:
+#    path: ../sunny_dart
