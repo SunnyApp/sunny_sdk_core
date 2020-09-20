@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: ensure_git_status_clean" time="0.016314">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: curr_semver" time="0.442178">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: increase_version" time="0.905737">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: curr_semver" time="0.43055">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: release_notes" time="0.48211">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: pub_publish" time="10.693137">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: finalize_version" time="4.055594">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>
