@@ -6,8 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:sunny_dart/extensions.dart';
 import 'package:sunny_dart/helpers/error_methods.dart';
 import 'package:sunny_dart/json.dart';
-
-import 'request_builder.dart';
+import 'package:sunny_sdk_core/request_builder.dart';
 
 final Logger _log = Logger("apiExceptions");
 

@@ -41,3 +41,4 @@ lane :icons do
   download_icons
   build_icon_fonts
 end
+

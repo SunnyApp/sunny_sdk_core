@@ -1,5 +1,5 @@
-import '../authentication.dart';
 import '../query_param.dart';
+import 'authentication.dart';
 
 class ApiKeyAuth implements Authentication {
   final String location;

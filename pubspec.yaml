@@ -6,9 +6,39 @@ repository: https://github.com/SunnyApp/sunny_sdk_core.git
 environment: 
   sdk: '>=2.9.0 <3.0.0'
   flutter: '>=1.17.0 <3.0.0'
-dependencies: 
+dependencies:
+  flutter:
+    sdk: flutter
+  sunny_forms:
+    path: ../sunny_forms
   sunny_dart: ^0.5.8+2
+  google_maps_webservice: ^0.0.18
+  firebase_auth: ^0.18.1+1
+  equatable: ^1.2.5
+#  sunny_lifecycle:
+#    path: ../sunny_lifecycle
+  meta_forms:
+    path: ../meta_forms
   logging: ^0.11.4
   http: ^0.12.2
-  flutter: 
-    sdk: flutter
+  sunny_core_widgets:
+    path: ../sunny_core_widgets
+#  sunny_forms:
+#    path: ../sunny_forms
+
+dependency_overrides:
+  meta_forms:
+    path: ../meta_forms
+
+  #  observable_collections:
+  #    path: ../observable_collections
+  progress_indicator_button:
+    path: ../progress_button
+  sunny_dart:
+    path: ../sunny_dart
+  sunny_core_widgets:
+    path: ../sunny_core_widgets
+  #  flutter_platform_widgets:
+  #    path: ../flutter_platform_widgets
+  flutter_chips_input_sunny:
+    path: ../flutter_chips_input

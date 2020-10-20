@@ -1,4 +1,5 @@
-import '../authentication.dart';
+import 'package:sunny_sdk_core/auth.dart';
+
 import '../query_param.dart';
 
 class HttpBasicAuthentication extends Authentication {
