@@ -91,7 +91,8 @@ class ApiResponseException extends ApiException {
   bool get isAuthError => statusCode == 401 || statusCode == 403;
 
   @override
-  String toString() => "${builder?.path?.plus(": ")}$statusCode: $message";
+  String toString() =>
+      "${builder?.path?.plus(": ") ?? ''}$statusCode: $message";
 
   ApiErrorPayload get payload => _payload ??= ApiErrorPayload.fromJson(message);
 }

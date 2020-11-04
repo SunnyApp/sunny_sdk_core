@@ -8,6 +8,7 @@ class RequestBuilder {
   Object body;
   final Map<String, String> headerParams = {};
   final Map<String, String> formParams = {};
+  Iterable<String> authNames;
   String contentType;
 
   String get requestUrl {
