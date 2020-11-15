@@ -109,7 +109,7 @@ class ApiClient with LoggingMixin {
   // If collectionFormat is 'multi' a key might appear multiple times.
   Future<Response> invokeRequest(RequestBuilder request) async {
     return await invokeAPI(
-        request.path,
+        request.requestUrl,
         request.method.enumValue,
         request.queryParams.mapEntries((k, v) => QueryParam(k, v?.toString())),
         request.body,

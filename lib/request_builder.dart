@@ -1,3 +1,5 @@
+import 'package:sunny_sdk_core/api_exports.dart';
+
 class RequestBuilder {
   String path;
   HttpMethod method;
@@ -20,7 +22,11 @@ class RequestBuilder {
     var requestPath = path;
     pathParams.forEach((key, value) =>
         requestPath = requestPath.replaceAll("{$key}", "$value"));
-    String url = basePath + requestPath + queryString;
+    String url = joinString((_) {
+      _ += basePath;
+      _ += requestPath;
+      _ += queryString;
+    }, '');
     return url;
   }
 }
