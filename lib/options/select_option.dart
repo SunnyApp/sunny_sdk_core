@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection_diff/diff_equality.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,44 +10,68 @@ import 'package:sunny_dart/typedefs.dart';
 typedef SelectionWidgetBuilder = Widget Function(
     BuildContext context, bool isSelected);
 
-//Future<KeyedOption<K, V>> openPicker<K, V>(BuildContext context,
-//    {title, content, @required Set<KeyedOption<K, V>> options}) async {
-//  final intl = SunnyL10n.of(context);
-//  options = options.toSet();
-//  return await showPlatformBottomSheet<KeyedOption<K, V>>(
-//      context: context,
-//      builder: (context) => PlatformBottomSheet(
-//            title: textOrNull(title),
-//            content: textOrNull(content),
-//            actions: [
-//              ...options.map(
-//                (KeyedOption<K, V> option) {
-//                  return PlatformBottomSheetAction(
-//                    child: PlatformListTile(
-//                      card: false,
-//                      backgroundColor: Colors.transparent,
-//                      padding: EdgeInsets.zero,
-//                      margin: EdgeInsets.zero,
-//                      title: textOrNull(option.label),
-//                      leading:
-//                          (option.icon is IconData) ? iconOrNull(option.icon as IconData) : (option.icon as Widget),
-//                      subtitle: textOrNull(option.subtitle?.first), // Probably not idea to pick the first of the array.  not sure why the subtile is a list and not string.
-//                    ),
-//                    onPressed: () => Navigator.pop(context, option),
-//                  );
-//                },
-//              ),
-//            ],
-//            cancelButton: PlatformBottomSheetAction(
-//              isDefaultAction: true,
-//              child: Text(intl.cancelLabel),
-//              ios: (_) => CupertinoBottomSheetActionData(isDefaultAction: true),
-//              onPressed: () => Navigator.pop(context),
-//            ),
-//          ));
-//}
+abstract class IKeyedOptionsHandler<K, V> {
+  FutureOr<V> loadValue(K key);
+  String get key;
 
-abstract class IKeyedOptionsHandler<K, V> {}
+  const IKeyedOptionsHandler();
+}
+
+/// Selects the given option
+typedef SelectOption<K, T> = void Function(KeyedOption<K, T> input);
+
+typedef RenderSuggestionTile<K, T> = Widget Function(
+  BuildContext context,
+  KeyedOption<K, T> suggestion, {
+  @required bool isSelected,
+  @required SelectOption<K, T> selectOption,
+  VoidCallback onTap,
+});
+
+abstract class TypeaheadOptionsAndHandler<K, T>
+    implements TypeaheadHandler<K, T>, TypeaheadOptions {
+  const TypeaheadOptionsAndHandler();
+}
+
+enum OptionValueType { key, value }
+enum TypeaheadFocusMode { showAll, showAllAndClear, showFiltered, none }
+
+abstract class TypeaheadOptions {
+  /// Gets the placeholder text, given a selected option
+  String get placeholder => null;
+
+  String get noOptionsLabel => "Type a value";
+
+  Icon get prefixIcon => null;
+
+  TypeaheadFocusMode get focusMode => TypeaheadFocusMode.showAll;
+
+  bool get showExpand;
+
+  OptionValueType get valueType;
+}
+
+/// Contains all the view-related concerns for integrating [KeyedOption] handlers into typeahead fields
+abstract class TypeaheadHandler<K, T> {
+  /// Gets the selected text that shows up in the
+  String getSelection(KeyedOption<K, T> selectedOption);
+
+  /// Renders the suffix for the selected item in the form control
+  Widget renderSelectedItemSuffix(
+      BuildContext context, KeyedOption<K, T> selected,
+      {@required SelectOption<K, T> selectOption});
+
+  /// Renders the suggested tile in the list of options
+  Widget renderSuggestionTile(
+    BuildContext context,
+    KeyedOption<K, T> suggestion, {
+    @required bool isSelected,
+    @required SelectOption<K, T> selectOption,
+    VoidCallback onTap,
+  });
+
+  const TypeaheadHandler();
+}
 
 class KeyedContextSwitchOption<K, V> extends _KeyedOption<K, V> {
   KeyedContextSwitchOption(

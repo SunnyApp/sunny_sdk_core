@@ -1,6 +1,6 @@
 import 'package:google_maps_webservice/places.dart';
-import 'package:meta_forms/mverse/m_model.dart';
 import 'package:sunny_dart/helpers/lists.dart';
+import 'package:sunny_sdk_core/mverse/m_model.dart';
 
 Iterable<String> addressToString(SunnyPlace address) {
   if (address == null) {

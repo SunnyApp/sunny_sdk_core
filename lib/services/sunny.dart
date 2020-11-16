@@ -1,6 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:sunny_core_widgets/intl.dart';
 import 'package:sunny_dart/helpers.dart';
 import 'package:sunny_sdk_core/api.dart';
 import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
@@ -9,17 +7,17 @@ import 'package:sunny_sdk_core/model/user_pref_key.dart';
 abstract class BuildContextResolver {
   T resolve<T>(BuildContext context);
 
-  const factory BuildContextResolver.provider() = _ProviderBuildContextResolver;
+  // const factory BuildContextResolver.provider() = _ProviderBuildContextResolver;
 }
 
-class _ProviderBuildContextResolver implements BuildContextResolver {
-  @override
-  T resolve<T>(BuildContext context) {
-    return Provider.of(context, listen: false);
-  }
-
-  const _ProviderBuildContextResolver();
-}
+// class _ProviderBuildContextResolver implements BuildContextResolver {
+//   @override
+//   T resolve<T>(BuildContext context) {
+//     return Provider.of(context, listen: false);
+//   }
+//
+//   const _ProviderBuildContextResolver();
+// }
 
 SunnyCore _sunny = SunnyCore._();
 SunnyCore get Sunny => _sunny;
@@ -33,7 +31,7 @@ set sunny(SunnyCore sunny) {
 class SunnyCore {
   SunnyCore._();
 
-  BuildContextResolver resolver = const BuildContextResolver.provider();
+  BuildContextResolver resolver;
   BuildContext buildContext;
 
   BuildContext get _verifyBuildContext =>
@@ -51,7 +49,7 @@ class SunnyCore {
 }
 
 extension SunnyCoreEssentialExt on SunnyCore {
-  SunnyIntl get intl => get();
+  // SunnyIntl get intl => get();
   IUserPreferencesService get userPreferencesService => get();
   IAuthState get authState => get();
   ApiClient get apiClient => get();

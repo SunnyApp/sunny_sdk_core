@@ -1,12 +1,24 @@
 import 'package:intl/intl.dart';
 import 'package:sunny_dart/time/date_components.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import 'time_unit.dart';
 
 const months = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
+typedef FlexiDateFormatter = String Function(FlexiDate date,
+    {String futureLabel, String historyLabel, bool withYear, String dateLabel});
+
 class FlexiDate extends DateComponents {
+  static FlexiDateFormatter fullFormatter = (
+    date, {
+    String futureLabel = "in",
+    String historyLabel = "ago",
+    bool withYear = false,
+    String dateLabel = "",
+  }) {
+    return date.formatted();
+  };
+
   FlexiDate({int day, int month = 1, int year})
       : super(day: day, month: month, year: year);
 
@@ -40,6 +52,19 @@ class FlexiDate extends DateComponents {
 
   @override
   FlexiDate withoutYear() => FlexiDate(day: day, month: month, year: null);
+
+  String fullFormat({
+    String futureLabel = "in",
+    String historyLabel = "ago",
+    bool withYear = false,
+    String dateLabel = "",
+  }) {
+    return fullFormatter?.call(this,
+        futureLabel: futureLabel,
+        historyLabel: historyLabel,
+        withYear: withYear,
+        dateLabel: dateLabel);
+  }
 }
 
 extension DateComponentsFormat on DateComponents {
@@ -70,55 +95,6 @@ Duration durationOf(TimeUnit timeUnit, int timeAmount) {
       return Duration(microseconds: timeAmount);
     default:
       throw Exception("Unable to convert from $timeUnit units");
-  }
-}
-
-extension FlexiDateFormatters on FlexiDate {
-//  String historyString({String label = "ago", bool withYear = false, String dateLabel = ""}) {
-//    final flexiDate = this;
-//    final parts = <String>[];
-//    if (flexiDate == null) return null;
-//
-//    if (flexiDate.hasYear) {
-//      final dt = flexiDate.toDateTime();
-//      final yearsAgo = dt.yearsAgo;
-//      final monthsAgo = dt.monthsAgo;
-//      if (yearsAgo > 0) {
-//        parts.add("$yearsAgo years $label");
-//      } else if (monthsAgo > 0) {
-//        parts.add("$yearsAgo months $label");
-//      }
-//    }
-//    if (flexiDate.hasMonth && flexiDate.hasDay) {
-//      parts.add((dateLabel.isNotEmpty ? "$dateLabel " : "") + sunnyIntl.flexiDate(flexiDate, withYear: withYear));
-//    }
-//
-//    return parts.join(" - ");
-//  }
-
-  String fullFormat({
-    String futureLabel = "in",
-    String historyLabel = "ago",
-    bool withYear = false,
-    String dateLabel = "",
-  }) {
-    final flexiDate = this;
-    final parts = <String>[];
-    if (flexiDate == null) return null;
-
-    if (flexiDate.hasYear) {
-      final dt = flexiDate.toDateTime();
-      String formatted = timeago.format(dt, allowFromNow: true);
-      if (historyLabel != "ago")
-        formatted = formatted.replaceAll("ago", historyLabel);
-      parts.add(formatted);
-    }
-    if (flexiDate.hasMonth && flexiDate.hasDay) {
-      parts.add((dateLabel.isNotEmpty ? "$dateLabel " : "") +
-          formatFlexiDate(flexiDate, withYear: withYear));
-    }
-
-    return parts.join(" - ");
   }
 }
 

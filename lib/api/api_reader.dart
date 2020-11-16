@@ -1,4 +1,5 @@
 import 'package:sunny_sdk_core/model_exports.dart';
+import 'package:sunny_sdk_core/mverse.dart';
 
 typedef Deserializer = dynamic Function(dynamic input);
 

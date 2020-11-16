@@ -12,9 +12,6 @@ import 'api_exceptions.dart';
 import 'api_reader.dart';
 
 class ApiClient with LoggingMixin {
-  static final _listRegEx = RegExp(r'^List<(.*)>$');
-  static final _mapRegEx = RegExp(r'^Map<String,(.*)>$');
-
   String basePath;
   Map<String, String> basePaths;
   final ApiReader serializer;

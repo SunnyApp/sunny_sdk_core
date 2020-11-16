@@ -1,4 +1,4 @@
-import 'package:meta_forms/mverse/m_model.dart';
+import 'package:sunny_sdk_core/mverse.dart';
 
 class DeleteResponse extends MModel {
   final bool deleted;
