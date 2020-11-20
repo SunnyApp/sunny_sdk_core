@@ -6,18 +6,9 @@ import 'package:sunny_sdk_core/model/user_pref_key.dart';
 
 abstract class BuildContextResolver {
   T resolve<T>(BuildContext context);
-
   // const factory BuildContextResolver.provider() = _ProviderBuildContextResolver;
 }
 
-// class _ProviderBuildContextResolver implements BuildContextResolver {
-//   @override
-//   T resolve<T>(BuildContext context) {
-//     return Provider.of(context, listen: false);
-//   }
-//
-//   const _ProviderBuildContextResolver();
-// }
 
 SunnyCore _sunny = SunnyCore._();
 SunnyCore get Sunny => _sunny;
