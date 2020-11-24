@@ -1,3 +1,4 @@
+export 'api/extractors.dart';
 export 'api/third_party_creds.dart';
 export 'api/api_client.dart';
 export 'api/api_exceptions.dart';

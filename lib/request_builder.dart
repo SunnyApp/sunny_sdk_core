@@ -14,6 +14,14 @@ class RequestBuilder {
   String contentType;
 
   String get requestUrl {
+    String url = joinString((_) {
+      _ += basePath;
+      _ += requestRelativeUrl;
+    }, '');
+    return url;
+  }
+
+  String get requestRelativeUrl {
     var ps = queryParams.entries
         .where((entry) => entry.value != null)
         .map((entry) => '${entry.key}=${entry.value}');
@@ -23,7 +31,6 @@ class RequestBuilder {
     pathParams.forEach((key, value) =>
         requestPath = requestPath.replaceAll("{$key}", "$value"));
     String url = joinString((_) {
-      _ += basePath;
       _ += requestPath;
       _ += queryString;
     }, '');

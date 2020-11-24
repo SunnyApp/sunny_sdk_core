@@ -24,7 +24,7 @@ class _ThirdPartyCreds {
   T get<T>(ThirdPartyApi<T> api) {
     final creds = _credentials[api.key] ??
         illegalState("No credentials found for ${api.key}.  You must set"
-            " the credentials using ${api.runtimeType}.credentials = myCredentials");
+            " the credentials using ThirdPartyCreds.${api.key} = myCredentials");
     return creds as T;
   }
 

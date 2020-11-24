@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:m_entity/m_entity.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 
@@ -30,7 +31,7 @@ MetadataOverrides meta(
     Map<dynamic, String> labels,
     List<dynamic> sortOrder,
     Map<JsonPath, MetaFieldConfig> formConfig,
-//    Map<JsonPath, MetaDateFormatter> metaDateFormatters,
+    Map<JsonPath, MetaDateFormatter> metaDateFormatters,
     Map<dynamic, String> placeholders}) {
   return MetadataOverrides.coerced(
       label: label,
@@ -39,7 +40,7 @@ MetadataOverrides meta(
       pluralLabel: pluralLabel,
       ignoredPaths: ignoredPaths,
       formConfig: formConfig?.mapValues((_, v) => [v]),
-//      metaDateFormatters: metaDateFormatters,
+      metaDateFormatters: metaDateFormatters,
       sortOrder: sortOrder ?? labels?.keys,
       labels: labels,
       placeholders: placeholders);
@@ -55,7 +56,7 @@ class MetadataOverrides {
   final Map<JsonPath, String> labels;
   final Map<JsonPath, List<MetaFieldConfig>> formConfig;
   final Map<JsonPath, String> placeholders;
-//  final Map<JsonPath, MetaDateFormatter> metaDateFormatters;
+  final Map<JsonPath, MetaDateFormatter> metaDateFormatters;
   final Set<JsonPath> ignoredPaths;
   final List<JsonPath> sortOrder;
 
@@ -67,7 +68,7 @@ class MetadataOverrides {
         pluralLabel = null,
         isDisabled = null,
         formConfig = const {},
-//        metaDateFormatters = null,
+        metaDateFormatters = null,
         category = null,
         placeholders = const {},
         sortOrder = const [],
@@ -81,7 +82,7 @@ class MetadataOverrides {
       this.addLabel,
       this.category,
       this.formConfig,
-//      this.metaDateFormatters,
+      this.metaDateFormatters,
       this.ignoredPaths = const {},
       Map<dynamic, String> labels,
       Map<dynamic, String> placeholders,
@@ -101,7 +102,7 @@ class MetadataOverrides {
       this.category,
       this.ignoredPaths = const {},
       this.labels = const {},
-//      this.metaDateFormatters = const {},
+      this.metaDateFormatters = const {},
       this.placeholders = const {},
       this.sortOrder = const []});
 
@@ -149,10 +150,10 @@ class MetadataOverrides {
           ...?placeholders,
           ...?other?.placeholders,
         },
-//        metaDateFormatters: {
-//          ...?metaDateFormatters,
-//          ...?other?.metaDateFormatters,
-//        },
+        metaDateFormatters: {
+          ...?metaDateFormatters,
+          ...?other?.metaDateFormatters,
+        },
         sortOrder: other?.sortOrder?.ifEmpty(() => this.sortOrder)?.toList(),
         ignoredPaths: {
           ...?ignoredPaths,
@@ -192,4 +193,64 @@ class _MetaFieldConfig implements MetaFieldConfig {
   const _MetaFieldConfig({
     this.isDisabled,
   });
+}
+
+const _kTileIconSize = 24.0;
+
+typedef MetaDateFormatterFactory<F, C> = MetaDateFormatter<F, C> Function();
+
+/// Overrides for meta date properties
+abstract class MetaDateFormatter<T, C> {
+  String title(T fact, C contact);
+
+  String subtitle(T fact, C contact);
+
+  Icon icon(T fact, C contact, {double size = _kTileIconSize});
+
+  factory MetaDateFormatter.of({
+    @required String Function(T fact, C contact) title,
+    @required String Function(T fact, C contact) subtitle,
+    @required Icon Function(T fact, C contact, {double size}) icon,
+  }) =>
+      _MetaDateFormatter<T, C>(title: title, subtitle: subtitle, icon: icon);
+
+  // static MetaDateFormatter<T, C> fallback<T extends Fact, C>() =>
+  //     _MetaDateFormatter<T>(
+  //       title: (T fact, Contact contact) => fact.title(contact),
+  //       subtitle: (T fact, Contact contact) => fact.subtitle(contact),
+  //       icon: (T fact, Contact contact, {double size}) =>
+  //       SunnyIcons.getIconOrNull(fact.factSchema.icon)?.sized(size)?.icon,
+  //     );
+}
+
+class _MetaDateFormatter<T, C> implements MetaDateFormatter<T, C> {
+  final String Function(T fact, C contact) _title;
+  final String Function(T fact, C contact) _subtitle;
+  final Icon Function(T fact, C contact, {double size}) _icon;
+
+  @override
+  Icon icon(T fact, C contact, {double size = _kTileIconSize}) {
+    return _icon(fact, contact, size: size);
+  }
+
+  @override
+  String subtitle(T fact, C contact) {
+    return _subtitle(fact, contact);
+  }
+
+  @override
+  String title(T fact, C contact) {
+    return _title(fact, contact);
+  }
+
+  _MetaDateFormatter({
+    @required String Function(T fact, C contact) title,
+    @required String Function(T fact, C contact) subtitle,
+    @required Icon Function(T fact, C contact, {double size}) icon,
+  })  : assert(title != null),
+        assert(subtitle != null),
+        assert(icon != null),
+        _title = title,
+        _subtitle = subtitle,
+        _icon = icon;
 }
