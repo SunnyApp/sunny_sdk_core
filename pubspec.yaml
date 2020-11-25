@@ -8,7 +8,7 @@ environment:
   flutter: '>=1.17.0 <3.0.0'
 dependencies:
   equatable: ^1.2.5
-  firebase_auth: ^0.18.3
+  firebase_auth: ^0.18.3+1
   flutter:
     sdk: flutter
   google_maps_webservice: ^0.0.18
@@ -26,4 +26,4 @@ dependencies:
   sunny_dart: ^0.5.8+3
   m_entity:
     path: ../sunny_entities/m_entity
-dependency_overrides:
+
