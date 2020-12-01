@@ -21,7 +21,7 @@ class FirebaseApiAuth extends Authentication with LoggingMixin {
         lastApiKey = token;
         headerParams["Authorization"] = "Bearer $token";
       } else {
-        log.info("No firebase user for request");
+        log.fine("No firebase user for request");
       }
     } on fb.FirebaseAuthException {
       throw ApiException.response(401, "Not authenticated");

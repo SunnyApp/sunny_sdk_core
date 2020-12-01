@@ -94,6 +94,9 @@ class Definitions {
       Definition.fact("religionType", PropSchemaType.string);
   static const Definition sportType =
       Definition.fact("sportType", PropSchemaType.string);
+  static const Definition associationType =
+      Definition.fact("associationType", PropSchemaType.string);
+
   static const Definition mOperationRef =
       Definition.of("mverse", "mthing", "mOperationRef", PropSchemaType.string);
 

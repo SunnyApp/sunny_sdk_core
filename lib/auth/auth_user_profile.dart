@@ -12,15 +12,11 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 class AuthUserProfile with EquatableMixin {
   final fb.User fbUser;
   final UserDetails profile;
-  const AuthUserProfile(this.fbUser, this.profile);
-  factory AuthUserProfile.of(fb.User fbUser, UserDetails profile) {
-    if (profile == null) {
-      return null;
-    } else {
-      assert(fbUser != null, "fbUser should never be null if profile isn't");
-      return AuthUserProfile(fbUser, profile);
-    }
-  }
+  final AuthEventSource source;
+  const AuthUserProfile(this.fbUser, this.profile, this.source);
+  const AuthUserProfile.empty(this.source)
+      : fbUser = null,
+        profile = null;
 
   Future<String> getIdToken({bool forceRefresh = false}) {
     return fbUser.getIdToken(forceRefresh);
@@ -28,6 +24,16 @@ class AuthUserProfile with EquatableMixin {
 
   @override
   List<Object> get props => [fbUser?.uid, profile?.id];
+}
+
+enum AuthEventSource {
+  existing,
+  error,
+  failed,
+  initial,
+  manual,
+  framework,
+  postSignup
 }
 
 class UserDetails {

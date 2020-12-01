@@ -24,6 +24,11 @@ IOptionsService get optionsService => Sunny.get();
 
 abstract class IOptionsService {
   void register(IKeyedOptionsHandler prop);
+
+  IKeyedOptionsHandler<K, T> getKeyedHandler<K, T>(Object key,
+      {@required IMetaFormFieldContext metaContext});
+
+  bool contains<K, T>(Object key);
 }
 // class OptionsService {
 //   Map<String, KeyedOptionsHandler> _optionsHandlers =

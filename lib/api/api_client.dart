@@ -6,23 +6,29 @@ import 'package:sunny_sdk_core/auth/authentication.dart';
 import 'package:sunny_sdk_core/auth/firebase_api_auth.dart';
 import 'package:sunny_sdk_core/query_param.dart';
 import 'package:sunny_sdk_core/request_builder.dart';
+import 'package:sunny_sdk_core/services/sunny.dart';
 
 import '../auth.dart';
 import 'api_exceptions.dart';
 import 'api_reader.dart';
 
+ApiClient get apiClient => Sunny.get();
+
 class ApiClient with LoggingMixin {
+  static const kBearer = "Bearer";
+
   String basePath;
   Map<String, String> basePaths;
   final ApiReader serializer;
   final Client client;
-
+  final String defaultAuthName;
   Map<String, String> _defaultHeaderMap = {};
   Map<String, Authentication> _authentications = {};
 
   ApiClient(
       {this.basePath = "https://localhost:8080",
       Client client,
+      this.defaultAuthName,
       this.serializer,
       Map<String, String> basePaths,
       Authentication authentication})
@@ -130,6 +136,7 @@ class ApiClient with LoggingMixin {
       Iterable<String> authNames,
       {String basePath}) async {
     basePath ??= this.basePath;
+    authNames ??= defaultAuthName.asList();
     await _updateParamsForAuth(
         authNames?.toSet(), [...?queryParams], headerParams);
 

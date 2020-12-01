@@ -1,14 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:sunny_dart/helpers.dart';
 import 'package:sunny_sdk_core/api.dart';
 import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
 import 'package:sunny_sdk_core/model/user_pref_key.dart';
+import 'package:sunny_sdk_core/model_exports.dart';
 
 abstract class BuildContextResolver {
   T resolve<T>(BuildContext context);
-  // const factory BuildContextResolver.provider() = _ProviderBuildContextResolver;
+  Widget register(BuildContext context, resolverOrList,
+      {Widget child, Key key});
 }
-
 
 SunnyCore _sunny = SunnyCore._();
 SunnyCore get Sunny => _sunny;
@@ -55,5 +58,7 @@ abstract class IAuthState {
   bool get isLoggedIn;
   bool get isNotLoggedIn;
   String get accountId;
+  UserDetails get currentUser;
+  AuthUserProfile get current;
   Stream<AuthUserProfile> get userStateStream;
 }

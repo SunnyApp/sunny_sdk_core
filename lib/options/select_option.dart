@@ -13,6 +13,7 @@ typedef SelectionWidgetBuilder = Widget Function(
 abstract class IKeyedOptionsHandler<K, V> {
   FutureOr<V> loadValue(K key);
   String get key;
+  bool get canShowAll;
 
   const IKeyedOptionsHandler();
 }
@@ -69,6 +70,8 @@ abstract class TypeaheadHandler<K, T> {
     @required SelectOption<K, T> selectOption,
     VoidCallback onTap,
   });
+
+  Widget wrapSuggestionTile(Widget tile);
 
   const TypeaheadHandler();
 }
@@ -185,7 +188,8 @@ typedef KeyedAdhocOptionCreator<K, T> = Future<T> Function(
     BuildContext context, KeyedAdhocOption<K, T> option);
 
 abstract class Option<V> extends KeyedOption<V, V> {
-  static Option<String> ofString(String value) => _Option.ofString(value);
+  static Option<String> ofString(String value, {icon}) =>
+      _Option.ofString(value, icon: icon);
 
   static Option<T> ofValue<T>(T key, {String label}) {
     // ignore: can_be_null_after_null_aware
@@ -356,9 +360,10 @@ class _Option<V> extends _KeyedOption<V, V>
           extraTokens: extraTokens,
         );
 
-  static _Option<String> ofString(String value) => _Option(
+  static _Option<String> ofString(String value, {icon}) => _Option(
         "$value",
         label: value.toTitle(),
+        icon: icon,
       );
 
   @override
