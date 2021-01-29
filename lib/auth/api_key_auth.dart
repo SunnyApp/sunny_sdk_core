@@ -10,7 +10,7 @@ class ApiKeyAuth implements Authentication {
   ApiKeyAuth(this.location, this.paramName);
 
   @override
-  void applyToParams(List<QueryParam> query, Map<String, String> headers) {
+  void applyToParams(QueryParams query, Map<String, String> headers) {
     String value;
     if (apiKeyPrefix != null) {
       value = '$apiKeyPrefix $apiKey';
@@ -19,9 +19,12 @@ class ApiKeyAuth implements Authentication {
     }
 
     if (location == 'query' && value != null) {
-      query.add(new QueryParam(paramName, value));
+      query[paramName] = value;
     } else if (location == 'header' && value != null) {
       headers[paramName] = value;
     }
   }
+
+  @override
+  get lastAuthentication => apiKey;
 }

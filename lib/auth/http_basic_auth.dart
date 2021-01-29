@@ -4,5 +4,5 @@ import '../query_param.dart';
 
 class HttpBasicAuthentication extends Authentication {
   @override
-  void applyToParams(List<QueryParam> query, Map<String, String> headers) {}
+  void applyToParams(QueryParams query, Map<String, String> headers) {}
 }

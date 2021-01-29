@@ -1,5 +1,9 @@
-import 'package:sunny_sdk_core/model_exports.dart';
-import 'package:sunny_sdk_core/mverse.dart';
+// import 'package:sunny_sdk_core/mverse.dart';
+import 'package:meta/meta.dart';
+import 'package:sunny_sdk_core/mverse/m_model.dart';
+import 'package:sunny_sdk_core/mverse/mmodel_registry.dart';
+
+import '../query_param.dart';
 
 typedef Deserializer = dynamic Function(dynamic input);
 
@@ -91,7 +95,8 @@ class AggregateApiReader with CachingApiReaderMixin {
     ApiReader reader3,
     ApiReader reader4,
     ApiReader reader5,
-  ]) : _readers = [reader1, reader2, reader3, reader4, reader5].whereNotNull();
+  ]) : _readers = [reader1, reader2, reader3, reader4, reader5]
+            .where((element) => element != null);
 
   Deserializer findReader(input, String targetType) {
     for (final reader in _readers) {
@@ -118,15 +123,15 @@ extension ApiReaderExt on ApiReader {
   }
 
 // port from Java version
-  Iterable<QueryParam> convertParametersForCollectionFormat(
+  QueryParams convertParametersForCollectionFormat(
       String collectionFormat, String name, dynamic value) {
-    var params = <QueryParam>[];
+    var params = QueryParams();
 
     // preconditions
     if (name == null || name.isEmpty || value == null) return params;
 
     if (value is! List) {
-      params.add(QueryParam(name, parameterToString(value)));
+      params.add(name, parameterToString(value));
       return params;
     }
 
@@ -138,13 +143,13 @@ extension ApiReaderExt on ApiReader {
         : collectionFormat; // default: csv
 
     if (collectionFormat == "multi") {
-      return values.map((v) => QueryParam(name, parameterToString(v)));
+      values.forEach((v) => params[name] = parameterToString(v));
+      return params;
     }
 
     String delimiter = _delimiters[collectionFormat] ?? ",";
 
-    params.add(QueryParam(
-        name, values.map((v) => parameterToString(v)).join(delimiter)));
+    params.add(name, values.map((v) => parameterToString(v)).join(delimiter));
     return params;
   }
 }

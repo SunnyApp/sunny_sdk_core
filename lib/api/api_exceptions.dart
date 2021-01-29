@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:sunny_dart/extensions.dart';
 import 'package:sunny_dart/helpers/error_methods.dart';
@@ -23,7 +21,7 @@ abstract class ApiException implements Exception {
   RequestBuilder get builder;
 
   const factory ApiException.socket(
-    SocketException error,
+    dynamic error,
     StackTrace stackTrace, [
     RequestBuilder builder,
   ]) = ApiSocketException;
@@ -55,7 +53,7 @@ class ApiSocketException extends ApiWrappedException {
       [RequestBuilder builder])
       : super(exception, trace, builder);
 
-  final SocketException exception;
+  final dynamic exception;
 
   @override
   String get message =>
@@ -231,7 +229,7 @@ class ValidationError {
   final dynamic value;
 
   ValidationError({
-    @required this.path,
+    this.path,
     this.message,
     this.debugMessage,
     this.code,

@@ -1,6 +1,6 @@
 export 'dart:convert';
 
-export 'package:flutter/widgets.dart' hide Notification;
+export 'package:meta/meta.dart';
 export 'package:sunny_dart/helpers.dart';
 export 'package:sunny_dart/json.dart';
 export 'package:sunny_dart/time.dart';

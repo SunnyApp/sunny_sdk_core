@@ -10,9 +10,15 @@ class ThirdPartyApi<C> {
 extension ThirdPartyCredsApis on _ThirdPartyCreds {
   ThirdPartyApi<String> get googlePlaces =>
       const ThirdPartyApi<String>("googlePlaces");
+  ThirdPartyApi<String> get museAI => const ThirdPartyApi<String>("museAI");
+  ThirdPartyApi<ClientIdSecretCredentials> get s3 =>
+      const ThirdPartyApi<ClientIdSecretCredentials>("s3");
+  ThirdPartyApi<ClientIdSecretCredentials> get googleSignIn =>
+      const ThirdPartyApi<ClientIdSecretCredentials>("googleSignIn");
   ThirdPartyApi<String> get yelp => const ThirdPartyApi<String>("yelp");
   ThirdPartyApi<ClientIdSecretCredentials> get foursquare =>
       const ThirdPartyApi<ClientIdSecretCredentials>("foursquare");
+  ThirdPartyApi<String> get ipstack => const ThirdPartyApi<String>("ipstack");
 }
 
 final ThirdPartyCreds = _ThirdPartyCreds();

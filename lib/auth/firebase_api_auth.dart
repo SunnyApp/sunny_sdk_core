@@ -1,11 +1,12 @@
 import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_sdk_core/api/api_exceptions.dart';
-import 'package:sunny_sdk_core/sunny_sdk_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:sunny_sdk_core/auth/authentication.dart';
+import 'package:sunny_sdk_core/query_param.dart';
 
 /// Special subclass that consults the firebase global and attaches the token
 /// to the request
-class FirebaseApiAuth extends Authentication with LoggingMixin {
+class FirebaseApiAuth with LoggingMixin implements Authentication {
   FirebaseApiAuth._();
   factory FirebaseApiAuth() => _instance;
   static fb.User user;
@@ -14,7 +15,7 @@ class FirebaseApiAuth extends Authentication with LoggingMixin {
 
   @override
   Future applyToParams(
-      List<QueryParam> queryParams, Map<String, String> headerParams) async {
+      QueryParams queryParams, Map<String, String> headerParams) async {
     try {
       if (user != null) {
         final token = await user.getIdToken();
@@ -29,4 +30,7 @@ class FirebaseApiAuth extends Authentication with LoggingMixin {
       throw ApiException.runtimeError(e, stack);
     }
   }
+
+  @override
+  get lastAuthentication => lastApiKey;
 }

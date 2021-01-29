@@ -1,64 +1,64 @@
 import 'dart:convert';
-
-import 'package:http/http.dart';
-import 'package:sunny_dart/sunny_dart.dart';
+import 'dart:async';
+import 'package:sunny_dart/extensions.dart';
+import 'package:meta/meta.dart';
+import 'package:pfile/pfile.dart';
+import 'package:sunny_dart/helpers/logging_mixin.dart';
+import 'package:sunny_dart/helpers/tuple.dart';
+import 'package:sunny_sdk_core/api/api_client_transport.dart';
+import 'package:sunny_sdk_core/auth/api_key_auth.dart';
 import 'package:sunny_sdk_core/auth/authentication.dart';
-import 'package:sunny_sdk_core/auth/firebase_api_auth.dart';
 import 'package:sunny_sdk_core/query_param.dart';
 import 'package:sunny_sdk_core/request_builder.dart';
-import 'package:sunny_sdk_core/services/sunny.dart';
 
-import '../auth.dart';
 import 'api_exceptions.dart';
 import 'api_reader.dart';
-
-ApiClient get apiClient => Sunny.get();
 
 class ApiClient with LoggingMixin {
   static const kBearer = "Bearer";
 
+  final ApiClientTransport transport;
+
   String basePath;
   Map<String, String> basePaths;
   final ApiReader serializer;
-  final Client client;
   final String defaultAuthName;
-  Map<String, String> _defaultHeaderMap = {};
-  Map<String, Authentication> _authentications = {};
+  final Map<String, dynamic> defaultHeaderMap = {};
+  final Map<String, Authentication> authentications = {};
 
-  ApiClient(
-      {this.basePath = "https://localhost:8080",
-      Client client,
-      this.defaultAuthName,
-      this.serializer,
-      Map<String, String> basePaths,
-      Authentication authentication})
-      : basePaths = basePaths ?? {},
-        client = client ?? Client() {
+  ApiClient({@required this.transport,
+    this.basePath = "https://localhost:8080",
+    this.defaultAuthName = kBearer,
+    this.serializer,
+    Map<String, String> basePaths,
+    Authentication authentication})
+      : basePaths = basePaths ?? {} {
     // Setup authentications (key: authentication name, value: authentication).
-    _authentications['Bearer'] =
+    authentications['Bearer'] =
         authentication ?? ApiKeyAuth("header", "Authorization");
   }
 
   String get currentAccessToken {
-    final bearer = _authentications.values.first;
+    final bearer = authentications.values.first;
     if (bearer is ApiKeyAuth) {
       return bearer.apiKey;
-    } else if (bearer is FirebaseApiAuth) {
-      return bearer.lastApiKey;
     } else {
-      return null;
+      return bearer?.lastAuthentication?.toString();
     }
   }
 
-  Future applyAuthHeader(
-      {List<QueryParam> queryParams, Map<String, String> headers}) async {
-    for (var auth in _authentications.values) {
+  Future<Tuple<QueryParams, Map<String, String>>> applyAuthHeader(
+      {QueryParams queryParams, Map<String, String> headers}) async {
+    queryParams ??= QueryParams();
+    headers ??= {};
+    for (var auth in authentications.values) {
       await auth.applyToParams(queryParams, headers);
     }
+    return Tuple(queryParams, headers);
   }
 
   void addDefaultHeader(String key, String value) {
-    _defaultHeaderMap[key] = value;
+    defaultHeaderMap[key] = value;
   }
 
   dynamic _deserialize(dynamic value, String targetType) {
@@ -86,6 +86,21 @@ class ApiClient with LoggingMixin {
     return _deserialize(decodedJson, targetType);
   }
 
+  /// Update query and header parameters based on authentication settings.
+  /// @param authNames The authentications to apply
+  Future updateParamsForAuth(Set<String> authNames, QueryParams queryParams,
+      Map<String, String> headerParams) async {
+    for (var authName in authNames.orEmpty()) {
+      Authentication auth = authentications[authName];
+      if (auth == null) {
+        throw ArgumentError("Authentication undefined: " +
+            authName +
+            " but found ${authentications.keys}");
+      }
+      await auth.applyToParams(queryParams, headerParams);
+    }
+  }
+
   T decodeAs<T>(String jsonVal) {
     if (T == String) {
       return jsonVal as T;
@@ -98,117 +113,55 @@ class ApiClient with LoggingMixin {
     return _deserialize(decodedJson, targetType) as T;
   }
 
-  String serialize(Object obj) {
-    String serialized = '';
-    if (obj == null) {
-      serialized = '';
-    } else {
-      serialized = json.encode(obj);
-    }
-    return serialized;
-  }
-
   // We don't use a Map<String, String> for queryParams.
   // If collectionFormat is 'multi' a key might appear multiple times.
-  Future<Response> invokeRequest(RequestBuilder request) async {
-    return await invokeAPI(
+  Future<ApiResponse> invokeRequest(RequestBuilder request) async {
+    final authNames = request.authNames ??
+        [
+          if (defaultAuthName != null) defaultAuthName,
+        ];
+
+    await updateParamsForAuth(
+        authNames?.toSet(), request.queryParams, request.headerParams);
+
+    return transport.invokeAPI(
         request.requestRelativeUrl,
         request.method.enumValue,
-        request.queryParams.mapEntries((k, v) => QueryParam(k, v?.toString())),
+        request.queryParams,
+        request.files,
         request.body,
         request.headerParams,
         request.formParams,
         request.contentType,
-        request.authNames,
         basePath: request.basePath);
   }
 
   // We don't use a Map<String, String> for queryParams.
   // If collectionFormat is 'multi' a key might appear multiple times.
-  Future<Response> invokeAPI(
-      String path,
+  Future<ApiResponse> invoke(String path,
       String method,
-      Iterable<QueryParam> queryParams,
+      QueryParams queryParams,
+      Iterable<PFile> files,
       Object body,
       Map<String, String> headerParams,
       Map<String, String> formParams,
       String contentType,
-      Iterable<String> authNames,
-      {String basePath}) async {
-    basePath ??= this.basePath;
-    authNames ??= defaultAuthName.asList();
-    await _updateParamsForAuth(
-        authNames?.toSet(), [...?queryParams], headerParams);
+      List<String> authNames, {String basePath}) async {
+    authNames ??= [
+      if (defaultAuthName != null) defaultAuthName,
+    ];
 
-    var ps = queryParams
-        .where((p) => p.value != null)
-        .map((p) => '${p.name}=${p.value}');
-    String queryString = ps.isNotEmpty ? '?' + ps.join('&') : '';
+    await updateParamsForAuth(authNames.toSet(), queryParams, headerParams);
 
-    String url = basePath + path + queryString;
-
-    headerParams.addAll(_defaultHeaderMap);
-    headerParams['Content-Type'] = contentType;
-    Response response;
-    if (body is MultipartRequest) {
-      var request = MultipartRequest(method, Uri.parse(url));
-      request.fields.addAll(body.fields);
-      request.files.addAll(body.files);
-      request.headers.addAll(body.headers);
-      request.headers.addAll(headerParams);
-      var streamedResp = await client.send(request);
-      response = await Response.fromStream(streamedResp);
-    } else {
-      var msgBody = contentType == "application/x-www-form-urlencoded"
-          ? formParams
-          : serialize(body);
-
-      final doRequest = () async {
-        switch (method) {
-          case "POST":
-            return client.post(url, headers: headerParams, body: msgBody);
-          case "PUT":
-            return client.put(url, headers: headerParams, body: msgBody);
-          case "DELETE":
-            return client.delete(url, headers: headerParams);
-          case "PATCH":
-            return client.patch(url, headers: headerParams, body: msgBody);
-
-          default:
-            return client.get(url, headers: headerParams);
-        }
-      };
-      response = await doRequest();
-    }
-    if (response.statusCode >= 400) {
-      throw ApiException.response(response.statusCode, response.body,
-          builder: RequestBuilder()..path = path);
-    } else {
-      return response;
-    }
-  }
-
-  /// Update query and header parameters based on authentication settings.
-  /// @param authNames The authentications to apply
-  Future _updateParamsForAuth(Set<String> authNames,
-      List<QueryParam> queryParams, Map<String, String> headerParams) async {
-    for (var authName in authNames.orEmpty()) {
-      Authentication auth = _authentications[authName];
-      if (auth == null) {
-        throw ArgumentError("Authentication undefined: " + authName);
-      }
-      await auth.applyToParams(queryParams, headerParams);
-    }
-  }
-
-  void setAccessToken(String accessToken) {
-    _authentications.forEach((key, auth) {
-      if (auth is OAuth) {
-        auth.setAccessToken(accessToken);
-      } else if (auth is ApiKeyAuth) {
-        auth.apiKey = accessToken;
-        auth.apiKeyPrefix = "Bearer";
-      }
-    });
+    return transport.invokeAPI(
+        path,
+        method,
+        queryParams,
+        files,
+        body,
+        headerParams,
+        formParams,
+        contentType,
+        basePath: basePath);
   }
 }

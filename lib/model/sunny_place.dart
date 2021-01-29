@@ -1,4 +1,3 @@
-import 'package:google_maps_webservice/places.dart';
 import 'package:sunny_dart/helpers/lists.dart';
 import 'package:sunny_sdk_core/mverse/m_model.dart';
 
@@ -23,6 +22,7 @@ Iterable<String> addressToString(SunnyPlace address) {
 /// Represents a physical location.  Represented by a few different generated models.  See [Location]
 /// and [ContactAddress]
 abstract class SunnyPlace implements MModel {
+  String get name;
   String get googlePlaceId;
 
   String get description;
@@ -45,6 +45,7 @@ abstract class SunnyPlace implements MModel {
 
   set googlePlaceId(String googlePlaceId);
 
+  set name(String name);
   set description(String description);
 
   set type(String type);
@@ -63,6 +64,6 @@ abstract class SunnyPlace implements MModel {
 
   set countryCode(String countryCode);
 
-  PlaceDetails get placeDetails;
-  set placeDetails(PlaceDetails placeDetails);
+  // PlaceDetails get placeDetails;
+  // set placeDetails(PlaceDetails placeDetails);
 }

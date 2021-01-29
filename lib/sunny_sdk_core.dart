@@ -8,4 +8,7 @@ export 'mverse.dart';
 export 'options.dart';
 export 'query_param.dart';
 export 'request_builder.dart';
+export 'rproxy.dart';
 export 'services.dart';
+
+export 'package:meta/meta.dart';

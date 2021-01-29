@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:sunny_sdk_core/mverse.dart';
 
 import 'package:sunny_dart/helpers/functions.dart';
+import 'package:sunny_dart/sunny_get.dart';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_sdk_core/api/repository.dart';
 import 'package:sunny_sdk_core/api/sunny_api.dart';
@@ -12,7 +13,7 @@ import 'package:sunny_sdk_core/model/delete_response.dart';
 import 'package:sunny_sdk_core/services/lifecycle_aware.dart';
 import 'package:sunny_sdk_core/services/sunny.dart';
 
-ApiRegistry get apiRegistry => Sunny.get();
+ApiRegistry get apiRegistry => sunny.get();
 
 abstract class ApiRegistry {
   void register(Repository repo);

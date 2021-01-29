@@ -15,6 +15,7 @@ abstract class IKeyedOptionsHandler<K, V> {
   String get key;
   bool get canShowAll;
 
+  IKeyedOptionsHandler<KK, VV> cast<KK, VV>();
   const IKeyedOptionsHandler();
 }
 

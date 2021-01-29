@@ -1,11 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_dart/helpers/safe_completer.dart';
-import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
 import 'package:sunny_sdk_core/services.dart';
+
+typedef _AsyncValueGetter<R> = Future<R> Function();
 
 /// Container for data that allows easy subscriptions and rendering
 abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
@@ -17,7 +19,7 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     onLogout(() => reset());
   }
 
-  factory DataService.of({AsyncValueGetter<T> factory}) =>
+  factory DataService.of({_AsyncValueGetter<T> factory}) =>
       _DataService(factory);
 
   @protected
@@ -34,10 +36,6 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
       rethrow;
     }
   }
-
-  @override
-  Stream<AuthUserProfile> get userStateStream =>
-      Sunny.get<IAuthState>().userStateStream;
 
   Stream<T> get stream async* {
     if (currentValue == null && isReady.isNotStarted) {
@@ -62,7 +60,6 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   }
 
   /// Retrieves the latest copy of the data from an external source
-  @protected
   Future<T> internalFetchData();
 
   void reset() {
@@ -119,12 +116,14 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
 }
 
 class _DataService<T> extends DataService<T> {
-  final AsyncValueGetter<T> _internalFetchData;
+  final _AsyncValueGetter<T> _internalFetchData;
 
   @override
   Future<T> internalFetchData() {
     return _internalFetchData();
   }
 
-  _DataService(this._internalFetchData) : assert(_internalFetchData != null);
+  _DataService(this._internalFetchData)
+      : assert(_internalFetchData != null),
+        super();
 }

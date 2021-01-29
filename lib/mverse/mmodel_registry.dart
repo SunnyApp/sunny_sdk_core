@@ -1,4 +1,5 @@
-import 'package:sunny_dart/sunny_dart.dart';
+import 'package:sunny_dart/helpers/functions.dart';
+import 'package:sunny_dart/helpers/logging_mixin.dart';
 
 import 'm_model.dart';
 

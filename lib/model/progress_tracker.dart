@@ -1,19 +1,26 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:sunny_dart/helpers/safe_completer.dart';
 import 'package:sunny_dart/helpers/strings.dart';
+import 'package:sunny_dart/sunny_dart.dart';
 
 class ProgressTracker<T> extends ChangeNotifier {
-  ProgressTracker._(num total, [String name])
-      : assert(total != null, total >= 0),
-        key = Key(name ?? uuid()),
-        _total = total.toDouble();
+  ProgressTracker._(FutureOr<num> total, [String name])
+      : key = Key(name ?? uuid()),
+        _total = total.resolveOrNull()?.toDouble() {
+    total.futureValue().then((total) {
+      assert(total != null, total >= 0);
+      this._total = total.toDouble();
+      updateTotal(total.toDouble());
+    });
+  }
 
   final SafeCompleter<T> _completer = SafeCompleter<T>();
 
   /// Creates
-  ProgressTracker(num total, [String name]) : this._(total, name);
+  ProgressTracker(FutureOr<num> total, [String name]) : this._(total, name);
 
   /// Instead of counting towards an arbitrary count, we'll base the counter on a percent and the caller will
   /// make sure to send the appropriate ratios

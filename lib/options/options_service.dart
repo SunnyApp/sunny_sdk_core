@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:logging/logging.dart';
 import 'package:m_entity/m_entity.dart';
 import 'package:sunny_dart/json.dart';
@@ -20,7 +21,7 @@ import 'select_option.dart';
 
 // typedef AdhocBuilder<T> = AdhocOption<T> Function(String message);
 
-IOptionsService get optionsService => Sunny.get();
+IOptionsService get optionsService => sunny.get();
 
 abstract class IOptionsService {
   void register(IKeyedOptionsHandler prop);

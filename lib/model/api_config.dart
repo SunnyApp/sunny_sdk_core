@@ -1,3 +1,4 @@
+import 'package:sunny_sdk_core/api/api_client_transport.dart';
 import 'package:sunny_sdk_core/api_exports.dart';
 
 import '../api.dart';
@@ -20,9 +21,11 @@ class ApiConfig {
 
   /// Recreates an authentication state (usually done inside an isolate)
   ApiClient apiClient(
-      {@required ApiReader reader, bool logToFirebase = false}) {
+      {@required ApiClientTransport apiClient,
+      @required ApiReader reader,
+      bool logToFirebase = false}) {
     return ApiClient(
-      basePath: basePath,
+      transport: apiClient,
       basePaths: basePaths,
       serializer: reader,
       authentication: ApiKeyAuth('header', 'Authorization')

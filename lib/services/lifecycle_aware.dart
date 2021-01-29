@@ -1,25 +1,24 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 import 'package:logging/logging.dart';
+import 'package:sunny_dart/helpers/disposable.dart';
 import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
+import 'package:sunny_dart/sunny_get.dart';
 import 'package:sunny_sdk_core/services/sunny.dart';
+
+typedef _AsyncCallback = FutureOr Function();
 
 abstract class LifecycleAware {
   FutureOr dispose();
 }
 
-abstract class HasDisposers {
-  void registerDisposer(FutureOr dispose());
-  void removeDisposer(FutureOr dispose());
-}
-
 abstract class LifecycleAwareBase implements HasDisposers {
   Logger get log;
 
-  void onShutdown(AsyncCallback callback);
+  void onShutdown(_AsyncCallback callback);
 
-  void onStartup(AsyncCallback callback);
+  void onStartup(_AsyncCallback callback);
 
   bool isShuttingDown();
 
@@ -38,7 +37,7 @@ abstract class LifecycleAwareBase implements HasDisposers {
 typedef AsyncOrCallback = FutureOr Function();
 mixin LifecycleAwareMixin implements LifecycleAwareBase {
   Stream<AuthUserProfile> get userStateStream =>
-      Sunny.authState.userStateStream;
+      sunny.authState.userStateStream;
   @override
   Logger get log;
 
@@ -50,7 +49,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   final _onLogout = <AsyncOrCallback>[];
 
   @protected
-  void onShutdown(AsyncCallback callback) {
+  void onShutdown(_AsyncCallback callback) {
     _onShutdown.add(callback);
   }
 
@@ -79,7 +78,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   }
 
   @protected
-  void onStartup(AsyncCallback callback) {
+  void onStartup(_AsyncCallback callback) {
     callback();
   }
 

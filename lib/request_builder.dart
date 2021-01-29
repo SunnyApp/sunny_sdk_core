@@ -1,11 +1,14 @@
-import 'package:sunny_sdk_core/api_exports.dart';
+import 'package:sunny_dart/helpers/strings.dart';
+import 'package:pfile/pfile_api.dart';
+import 'query_param.dart';
 
 class RequestBuilder {
   String path;
   HttpMethod method;
   String basePath;
 
-  final Map<String, Object> queryParams = {};
+  final queryParams = QueryParams();
+  final List<PFile> files = [];
   final Map<String, Object> pathParams = {};
   Object body;
   final Map<String, String> headerParams = {};

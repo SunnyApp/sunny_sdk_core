@@ -7,42 +7,41 @@ import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
 import 'package:sunny_sdk_core/model/user_pref_key.dart';
 import 'package:sunny_sdk_core/model_exports.dart';
 
+export 'package:sunny_dart/sunny_get.dart';
+
 abstract class BuildContextResolver {
   T resolve<T>(BuildContext context);
   Widget register(BuildContext context, resolverOrList,
       {Widget child, Key key});
 }
 
-SunnyCore _sunny = SunnyCore._();
-SunnyCore get Sunny => _sunny;
-
-set sunny(SunnyCore sunny) {
-  assert(sunny != null);
-  _sunny = sunny;
+extension SunnyCoreCastExt on SunnyGet {
+  SunnyCore get core => this as SunnyCore;
 }
 
 /// Context holder for sunny-related services
-class SunnyCore {
-  SunnyCore._();
+class SunnyCore implements SunnyGet {
+  SunnyCore({this.resolver});
 
   BuildContextResolver resolver;
   BuildContext buildContext;
 
-  BuildContext get _verifyBuildContext =>
-      buildContext ?? illegalState("No buildContext set yet");
-  BuildContextResolver get _verifyResolver =>
-      resolver ?? illegalState("No resolver set");
+  BuildContext _verifyBuildContext<T>() =>
+      buildContext ??
+      illegalState("No buildContext set yet while resolving $T");
+  BuildContextResolver _verifyResolver<T>() =>
+      resolver ?? illegalState("No resolver set getting $T");
 
   T call<T>({String name, BuildContext context}) =>
       _resolveOrError<T>(name, context);
-  T get<T>({BuildContext context, String name}) =>
-      _resolveOrError<T>(name, context);
+  T get<T>({dynamic context, String name}) =>
+      _resolveOrError<T>(name, context as BuildContext);
   T _resolveOrError<T>(String name, BuildContext context) =>
-      _verifyResolver.resolve<T>(context ?? _verifyBuildContext) ??
+      _verifyResolver<T>().resolve<T>(context ?? buildContext) ??
       illegalState("Cannot locate ${name ?? "$T"}");
 }
 
-extension SunnyCoreEssentialExt on SunnyCore {
+extension SunnyCoreEssentialExt on SunnyGet {
   // SunnyIntl get intl => get();
   IUserPreferencesService get userPreferencesService => get();
   IAuthState get authState => get();

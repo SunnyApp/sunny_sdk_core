@@ -165,33 +165,38 @@ class MetadataOverrides {
 /// Marker interface for making configuration changes to widgets
 abstract class MetaFieldConfig {
   bool get isDisabled;
+  bool get isRequired;
 
   /// Merges these overrides with another
   MetaFieldConfig merge(MetaFieldConfig other);
 
-  static MetaFieldConfig of({bool isDisabled}) {
-    return _MetaFieldConfig(isDisabled: isDisabled);
+  static MetaFieldConfig of({bool isDisabled, bool isRequired}) {
+    return _MetaFieldConfig(isDisabled: isDisabled, isRequired: isRequired);
   }
 }
 
 class _MetaFieldConfig implements MetaFieldConfig {
   final bool isDisabled;
+  final bool isRequired;
 
   @override
   _MetaFieldConfig merge(MetaFieldConfig other) {
-    return this.copy(isDisabled: other.isDisabled);
+    return this.copy(isDisabled: other.isDisabled, isRequired: isRequired);
   }
 
   _MetaFieldConfig copy({
     bool isDisabled,
+    bool isRequired,
   }) {
     return _MetaFieldConfig(
       isDisabled: isDisabled ?? this.isDisabled,
+      isRequired: isRequired ?? this.isRequired,
     );
   }
 
   const _MetaFieldConfig({
     this.isDisabled,
+    this.isRequired,
   });
 }
 

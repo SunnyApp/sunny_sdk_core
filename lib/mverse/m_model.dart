@@ -1,14 +1,12 @@
 import 'dart:core';
 
-// import 'package:collection_diff/collection_diff.dart';
 import 'package:collection_diff/collection_diff.dart';
-// import 'package:meta_forms/build_context_provides.dart';
-// import 'package:meta_forms/mschema_service.dart';
 import 'package:quiver/core.dart';
-// import 'package:sunny_core_widgets/provided.dart';
+import 'package:sunny_dart/helpers/functions.dart';
+import 'package:sunny_dart/helpers/strings.dart';
+import 'package:sunny_dart/extensions/lang_extensions.dart';
 import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/json/map_model.dart';
-import 'package:sunny_dart/sunny_dart.dart';
 import 'package:sunny_dart/time.dart';
 import 'package:timezone/timezone.dart';
 
@@ -54,9 +52,10 @@ abstract class MModel with DiffDelegateMixin implements Entity, MapModel {
   /// For [Diffable]
   dynamic get diffKey => id;
 
-  String get id => illegalState("Not implemented $runtimeType");
+  String get id => illegalState("Not implemented $runtimeType.id");
 
-  MKey get mkey => mkeyOrNull ?? illegalState("Not implemented $runtimeType");
+  MKey get mkey =>
+      mkeyOrNull ?? illegalState("Not implemented $runtimeType.mkey");
 
   RecordKey get recordKey => null;
 
@@ -100,7 +99,7 @@ abstract class MModel with DiffDelegateMixin implements Entity, MapModel {
     return this[name];
   }
 
-  takeFrom(source) => illegalState("Not supported");
+  takeFrom(source) => illegalState("Not supported takeFrom");
 
   void takeFromMap(Map<String, dynamic> from, {bool copyEntries = true}) {
     if (copyEntries == true && from != null) {

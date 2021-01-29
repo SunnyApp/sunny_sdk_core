@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 

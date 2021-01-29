@@ -36,6 +36,7 @@ class Definitions {
       Definition.core("geoLocation", PropSchemaType.geoLocation);
   static const Definition imageUrl =
       Definition.core("imageUrl", PropSchemaType.uri);
+
   static const Definition jsonPath =
       Definition.core("jsonPath", PropSchemaType.string);
   static const Definition literal =

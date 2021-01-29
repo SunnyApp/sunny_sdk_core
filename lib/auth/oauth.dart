@@ -7,8 +7,7 @@ class OAuth implements Authentication {
   OAuth({this.accessToken});
 
   @override
-  void applyToParams(
-      List<QueryParam> queryParams, Map<String, String> headerParams) {
+  void applyToParams(QueryParams params, Map<String, String> headerParams) {
     if (accessToken != null) {
       headerParams["Authorization"] = "Bearer " + accessToken;
     }
@@ -17,4 +16,7 @@ class OAuth implements Authentication {
   void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
   }
+
+  @override
+  get lastAuthentication => accessToken;
 }
