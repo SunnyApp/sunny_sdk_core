@@ -28,6 +28,14 @@ class Inst<T> {
         dispose = null,
         t = T;
 
+  Inst._(
+      {this.instance,
+      this.t,
+      this.dispose,
+      this.factory,
+      this.shouldUpdate,
+      @required this.skipIfRegistered});
+
   Inst.constant(this.instance, {this.skipIfRegistered = true})
       : assert(instance != null),
         factory = null,

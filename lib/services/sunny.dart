@@ -7,12 +7,28 @@ import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
 import 'package:sunny_sdk_core/model/user_pref_key.dart';
 import 'package:sunny_sdk_core/model_exports.dart';
 
+import 'resolver_inits.dart';
+
 export 'package:sunny_dart/sunny_get.dart';
 
 abstract class BuildContextResolver {
   T resolve<T>(BuildContext context);
   Widget register(BuildContext context, resolverOrList,
       {Widget child, Key key});
+}
+
+extension BuildContextResolverExt on BuildContextResolver {
+  Widget registerSingleton<T>(BuildContext context, T item,
+      {Widget child, Key key}) {
+    return register(context, [Inst.constant(item)], child: child, key: key);
+  }
+
+  Widget registerBuilder<T>(
+      BuildContext context, T create(BuildContext context),
+      {Widget child, Key key, InstDispose<T> dispose}) {
+    return register(context, [Inst.factory(create, dispose: dispose)],
+        child: child, key: key);
+  }
 }
 
 extension SunnyCoreCastExt on SunnyGet {
