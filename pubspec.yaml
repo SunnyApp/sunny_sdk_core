@@ -1,6 +1,6 @@
 name: sunny_sdk_core
 author: eric@sunnyapp.co
-version: 2.0.0+nullsafe.2
+version: 2.0.0+nullsafe.3
 description: Core libraries for swagger-generated sdks
 repository: https://github.com/SunnyApp/sunny_sdk_core.git
 environment: 
@@ -11,7 +11,7 @@ dependencies:
   buffer: ^1.1.0
   chunked_stream: ^1.4.0
   equatable: ^2.0.0
-  pfile: any
+  pfile: ^1.0.1+2
   meta: ^1.3.0
   http: ^0.13.0
   logging: ^1.0.0
