@@ -8,10 +8,10 @@ final isoDateFormat = DateFormat("yyyy-MM-dd");
 
 TZDateTime tzDateTime(DateTime dateTime) => dateTime is TZDateTime
     ? dateTime
-    : TZDateTime.from(dateTime, sunnyLocalization.userLocation);
+    : TZDateTime.from(dateTime, sunnyLocalization.userLocation!);
 
-String smartDateFormat(DateTime dateTime,
-    {bool formatTime, bool useToday = true}) {
+String? smartDateFormat(DateTime? dateTime,
+    {bool? formatTime, bool useToday = true}) {
   if (dateTime == null) return null;
 
   formatTime ??= hasTime(dateTime);

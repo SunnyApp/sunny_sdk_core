@@ -20,13 +20,13 @@ class DiffLogEntry extends DiffLogEntryBase {
       ? wrapped
       : DiffLogEntry(wrapped as Map<String, dynamic>);
 
-  DiffLogEntry.of({List<Change> changes})
+  DiffLogEntry.of({List<Change>? changes})
       : super.of(
           changes: changes,
         );
 
-  List<Change> get changes => _changes;
-  set changes(List<Change> changes) {
+  List<Change>? get changes => _changes;
+  set changes(List<Change>? changes) {
     this._changes = changes;
     wrapped['changes'] = jsonLiteral(changes);
   }
@@ -34,30 +34,30 @@ class DiffLogEntry extends DiffLogEntryBase {
 
 abstract class DiffLogEntryBase extends MModel {
   DiffLogEntryBase(Map<String, dynamic> wrapped,
-      {MSchemaRef mtype = DiffLogEntryRef, @required bool update})
+      {MSchemaRef mtype = DiffLogEntryRef, required bool update})
       : super(wrapped, mtype: mtype, update: false) {
     if (update == true) takeFromMap(wrapped, copyEntries: false);
   }
 
   DiffLogEntryBase.fromJson(wrapped)
       : this(wrapped as Map<String, dynamic>, update: true);
-  DiffLogEntryBase.of({List<Change> changes})
+  DiffLogEntryBase.of({List<Change>? changes})
       : super(<String, dynamic>{}, mtype: DiffLogEntryRef) {
     if (changes != null) this.changes = changes;
   }
 
-  List<Change> _changes;
+  List<Change>? _changes;
 
   /// Property getter and setter for changes:
-  List<Change> get changes;
-  set changes(List<Change> changes);
+  List<Change>? get changes;
+  set changes(List<Change>? changes);
 
   @override
   String toString() => json.encode(wrapped).toString();
   dynamic toJson() => wrapped;
 
   operator [](key) {
-    switch (key) {
+    switch ("$key") {
       case "changes":
         return this.changes;
       default:
@@ -81,13 +81,13 @@ abstract class DiffLogEntryBase extends MModel {
     if (source is Map<String, dynamic>) {
       takeFromMap(source, copyEntries: true);
     } else if (source is MModel) {
-      takeFromMap(source?.wrapped, copyEntries: true);
+      takeFromMap(source.wrapped, copyEntries: true);
     } else {
       throw ("Can't take values from unknown type ${source.runtimeType}");
     }
   }
 
-  void takeFromMap(Map<String, dynamic> from, {bool copyEntries = true}) {
+  void takeFromMap(Map<String, dynamic>? from, {bool copyEntries = true}) {
     if (from == null) return;
 
     super.takeFromMap(from, copyEntries: copyEntries);

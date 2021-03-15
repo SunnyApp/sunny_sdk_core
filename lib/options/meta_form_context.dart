@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:m_entity/m_entity.dart';
 import 'package:sunny_dart/sunny_dart.dart';
+import 'package:sunny_sdk_core/mverse/imverse.dart';
 
 import 'meta_property_handler.dart';
 
@@ -17,22 +17,22 @@ abstract class IMetaFormContext {
   List<IMetaPropertyHandler> get extraHandlers;
   Map<String, dynamic> get scope;
   bool get isEmbed;
-  IMetaFormFieldContext prop(MSchemaProperty property);
-  MSchemaDefinition get schema;
+  IMetaFormFieldContext prop(IMSchemaProperty property);
+  IMSchemaDefinition get schema;
   bool get isLoaded;
 }
 
 MetadataOverrides meta(
-    {String label,
-    String pluralLabel,
-    String addLabel,
-    String editLabel,
-    Set<JsonPath> ignoredPaths,
-    Map<dynamic, String> labels,
-    List<dynamic> sortOrder,
-    Map<JsonPath, MetaFieldConfig> formConfig,
-    Map<JsonPath, MetaDateFormatter> metaDateFormatters,
-    Map<dynamic, String> placeholders}) {
+    {String? label,
+    String? pluralLabel,
+    String? addLabel,
+    String? editLabel,
+    Set<JsonPath>? ignoredPaths,
+    Map<dynamic, String>? labels,
+    List<dynamic>? sortOrder,
+    Map<JsonPath, MetaFieldConfig>? formConfig,
+    Map<JsonPath, MetaDateFormatter>? metaDateFormatters,
+    Map<dynamic, String>? placeholders}) {
   return MetadataOverrides.coerced(
       label: label,
       addLabel: addLabel,
@@ -47,17 +47,17 @@ MetadataOverrides meta(
 }
 
 class MetadataOverrides {
-  final String label;
-  final String addLabel;
-  final String editLabel;
-  final String pluralLabel;
-  final String category;
-  final bool isDisabled;
+  final String? label;
+  final String? addLabel;
+  final String? editLabel;
+  final String? pluralLabel;
+  final String? category;
+  final bool? isDisabled;
   final Map<JsonPath, String> labels;
-  final Map<JsonPath, List<MetaFieldConfig>> formConfig;
+  final Map<JsonPath, List<MetaFieldConfig>>? formConfig;
   final Map<JsonPath, String> placeholders;
-  final Map<JsonPath, MetaDateFormatter> metaDateFormatters;
-  final Set<JsonPath> ignoredPaths;
+  final Map<JsonPath, MetaDateFormatter>? metaDateFormatters;
+  final Set<JsonPath>? ignoredPaths;
   final List<JsonPath> sortOrder;
 
   const MetadataOverrides.empty()
@@ -84,11 +84,11 @@ class MetadataOverrides {
       this.formConfig,
       this.metaDateFormatters,
       this.ignoredPaths = const {},
-      Map<dynamic, String> labels,
-      Map<dynamic, String> placeholders,
-      Iterable<dynamic> sortOrder})
+      Map<dynamic, String>? labels,
+      Map<dynamic, String>? placeholders,
+      Iterable<dynamic>? sortOrder})
       : labels = labels?.map((k, v) => MapEntry(JsonPath.of(k), v)) ?? {},
-        sortOrder = sortOrder?.map((p) => JsonPath.of(p))?.toList() ?? const [],
+        sortOrder = sortOrder?.map((p) => JsonPath.of(p)).toList() ?? const [],
         placeholders =
             placeholders?.map((k, v) => MapEntry(JsonPath.of(k), v)) ?? {};
 
@@ -106,16 +106,16 @@ class MetadataOverrides {
       this.placeholders = const {},
       this.sortOrder = const []});
 
-  String resolveLabel(JsonPath property, {String fallback}) {
+  String? resolveLabel(JsonPath property, {String? fallback}) {
     return labels[property] ?? fallback;
   }
 
-  String resolvePlaceholder(JsonPath property, {String fallback}) {
+  String? resolvePlaceholder(JsonPath property, {String? fallback}) {
     return placeholders[property] ?? fallback;
   }
 
   List<JsonPath> sortProperties(Iterable<JsonPath> source) {
-    final toSort = {...?source};
+    final toSort = {...source};
     final sorted = <JsonPath>[];
     for (final p in sortOrder) {
       if (toSort.contains(p)) {
@@ -132,7 +132,7 @@ class MetadataOverrides {
     return sorted;
   }
 
-  MetadataOverrides operator +(MetadataOverrides other) {
+  MetadataOverrides operator +(MetadataOverrides? other) {
     if (other == null) return this;
     return MetadataOverrides(
         label: other.label ?? this.label,
@@ -143,41 +143,41 @@ class MetadataOverrides {
         pluralLabel: other.pluralLabel ?? this.pluralLabel,
         formConfig: other.formConfig.mergeWith(this.formConfig),
         labels: {
-          ...?labels,
-          ...?other?.labels,
+          ...labels,
+          ...other.labels,
         },
         placeholders: {
-          ...?placeholders,
-          ...?other?.placeholders,
+          ...placeholders,
+          ...other.placeholders,
         },
         metaDateFormatters: {
           ...?metaDateFormatters,
-          ...?other?.metaDateFormatters,
+          ...?other.metaDateFormatters,
         },
-        sortOrder: other?.sortOrder?.ifEmpty(() => this.sortOrder)?.toList(),
+        sortOrder: other.sortOrder.ifEmpty(() => this.sortOrder).toList(),
         ignoredPaths: {
           ...?ignoredPaths,
-          ...?other?.ignoredPaths,
+          ...?other.ignoredPaths,
         });
   }
 }
 
 /// Marker interface for making configuration changes to widgets
 abstract class MetaFieldConfig {
-  bool get isDisabled;
-  bool get isRequired;
+  bool? get isDisabled;
+  bool? get isRequired;
 
   /// Merges these overrides with another
   MetaFieldConfig merge(MetaFieldConfig other);
 
-  static MetaFieldConfig of({bool isDisabled, bool isRequired}) {
+  static MetaFieldConfig of({bool? isDisabled, bool? isRequired}) {
     return _MetaFieldConfig(isDisabled: isDisabled, isRequired: isRequired);
   }
 }
 
 class _MetaFieldConfig implements MetaFieldConfig {
-  final bool isDisabled;
-  final bool isRequired;
+  final bool? isDisabled;
+  final bool? isRequired;
 
   @override
   _MetaFieldConfig merge(MetaFieldConfig other) {
@@ -185,8 +185,8 @@ class _MetaFieldConfig implements MetaFieldConfig {
   }
 
   _MetaFieldConfig copy({
-    bool isDisabled,
-    bool isRequired,
+    bool? isDisabled,
+    bool? isRequired,
   }) {
     return _MetaFieldConfig(
       isDisabled: isDisabled ?? this.isDisabled,
@@ -213,9 +213,9 @@ abstract class MetaDateFormatter<T, C> {
   Icon icon(T fact, C contact, {double size = _kTileIconSize});
 
   factory MetaDateFormatter.of({
-    @required String Function(T fact, C contact) title,
-    @required String Function(T fact, C contact) subtitle,
-    @required Icon Function(T fact, C contact, {double size}) icon,
+    required String Function(T fact, C contact) title,
+    required String Function(T fact, C contact) subtitle,
+    required Icon Function(T fact, C contact, {double? size}) icon,
   }) =>
       _MetaDateFormatter<T, C>(title: title, subtitle: subtitle, icon: icon);
 
@@ -249,13 +249,10 @@ class _MetaDateFormatter<T, C> implements MetaDateFormatter<T, C> {
   }
 
   _MetaDateFormatter({
-    @required String Function(T fact, C contact) title,
-    @required String Function(T fact, C contact) subtitle,
-    @required Icon Function(T fact, C contact, {double size}) icon,
-  })  : assert(title != null),
-        assert(subtitle != null),
-        assert(icon != null),
-        _title = title,
+    required String Function(T fact, C contact) title,
+    required String Function(T fact, C contact) subtitle,
+    required Icon Function(T fact, C contact, {double? size}) icon,
+  })   : _title = title,
         _subtitle = subtitle,
         _icon = icon;
 }

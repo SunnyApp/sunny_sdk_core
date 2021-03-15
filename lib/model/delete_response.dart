@@ -3,7 +3,7 @@ import 'package:sunny_sdk_core/mverse.dart';
 class DeleteResponse extends MModel {
   final bool deleted;
 
-  DeleteResponse.of({bool deleted}) : this({"deleted": deleted});
+  DeleteResponse.of({bool? deleted}) : this({"deleted": deleted});
 
   DeleteResponse(Map<String, dynamic> values)
       : deleted = values["deleted"] == true,
@@ -15,6 +15,6 @@ class DeleteResponse extends MModel {
 
   @override
   Map<String, dynamic> toMap() {
-    return wrapped ?? {};
+    return wrapped;
   }
 }

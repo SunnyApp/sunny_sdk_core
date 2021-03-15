@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sunny_dart/sunny_dart.dart';
 import 'package:sunny_dart/is_x.dart';
+import 'package:sunny_dart/sunny_dart.dart';
 
-NamedIconContainer _NamedIcons;
+NamedIconContainer? _NamedIcons;
 
 NamedIconContainer get NamedIcons {
   return _NamedIcons ?? GlobalIconResolver.icons;
@@ -15,15 +15,16 @@ set NamedIcons(NamedIconContainer _) {
 
 extension NamedIconContainerExt on NamedIconContainer {
   NamedIcon operator [](String name) => iconResolver.getIcon(name);
-  NamedIcon getIconOrNull(name) => this[name?.toString()];
+
+  NamedIcon getIconOrNull(name) => this[name.toString()];
 }
 
 /// Allows for simple lookup of icons by name.  Implement this container and add
 /// fields for a more performant solution
 class NamedIconContainer {
-  Color defaultColor;
-  Color defaultTextColor;
-  Color disabledColor;
+  Color? defaultColor;
+  Color? defaultTextColor;
+  Color? disabledColor;
   double defaultIconSize;
 
   final Getter<IconResolver> _iconResolver;
@@ -246,11 +247,11 @@ class NamedIconContainer {
 }
 
 abstract class IconResolver {
-  NamedIcon getIcon(String name, {NamedIcon fallback});
+  NamedIcon getIcon(String name, {NamedIcon? fallback});
 
-  NamedIcon getIconOrNull(String name);
+  NamedIcon? getIconOrNull(String name);
 
-  NamedIcon getSolidIconOrNull(String key);
+  NamedIcon? getSolidIconOrNull(String key);
 
   bool hasSolidIcon(String key);
 
@@ -258,13 +259,14 @@ abstract class IconResolver {
 
   bool supportsRegistration();
 
-  void registerIcon(NamedIcon icon, {bool isSolid});
+  void registerIcon(NamedIcon icon, {bool? isSolid});
 }
 
 class GlobalIconResolver implements IconResolver {
   final _iconMapping = <String, NamedIcon>{};
+
   @override
-  NamedIcon getIcon(String name, {NamedIcon fallback}) {
+  NamedIcon getIcon(String name, {NamedIcon? fallback}) {
     return _iconMapping[name] ??
         fallback ??
         NamedIcon(
@@ -272,12 +274,12 @@ class GlobalIconResolver implements IconResolver {
   }
 
   @override
-  NamedIcon getIconOrNull(String name) {
+  NamedIcon? getIconOrNull(String name) {
     return _iconMapping[name];
   }
 
   @override
-  NamedIcon getSolidIconOrNull(String key) {
+  NamedIcon? getSolidIconOrNull(String key) {
     return _iconMapping["${key}_solid"];
   }
 
@@ -297,19 +299,17 @@ class GlobalIconResolver implements IconResolver {
   GlobalIconResolver._();
 
   @override
-  void registerIcon(NamedIcon icon, {bool isSolid}) {
-    if (icon != null) {
-      _iconMapping[icon.name] = icon;
-      if (isSolid != true) {
-        registerIcon(
-            icon.copyWith(
-                name: "${icon.name}_solid",
-                isSolid: true,
-                iconData: icon.solidData,
-                solidData: icon.solidData,
-                color: Colors.white),
-            isSolid: true);
-      }
+  void registerIcon(NamedIcon icon, {bool? isSolid}) {
+    _iconMapping[icon.name] = icon;
+    if (isSolid != true) {
+      registerIcon(
+          icon.copyWith(
+              name: "${icon.name}_solid",
+              isSolid: true,
+              iconData: icon.solidData,
+              solidData: icon.solidData,
+              color: Colors.white),
+          isSolid: true);
     }
   }
 
@@ -327,16 +327,15 @@ class NamedIcon extends IconData {
   final bool _isSolid;
   final bool circular;
 
-  final Color _color;
+  final Color? _color;
   final Color _foregroundColor;
 
   NamedIcon(String name, IconData iosIcon, IconData androidIcon,
-      [IconData solidIosIcon, IconData solidAndroidIcon])
+      [IconData? solidIosIcon, IconData? solidAndroidIcon])
       : this._(
           name,
-          iconData: isIOS ? iosIcon : androidIcon,
-          solidData:
-              isIOS ? iosIcon ?? iosIcon : solidAndroidIcon ?? androidIcon,
+          iconData: infoX.isIOS ? iosIcon : androidIcon,
+          solidData: infoX.isIOS ? iosIcon : (solidAndroidIcon ?? androidIcon),
 // We're not using solid icons
 //          solidData: Platform.isIOS ? solidIosIcon ?? iosIcon : solidAndroidIcon ?? androidIcon,
           circular: false,
@@ -348,16 +347,14 @@ class NamedIcon extends IconData {
 
   NamedIcon._(
     this.name, {
-    @required this.iconData,
-    @required this.solidData,
-    @required this.circular,
-    @required Color color,
-    @required bool isSolid,
-    @required Color foregroundColor,
-    @required this.size,
-  })  : assert(iconData != null),
-        assert(solidData != null),
-        _isSolid = isSolid ?? false,
+    required this.iconData,
+    required this.solidData,
+    required this.circular,
+    required Color? color,
+    required bool isSolid,
+    required Color foregroundColor,
+    required this.size,
+  })   : _isSolid = isSolid,
         _color = color,
         _foregroundColor = foregroundColor,
         icon =
@@ -375,11 +372,11 @@ class NamedIcon extends IconData {
 
   /// Builds as a widget
   Widget build({
-    bool circular,
-    bool solid,
-    Color color,
-    Color foregroundColor,
-    double size,
+    bool? circular,
+    bool? solid,
+    Color? color,
+    Color? foregroundColor,
+    double? size,
   }) {
     return copyWith(
       circular: circular,
@@ -391,14 +388,14 @@ class NamedIcon extends IconData {
   }
 
   NamedIcon copyWith({
-    String name,
-    IconData iconData,
-    IconData solidData,
-    bool circular,
-    bool isSolid,
-    Color color,
-    Color foregroundColor,
-    double size,
+    String? name,
+    IconData? iconData,
+    IconData? solidData,
+    bool? circular,
+    bool? isSolid,
+    Color? color,
+    Color? foregroundColor,
+    double? size,
   }) {
     return NamedIcon._(name ?? this.name,
         iconData: iconData ?? this.iconData,
@@ -410,8 +407,10 @@ class NamedIcon extends IconData {
         size: size ?? this.size);
   }
 
+  // ignore: unnecessary_null_comparison
   bool get iconExists => icon != null;
 
+  // ignore: unnecessary_null_comparison
   bool get solidIconExists => solidData != null;
 
   @override
@@ -431,7 +430,7 @@ class NamedIcon extends IconData {
     );
   }
 
-  NamedIcon solid([Color color]) {
+  NamedIcon solid([Color? color]) {
     return copyWith(isSolid: true, color: color);
   }
 
@@ -455,20 +454,7 @@ NamedIcon icon(String name, IconData ios, IconData iosSolid) {
 }
 
 extension NamedIconTypedExtensions on NamedIcon {
-  NamedIcon get sunnyActionButtonIcon {
-    return this.sized(60).solid(Colors.white);
-  }
-
-  NamedIcon get inputIcon {
-    return this.sized(25);
-  }
-
-  NamedIcon tileIcon({bool dense = false}) {
-    return this.sized(tileIconSize(dense: dense));
-  }
-
-  Widget get widget {
-    if (this == null) return const SizedBox(height: 0, width: 0);
+  Widget get _widget {
     if (circular) {
       return ClipOval(
         child: Container(
@@ -482,7 +468,7 @@ extension NamedIconTypedExtensions on NamedIcon {
           child: Center(
             child: Icon(
               _isSolid ? solidData : iconData,
-              color: _foregroundColor ?? Colors.white,
+              color: _foregroundColor,
               size: size - (size / 4) + 1,
             ),
           ),
@@ -500,6 +486,28 @@ extension NamedIconTypedExtensions on NamedIcon {
           color: _color,
         ),
       );
+    }
+  }
+
+  NamedIcon get sunnyActionButtonIcon {
+    return this.sized(60).solid(Colors.white);
+  }
+
+  NamedIcon get inputIcon {
+    return this.sized(25);
+  }
+
+  NamedIcon tileIcon({bool dense = false}) {
+    return this.sized(tileIconSize(dense: dense));
+  }
+}
+
+extension NamedIconTypedNullableExtensions on NamedIcon? {
+  Widget get widget {
+    if (this == null) {
+      return const SizedBox(height: 0, width: 0);
+    } else {
+      return this!._widget;
     }
   }
 }

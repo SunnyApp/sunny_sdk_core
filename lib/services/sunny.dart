@@ -12,20 +12,20 @@ import 'resolver_inits.dart';
 export 'package:sunny_dart/sunny_get.dart';
 
 abstract class BuildContextResolver {
-  T resolve<T>(BuildContext context);
+  T resolve<T>(BuildContext? context);
   Widget register(BuildContext context, resolverOrList,
-      {Widget child, Key key});
+      {Widget? child, Key? key});
 }
 
 extension BuildContextResolverExt on BuildContextResolver {
   Widget registerSingleton<T>(BuildContext context, T item,
-      {Widget child, Key key}) {
+      {Widget? child, Key? key}) {
     return register(context, [Inst.constant(item)], child: child, key: key);
   }
 
   Widget registerBuilder<T>(
       BuildContext context, T create(BuildContext context),
-      {Widget child, Key key, InstDispose<T> dispose}) {
+      {Widget? child, Key? key, InstDispose<T>? dispose}) {
     return register(context, [Inst.factory(create, dispose: dispose)],
         child: child, key: key);
   }
@@ -39,8 +39,8 @@ extension SunnyCoreCastExt on SunnyGet {
 class SunnyCore implements SunnyGet {
   SunnyCore({this.resolver});
 
-  BuildContextResolver resolver;
-  BuildContext buildContext;
+  BuildContextResolver? resolver;
+  BuildContext? buildContext;
 
   BuildContext _verifyBuildContext<T>() =>
       buildContext ??
@@ -48,11 +48,11 @@ class SunnyCore implements SunnyGet {
   BuildContextResolver _verifyResolver<T>() =>
       resolver ?? illegalState("No resolver set getting $T");
 
-  T call<T>({String name, BuildContext context}) =>
+  T call<T>({String? name, BuildContext? context}) =>
       _resolveOrError<T>(name, context);
-  T get<T>({dynamic context, String name}) =>
-      _resolveOrError<T>(name, context as BuildContext);
-  T _resolveOrError<T>(String name, BuildContext context) =>
+  T get<T>({dynamic context, String? name}) =>
+      _resolveOrError<T>(name, context as BuildContext?);
+  T _resolveOrError<T>(String? name, BuildContext? context) =>
       _verifyResolver<T>().resolve<T>(context ?? buildContext) ??
       illegalState("Cannot locate ${name ?? "$T"}");
 }

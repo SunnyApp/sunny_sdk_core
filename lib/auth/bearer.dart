@@ -5,10 +5,10 @@ import 'authentication.dart';
 class BearerAuthentication implements Authentication {
   final String accessToken;
 
-  const BearerAuthentication(this.accessToken) : assert(accessToken != null);
+  const BearerAuthentication(this.accessToken);
   @override
   FutureOr applyToParams(
-      QueryParams queryParams, Map<String, String> headerParams) {
+      QueryParams queryParams, Map<String, String?> headerParams) {
     headerParams["Authorization"] = "Bearer $accessToken";
   }
 

@@ -28,5 +28,5 @@ abstract class SunnyApi<M extends Entity> extends Repository<M> {
   }
 
   @override
-  String keyToId(MKey key) => key?.recordKey?.value;
+  String? keyToId(MKey? key) => key?.recordKey.value;
 }

@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:m_entity/m_entity.dart';
 import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 

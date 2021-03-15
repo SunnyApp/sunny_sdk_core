@@ -1,7 +1,6 @@
-// import 'package:m_entity/m_entity.dart';
-import 'package:m_entity/m_entity.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 
+import 'imverse.dart';
 import 'm_model.dart';
 
 class Definitions {
@@ -118,18 +117,16 @@ class Definition implements HasBaseCode {
         baseCode = "$developer.$module.definitions.$definition";
 
   const Definition.core(String definition, this.propType)
-      : assert(propType != null),
-        uri =
+      : uri =
             "mverse://schemas/mverse/core/0.0.1/definitions.json#/definitions/$definition",
         baseCode = "mverse.core.definitions.$definition";
 
   const Definition.fact(String definition, this.propType)
-      : assert(propType != null),
-        uri =
+      : uri =
             "mverse://schemas/sunny/fact/0.0.1/definitions.json#/definitions/$definition",
         baseCode = "sunny.fact.definitions.$definition";
 
-  bool matches(MSchemaProperty prop) {
+  bool matches(IMSchemaProperty prop) {
     return prop.baseCode == this.baseCode || "${prop.uri}" == this.uri;
   }
 
@@ -176,5 +173,5 @@ enum PropSchemaType {
 }
 
 extension PropSchemaTypeExtensions on PropSchemaType {
-  String get value => this.enumValue;
+  String? get value => this.enumValue;
 }

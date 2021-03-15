@@ -6,20 +6,23 @@ import 'time_unit.dart';
 const months = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
 typedef FlexiDateFormatter = String Function(FlexiDate date,
-    {String futureLabel, String historyLabel, bool withYear, String dateLabel});
+    {String? futureLabel,
+    String? historyLabel,
+    bool? withYear,
+    String? dateLabel});
 
 class FlexiDate extends DateComponents {
   static FlexiDateFormatter fullFormatter = (
     date, {
-    String futureLabel = "in",
-    String historyLabel = "ago",
-    bool withYear = false,
-    String dateLabel = "",
+    String? futureLabel = "in",
+    String? historyLabel = "ago",
+    bool? withYear = false,
+    String? dateLabel = "",
   }) {
-    return date.formatted();
+    return date.formatted() ?? '';
   };
 
-  FlexiDate({int day, int month = 1, int year})
+  FlexiDate({int? day, int? month = 1, int? year})
       : super(day: day, month: month, year: year);
 
   FlexiDate.fromDateTime(DateTime time)
@@ -28,21 +31,21 @@ class FlexiDate extends DateComponents {
   factory FlexiDate.now() {
     final dateTime = DateTime.now();
     return FlexiDate(
-        day: dateTime?.day, month: dateTime?.month, year: dateTime?.year);
+        day: dateTime.day, month: dateTime.month, year: dateTime.year);
   }
 
-  factory FlexiDate.from(input) {
+  static FlexiDate? from(input) {
     final dc = DateComponents.from(input);
     return FlexiDate(day: dc?.day, month: dc?.month, year: dc?.year);
   }
 
-  factory FlexiDate.tryFrom(input) {
+  static FlexiDate? tryFrom(input) {
     final dc = DateComponents.tryFrom(input);
     if (dc == null) return null;
-    return FlexiDate(day: dc?.day, month: dc?.month, year: dc?.year);
+    return FlexiDate(day: dc.day, month: dc.month, year: dc.year);
   }
 
-  factory FlexiDate.fromJson(json) {
+  static FlexiDate? fromJson(json) {
     if (json == null) return null;
     return FlexiDate.from(json);
   }
@@ -59,7 +62,7 @@ class FlexiDate extends DateComponents {
     bool withYear = false,
     String dateLabel = "",
   }) {
-    return fullFormatter?.call(this,
+    return fullFormatter.call(this,
         futureLabel: futureLabel,
         historyLabel: historyLabel,
         withYear: withYear,
@@ -68,7 +71,7 @@ class FlexiDate extends DateComponents {
 }
 
 extension DateComponentsFormat on DateComponents {
-  String formatted() => formatFlexiDate(this);
+  String? formatted() => formatFlexiDate(this);
 }
 
 extension DateTimeToFlexiDateExtensions on DateTime {
@@ -77,28 +80,31 @@ extension DateTimeToFlexiDateExtensions on DateTime {
   }
 }
 
-Duration durationOf(TimeUnit timeUnit, int timeAmount) {
-  if (timeUnit == null && timeAmount == null) return null;
-
-  switch (timeUnit.value) {
-    case "DAYS":
-      return Duration(days: timeAmount);
-    case "HOURS":
-      return Duration(hours: timeAmount);
-    case "MINUTES":
-      return Duration(minutes: timeAmount);
-    case "SECONDS":
-      return Duration(seconds: timeAmount);
-    case "MILLISECONDS":
-      return Duration(milliseconds: timeAmount);
-    case "MICROSECONDS":
-      return Duration(microseconds: timeAmount);
-    default:
-      throw Exception("Unable to convert from $timeUnit units");
+Duration? durationOf(final TimeUnit? timeUnit, int? timeAmount) {
+  if (timeUnit == null && timeAmount == null) {
+    return null;
+  } else {
+    timeAmount ??= 1;
+    switch (timeUnit?.value) {
+      case "DAYS":
+        return Duration(days: timeAmount);
+      case "HOURS":
+        return Duration(hours: timeAmount);
+      case "MINUTES":
+        return Duration(minutes: timeAmount);
+      case "SECONDS":
+        return Duration(seconds: timeAmount);
+      case "MILLISECONDS":
+        return Duration(milliseconds: timeAmount);
+      case "MICROSECONDS":
+        return Duration(microseconds: timeAmount);
+      default:
+        throw Exception("Unable to convert from $timeUnit units");
+    }
   }
 }
 
-String formatFlexiDate(
+String? formatFlexiDate(
   input, {
   bool withYear = true,
   bool withMonth = true,

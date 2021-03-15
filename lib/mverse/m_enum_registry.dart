@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 
@@ -11,8 +10,8 @@ class MEnumRegistry with LoggingMixin {
 
   register<T extends MLiteral<String>>(
     String type, {
-    @required List<T> values,
-    @required MEnumFactory<T> factory,
+    required List<T> values,
+    required MEnumFactory<T> factory,
   }) {
     if (type.isNotEmpty != true) {
       return;
@@ -28,17 +27,16 @@ class MEnumRegistry with LoggingMixin {
   operator [](String mtype) => _factories[mtype];
 
   List<T> values<T>(String key) {
-    return _values[key] as List<T> ?? <T>[];
+    return _values[key] as List<T>? ?? <T>[];
   }
 
-  MEnumFactory<T> factory<T>(String key) {
-    return _factories[key] as MEnumFactory<T> ?? (String _) => null;
+  MEnumFactory<T?> factory<T>(String key) {
+    return _factories[key] as MEnumFactory<T>? ?? ((String _) => null);
   }
 
   M instantiate<M extends MLiteral<String>>(dynamic json,
-      {@required String type}) {
-    type ??= nullPointer("No enum type provided");
-    final MEnumFactory<M> factory = _factories[type] as MEnumFactory<M> ??
+      {required String type}) {
+    final MEnumFactory<M> factory = _factories[type] as MEnumFactory<M>? ??
         nullPointer("No enum factory found for $type}");
     return factory(json as String);
   }
@@ -47,7 +45,7 @@ class MEnumRegistry with LoggingMixin {
 }
 
 MEnumRegistry get mEnumRegistry => _mEnumRegistry ??= MEnumRegistry._();
-MEnumRegistry _mEnumRegistry;
+MEnumRegistry? _mEnumRegistry;
 
 initializeMEnumRegistry(MEnumRegistry registry) {
   _mEnumRegistry = registry;

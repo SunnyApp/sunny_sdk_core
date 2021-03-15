@@ -24,7 +24,7 @@ abstract class LifecycleAwareBase implements HasDisposers {
 
   Future doShutdown();
 
-  R exec<R>(R block());
+  R? exec<R>(R block());
 
   void registerLoginHooks(IAuthState state);
 
@@ -42,7 +42,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   Logger get log;
 
   bool _isShuttingDown = false;
-  bool _isLoggedIn;
+  bool? _isLoggedIn;
 
   final _onShutdown = <AsyncOrCallback>[];
   final _onLogin = <AsyncOrCallback>[];
@@ -65,7 +65,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
     if (_isLoggedIn == null) {
       _isLoggedIn = false;
       userStateStream.listen((state) async {
-        final isLoggedIn = state?.fbUser == null;
+        final isLoggedIn = state.fbUser == null;
         if (isLoggedIn != _isLoggedIn) {
           this._isLoggedIn = isLoggedIn;
           final callbacks = isLoggedIn ? _onLogin : _onLogout;
@@ -95,7 +95,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   Future doShutdown() async {}
 
   @override
-  R exec<R>(R block()) {
+  R? exec<R>(R block()) {
     if (isShuttingDown()) {
       log.severe("Trying to invoke function while shutting down", null,
           StackTrace.current);
@@ -135,7 +135,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
 typedef LifecycleCallback<T> = FutureOr<T> Function();
 
 extension LifecycleAwareBaseExt on LifecycleAwareBase {
-  void onDestroy(String name, LifecycleCallback destroy, {Duration wait}) {
+  void onDestroy(String name, LifecycleCallback destroy, {Duration? wait}) {
     // if (_onDestroy.containsKey(name)) {
     //   throw "Initializer $name already exists for $runtimeType";
     // }

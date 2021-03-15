@@ -13,15 +13,15 @@ bool _notEquals<T>(T a, T b) => a != b;
 
 /// Class used for defining container instances
 class Inst<T> {
-  final Type t;
-  final T instance;
-  final InstInitFn<T> factory;
-  final InstDispose<T> dispose;
-  final ShouldNotify<T> shouldUpdate;
+  final Type? t;
+  final T? instance;
+  final InstInitFn<T>? factory;
+  final InstDispose<T>? dispose;
+  final ShouldNotify<T>? shouldUpdate;
   final bool skipIfRegistered;
 
   Inst.instance(this.instance,
-      {ShouldNotify<T> shouldNotify, this.skipIfRegistered = true})
+      {ShouldNotify<T>? shouldNotify, this.skipIfRegistered = true})
       : assert(instance != null),
         factory = null,
         this.shouldUpdate = shouldNotify ?? _notEquals,
@@ -34,7 +34,7 @@ class Inst<T> {
       this.dispose,
       this.factory,
       this.shouldUpdate,
-      @required this.skipIfRegistered});
+      required this.skipIfRegistered});
 
   Inst.constant(this.instance, {this.skipIfRegistered = true})
       : assert(instance != null),

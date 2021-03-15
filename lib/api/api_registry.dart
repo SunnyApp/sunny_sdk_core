@@ -25,7 +25,7 @@ abstract class ApiRegistry {
 
   factory ApiRegistry.noop() => const _NoopApiRegistry();
 
-  afterCreate<T>(MKey newKey, T result);
+  afterCreate<T>(MKey? newKey, T result);
 
   afterDelete<T>(MKey deletedKey, DeleteResponse result);
 
@@ -47,7 +47,7 @@ class _NoopApiRegistry implements ApiRegistry {
   const _NoopApiRegistry();
 
   @override
-  afterCreate<T>(MKey newKey, T result) {}
+  afterCreate<T>(MKey? newKey, T result) {}
 
   @override
   afterUpdate<T>(MKey updatedKey, T updateSource, ChangeResult result) {}
@@ -62,7 +62,7 @@ class _NoopApiRegistry implements ApiRegistry {
 abstract class ApiSignal<T> {}
 
 class ApiCreateSignal<T> implements ApiSignal<T> {
-  final MKey newKey;
+  final MKey? newKey;
   final T newEntity;
 
   ApiCreateSignal(this.newKey, this.newEntity);
@@ -105,7 +105,7 @@ class _ApiRegistry
       _apis[ref] ?? nullPointer("No repository registered for ${ref.baseCode}");
 
   @override
-  afterCreate<T>(MKey newKey, T result) {
+  afterCreate<T>(MKey? newKey, T result) {
     if (_signalStream.hasListener) {
       _signalStream.add(ApiCreateSignal(newKey, result));
     }
@@ -125,16 +125,16 @@ class _ApiRegistry
   }
 }
 
-extension ApiSignalStream on Stream<ApiSignal> {
+extension ApiSignalStream on Stream<ApiSignal>? {
   Stream<ApiSignal> whereTypeIs(MSchemaRef type) {
     if (this == null) return Stream.empty();
-    return this.where((signal) {
+    return this!.where((signal) {
       if (signal is ApiUpdateSignal) {
         return signal.updatedKey.mtype == type;
       } else if (signal is ApiDeleteSignal) {
         return signal.deletedKey.mtype == type;
       } else if (signal is ApiCreateSignal) {
-        return signal.newKey.mtype == type;
+        return signal.newKey!.mtype == type;
       } else {
         return false;
       }
@@ -143,7 +143,7 @@ extension ApiSignalStream on Stream<ApiSignal> {
 
   Stream<ApiSignal<T>> whereType<T>() {
     if (this == null) return Stream.empty();
-    return this.where((signal) {
+    return this!.where((signal) {
       return signal is ApiSignal<T>;
     }).cast();
   }
@@ -151,7 +151,6 @@ extension ApiSignalStream on Stream<ApiSignal> {
 
 extension RepositoryExtensions<X extends Entity> on Repository<X> {
   Future<X> save(X toSave) async {
-    assert(toSave != null);
     if (toSave.mkey?.mxid != null) {
       await this.update(this.keyToId(toSave.mkey), toSave);
       return await this.load(keyToId(toSave.mkey));

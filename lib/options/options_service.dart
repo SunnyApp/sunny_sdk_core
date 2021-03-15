@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:logging/logging.dart';
-import 'package:m_entity/m_entity.dart';
 import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 import 'package:sunny_dart/typedefs.dart';
@@ -27,7 +26,7 @@ abstract class IOptionsService {
   void register(IKeyedOptionsHandler prop);
 
   IKeyedOptionsHandler<K, T> getKeyedHandler<K, T>(Object key,
-      {@required IMetaFormFieldContext metaContext});
+      {required IMetaFormFieldContext metaContext});
 
   bool contains<K, T>(Object key);
 }

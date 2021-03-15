@@ -3,18 +3,18 @@ import 'package:pfile/pfile_api.dart';
 import 'query_param.dart';
 
 class RequestBuilder {
-  String path;
-  HttpMethod method;
-  String basePath;
+  String? path;
+  HttpMethod? method;
+  String? basePath;
 
   final queryParams = QueryParams();
   final List<PFile> files = [];
   final Map<String, Object> pathParams = {};
-  Object body;
-  final Map<String, String> headerParams = {};
+  Object? body;
+  final Map<String, String?> headerParams = {};
   final Map<String, String> formParams = {};
-  Iterable<String> authNames;
-  String contentType;
+  Iterable<String>? authNames;
+  String? contentType;
 
   String get requestUrl {
     String url = joinString((_) {
@@ -32,7 +32,7 @@ class RequestBuilder {
 
     var requestPath = path;
     pathParams.forEach((key, value) =>
-        requestPath = requestPath.replaceAll("{$key}", "$value"));
+        requestPath = requestPath!.replaceAll("{$key}", "$value"));
     String url = joinString((_) {
       _ += requestPath;
       _ += queryString;

@@ -1,3 +1,4 @@
+export 'mverse/imverse.dart';
 export 'mverse/definitions.dart';
 export 'mverse/entity_extensions.dart';
 export 'mverse/m_enum_registry.dart';

@@ -1,10 +1,10 @@
 # This is a generated file; do not edit or check into version control.
-firebase_auth=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.18.4+1/
-firebase_auth_web=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-0.3.2+3/
-firebase_core=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.5.3/
-firebase_core_web=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-0.2.1+1/
-libphonenumber=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/libphonenumber-1.0.2/
-path_provider=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.27/
-path_provider_linux=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2/
-path_provider_macos=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+6/
-path_provider_windows=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-0.0.4+3/
+firebase_auth=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_auth-1.0.1/
+firebase_auth_web=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-1.0.2/
+firebase_core=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.0.1/
+firebase_core_web=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.0.1/
+libphonenumber2=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/libphonenumber2-2.0.2+2/
+path_provider=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider-2.0.1/
+path_provider_linux=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-2.0.0/
+path_provider_macos=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-2.0.0/
+path_provider_windows=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-2.0.0/

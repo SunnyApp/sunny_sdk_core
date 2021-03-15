@@ -13,13 +13,13 @@ typedef _AsyncValueGetter<R> = Future<R> Function();
 abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   final _updateStream = StreamController<T>.broadcast();
   final SafeCompleter<T> isReady = SafeCompleter.stopped();
-  T _currentValue;
+  T? _currentValue;
 
-  DataService({bool isLazy}) {
+  DataService({bool? isLazy}) {
     onLogout(() => reset());
   }
 
-  factory DataService.of({_AsyncValueGetter<T> factory}) =>
+  factory DataService.of({required _AsyncValueGetter<T> factory}) =>
       _DataService(factory);
 
   @protected
@@ -37,7 +37,7 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     }
   }
 
-  Stream<T> get stream async* {
+  Stream<T?> get stream async* {
     if (currentValue == null && isReady.isNotStarted) {
       final initialLoad = await loadInitial();
       yield initialLoad;
@@ -51,7 +51,7 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
         yield null;
       }
     } else {
-      yield currentValue;
+      yield currentValue!;
     }
 
     await for (final data in _updateStream.stream) {
@@ -69,7 +69,7 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   }
 
   @protected
-  StreamController<T> get controller => _updateStream;
+  StreamController<T?> get controller => _updateStream;
 
   Future<T> refresh() async {
     final result = await internalFetchData();
@@ -77,11 +77,11 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     return result;
   }
 
-  T get currentValue {
+  T? get currentValue {
     return _currentValue;
   }
 
-  set currentValue(T value) {
+  set currentValue(T? value) {
     if (value != null) {
       _currentValue = value;
       if (!controller.isClosed) controller.add(value);
@@ -95,7 +95,7 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   }
 
   /// Retrieves the current copy of this data, if it exists, or fetches it.
-  Future<T> get() async {
+  Future<T?> get() async {
     if (_currentValue != null) {
       return _currentValue;
     } else {
@@ -123,7 +123,5 @@ class _DataService<T> extends DataService<T> {
     return _internalFetchData();
   }
 
-  _DataService(this._internalFetchData)
-      : assert(_internalFetchData != null),
-        super();
+  _DataService(this._internalFetchData) : super();
 }

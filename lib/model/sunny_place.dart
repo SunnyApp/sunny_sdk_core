@@ -1,7 +1,7 @@
 import 'package:sunny_dart/helpers/lists.dart';
 import 'package:sunny_sdk_core/mverse/m_model.dart';
 
-Iterable<String> addressToString(SunnyPlace address) {
+Iterable<String>? addressToString(SunnyPlace? address) {
   if (address == null) {
     return null;
   }

@@ -41,8 +41,8 @@ class _ThirdPartyCreds {
 }
 
 class ClientIdSecretCredentials {
-  final String clientId;
-  final String clientSecret;
+  final String? clientId;
+  final String? clientSecret;
 
   ClientIdSecretCredentials({this.clientId, this.clientSecret});
 }

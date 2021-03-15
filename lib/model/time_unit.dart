@@ -37,7 +37,7 @@ class TimeUnit extends TimeUnitBase {
   // ignore: non_constant_identifier_names
   static const TimeUnit years_ = TimeUnit._internal("YEARS");
 
-  static TimeUnit fromJson(dynamic data) {
+  static TimeUnit? fromJson(dynamic data) {
     if (data == null) return null;
     switch ("$data") {
       case "NANOS":

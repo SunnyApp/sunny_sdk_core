@@ -5,7 +5,7 @@ class QueryParams extends MapMixin<String, dynamic> {
 
   void add(String key, value) {
     if (value == null) return;
-    _values.putIfAbsent(key, () => []).add(value?.toString());
+    _values.putIfAbsent(key, () => []).add(value.toString());
   }
 
   Iterable<MapEntry<String, String>> flattened() {
@@ -14,10 +14,10 @@ class QueryParams extends MapMixin<String, dynamic> {
   }
 
   @override
-  dynamic operator [](Object key) {
-    final v = _values[key];
+  dynamic operator [](Object? key) {
+    final v = _values[key as String];
     if (v?.isNotEmpty != true) return null;
-    if (v.length == 1) {
+    if (v!.length == 1) {
       return v.first;
     } else {
       return v;
@@ -42,7 +42,7 @@ class QueryParams extends MapMixin<String, dynamic> {
   Iterable<String> get keys => _values.keys;
 
   @override
-  dynamic remove(Object key) {
+  dynamic remove(Object? key) {
     _values.remove(key);
   }
 }

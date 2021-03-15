@@ -9,16 +9,16 @@ import 'package:sunny_sdk_core/query_param.dart';
 class FirebaseApiAuth with LoggingMixin implements Authentication {
   FirebaseApiAuth._();
   factory FirebaseApiAuth() => _instance;
-  static fb.User user;
+  static fb.User? user;
   static final _instance = FirebaseApiAuth._();
-  String lastApiKey;
+  String? lastApiKey;
 
   @override
   Future applyToParams(
-      QueryParams queryParams, Map<String, String> headerParams) async {
+      QueryParams queryParams, Map<String, String?> headerParams) async {
     try {
       if (user != null) {
-        final token = await user.getIdToken();
+        final token = await user!.getIdToken();
         lastApiKey = token;
         headerParams["Authorization"] = "Bearer $token";
       } else {

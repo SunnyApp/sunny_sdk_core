@@ -25,9 +25,9 @@ typedef SelectOption<K, T> = void Function(KeyedOption<K, T> input);
 typedef RenderSuggestionTile<K, T> = Widget Function(
   BuildContext context,
   KeyedOption<K, T> suggestion, {
-  @required bool isSelected,
-  @required SelectOption<K, T> selectOption,
-  VoidCallback onTap,
+  required bool isSelected,
+  required SelectOption<K, T> selectOption,
+  VoidCallback? onTap,
 });
 
 abstract class TypeaheadOptionsAndHandler<K, T>
@@ -40,11 +40,11 @@ enum TypeaheadFocusMode { showAll, showAllAndClear, showFiltered, none }
 
 abstract class TypeaheadOptions {
   /// Gets the placeholder text, given a selected option
-  String get placeholder => null;
+  String? get placeholder => null;
 
   String get noOptionsLabel => "Type a value";
 
-  Icon get prefixIcon => null;
+  Icon? get prefixIcon => null;
 
   TypeaheadFocusMode get focusMode => TypeaheadFocusMode.showAll;
 
@@ -61,15 +61,15 @@ abstract class TypeaheadHandler<K, T> {
   /// Renders the suffix for the selected item in the form control
   Widget renderSelectedItemSuffix(
       BuildContext context, KeyedOption<K, T> selected,
-      {@required SelectOption<K, T> selectOption});
+      {required SelectOption<K, T> selectOption});
 
   /// Renders the suggested tile in the list of options
   Widget renderSuggestionTile(
     BuildContext context,
     KeyedOption<K, T> suggestion, {
-    @required bool isSelected,
-    @required SelectOption<K, T> selectOption,
-    VoidCallback onTap,
+    required bool isSelected,
+    required SelectOption<K, T> selectOption,
+    VoidCallback? onTap,
   });
 
   Widget wrapSuggestionTile(Widget tile);
@@ -81,12 +81,12 @@ class KeyedContextSwitchOption<K, V> extends _KeyedOption<K, V> {
   KeyedContextSwitchOption(
     K key,
     V value, {
-    @required String label,
-    @required this.onSelect,
+    required String label,
+    required this.onSelect,
     icon,
-    List subtitle,
-    String selection,
-    List<String> extraTokens,
+    List? subtitle,
+    String? selection,
+    List<String>? extraTokens,
   }) : super(
           key,
           value,
@@ -113,12 +113,12 @@ class KeyedAdhocOption<K, V> extends _KeyedOption<K, V> {
   KeyedAdhocOption(
     K key,
     V value, {
-    @required String label,
+    required String label,
     this.adhocCreator,
     icon,
-    List subtitle,
-    String selection,
-    List<String> extraTokens,
+    List? subtitle,
+    String? selection,
+    List<String>? extraTokens,
   }) : super(
           key,
           value,
@@ -135,12 +135,12 @@ class KeyedAdhocOption<K, V> extends _KeyedOption<K, V> {
 
   /// When the user selects the ad-hoc option, if this value is non-null, it will help the user create a "real"
 
-  final KeyedAdhocOptionCreator<K, V> adhocCreator;
+  final KeyedAdhocOptionCreator<K, V>? adhocCreator;
 
   bool get hasAdhocCreator => adhocCreator != null;
 
   Future<V> runAdhocCreator(BuildContext context) async {
-    return await adhocCreator.call(context, this);
+    return await adhocCreator!.call(context, this);
   }
 
   @override
@@ -161,12 +161,12 @@ mixin KeyedAdhocOptionMixin<K, V> {
 class AdhocOption<V> extends KeyedAdhocOption<V, V> {
   AdhocOption(
     V value, {
-    @required String label,
+    required String label,
     icon,
-    List subtitle,
-    KeyedAdhocOptionCreator<V, V> adhocCreator,
-    String selection,
-    List<String> extraTokens,
+    List? subtitle,
+    KeyedAdhocOptionCreator<V, V>? adhocCreator,
+    String? selection,
+    List<String>? extraTokens,
   }) : super(
           value,
           value,
@@ -192,19 +192,19 @@ abstract class Option<V> extends KeyedOption<V, V> {
   static Option<String> ofString(String value, {icon}) =>
       _Option.ofString(value, icon: icon);
 
-  static Option<T> ofValue<T>(T key, {String label}) {
+  static Option<T> ofValue<T>(T key, {String? label}) {
     // ignore: can_be_null_after_null_aware
-    return _Option<T>(key, label: label ?? key?.toString().toTitle());
+    return _Option<T>(key, label: (label ?? key?.toString().toTitle())!);
   }
 
   static KeyedOption<K, V> keyed<K, V>(
     K key,
     V value, {
-    String label,
-    List subtitle,
-    List<String> extraTokens,
-    String selection,
-    Widget icon,
+    required String label,
+    List? subtitle,
+    List<String>? extraTokens,
+    String? selection,
+    Widget? icon,
   }) =>
       _KeyedOption(key, value,
           label: label,
@@ -215,10 +215,10 @@ abstract class Option<V> extends KeyedOption<V, V> {
 
   factory Option(
     V value, {
-    @required String label,
+    required String label,
     icon,
-    List subtitle,
-    String selection,
+    List? subtitle,
+    String? selection,
     List<String> extraTokens = const [],
   }) {
     return _Option(
@@ -237,10 +237,10 @@ abstract class KeyedOption<K, V> implements DiffDelegate {
   factory KeyedOption(
     K key,
     V value, {
-    @required String label,
+    required String label,
     icon,
-    List subtitle,
-    String selection,
+    List? subtitle,
+    String? selection,
     List<String> extraTokens = const [],
   }) =>
       _KeyedOption(
@@ -256,10 +256,10 @@ abstract class KeyedOption<K, V> implements DiffDelegate {
   factory KeyedOption.ofToString(
     K key,
     V value, {
-    String label,
+    String? label,
     icon,
-    List subtitle,
-    String selection,
+    List? subtitle,
+    String? selection,
     List<String> extraTokens = const [],
   }) =>
       _KeyedOption(
@@ -282,15 +282,15 @@ abstract class KeyedOption<K, V> implements DiffDelegate {
 
   get icon;
 
-  List get subtitle;
+  List? get subtitle;
 
-  List<String> get extraTokens;
+  List<String>? get extraTokens;
 }
 
 class StringOption extends _Option<String> {
   StringOption(
     String value, {
-    String label,
+    String? label,
     dynamic icon,
   }) : super(
           value,
@@ -306,16 +306,16 @@ class _KeyedOption<K, V> with DiffDelegateMixin implements KeyedOption<K, V> {
   final String label;
   final String selection;
   final icon;
-  final List subtitle;
-  final List<String> extraTokens;
+  final List? subtitle;
+  final List<String>? extraTokens;
 
   _KeyedOption(
     this.key,
     this.value, {
-    @required this.label,
+    required this.label,
     this.icon,
     this.subtitle,
-    @required String selection,
+    required String? selection,
     this.extraTokens = const [],
   })  : assert(label != null),
         selection = selection ?? label;
@@ -346,10 +346,10 @@ class _Option<V> extends _KeyedOption<V, V>
     implements Option<V> {
   _Option(
     V value, {
-    @required String label,
+    required String label,
     icon,
-    List subtitle,
-    String selection,
+    List? subtitle,
+    String? selection,
     List<String> extraTokens = const [],
   }) : super(
           value,

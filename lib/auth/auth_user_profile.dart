@@ -10,8 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 /// But, some cases also need access to the underlying firebase authentication, possibly
 /// to get a token.
 class AuthUserProfile with EquatableMixin {
-  final fb.User fbUser;
-  final UserDetails profile;
+  final fb.User? fbUser;
+  final UserDetails? profile;
   final AuthEventSource source;
   const AuthUserProfile(this.fbUser, this.profile, this.source);
   const AuthUserProfile.empty(this.source)
@@ -19,11 +19,11 @@ class AuthUserProfile with EquatableMixin {
         profile = null;
 
   Future<String> getIdToken({bool forceRefresh = false}) {
-    return fbUser.getIdToken(forceRefresh);
+    return fbUser!.getIdToken(forceRefresh);
   }
 
   @override
-  List<Object> get props => [fbUser?.uid, profile?.id];
+  List<Object?> get props => [fbUser?.uid, profile?.id];
 }
 
 enum AuthEventSource {

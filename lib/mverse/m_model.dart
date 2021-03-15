@@ -2,9 +2,9 @@ import 'dart:core';
 
 import 'package:collection_diff/collection_diff.dart';
 import 'package:quiver/core.dart';
+import 'package:sunny_dart/extensions/lang_extensions.dart';
 import 'package:sunny_dart/helpers/functions.dart';
 import 'package:sunny_dart/helpers/strings.dart';
-import 'package:sunny_dart/extensions/lang_extensions.dart';
 import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/json/map_model.dart';
 import 'package:sunny_dart/time.dart';
@@ -25,19 +25,19 @@ abstract class MModel with DiffDelegateMixin implements Entity, MapModel {
           "attempting to mutate an abstract class?");
 
   // ignore: avoid_unused_constructor_parameters
-  MModel(Map<String, dynamic> values, {MSchemaRef mtype, bool update})
+  MModel(Map<String, dynamic>? values, {MSchemaRef? mtype, bool? update})
       : wrapped = values ?? <String, dynamic>{} {
-    if (mtype?.value?.isNotNullOrBlank == true) {
+    if (mtype?.value.isNotNullOrBlank == true) {
       if (this is MEntity) {
         if (wrapped["mmeta"] == null) {
           wrapped["mmeta"] = {};
         }
         if (wrapped["mmeta"]["mtype"] == null) {
-          wrapped["mmeta"]["mtype"] = mtype.value;
+          wrapped["mmeta"]["mtype"] = mtype!.value;
         }
       } else {
         if (wrapped["mtype"] == null) {
-          wrapped["mtype"] = mtype.value;
+          wrapped["mtype"] = mtype!.value;
         }
       }
       _mtype = mtype;
@@ -47,28 +47,28 @@ abstract class MModel with DiffDelegateMixin implements Entity, MapModel {
   /// For [Diffable]
   dynamic get diffSource => wrapped;
 
-  MSchemaRef _mtype;
+  MSchemaRef? _mtype;
 
   /// For [Diffable]
   dynamic get diffKey => id;
 
-  String get id => illegalState("Not implemented $runtimeType.id");
+  String? get id => illegalState("Not implemented $runtimeType.id");
 
-  MKey get mkey =>
+  MKey? get mkey =>
       mkeyOrNull ?? illegalState("Not implemented $runtimeType.mkey");
 
-  RecordKey get recordKey => null;
+  RecordKey? get recordKey => null;
 
-  MKey get mkeyOrNull => null;
+  MKey? get mkeyOrNull => null;
 
   MSchemaRef get mtype {
     return _mtype ??=
-        (mkeyOrNull?.mtype ?? MSchemaRef.fromJson(wrapped["mtype"]));
+        (mkeyOrNull?.mtype ?? MSchemaRef.fromJson(wrapped["mtype"])!);
   }
 
   /// There are some weird cases where collections aren't synced properly with the underlying json.  This will
   /// overwrite the json with the latest value of the variable.
-  void sync([Set<String> fields]) {
+  void sync([Set<String>? fields]) {
     fields ??= this.mfields;
     fields.forEach((f) {
       final v = this[f];
@@ -101,17 +101,17 @@ abstract class MModel with DiffDelegateMixin implements Entity, MapModel {
 
   takeFrom(source) => illegalState("Not supported takeFrom");
 
-  void takeFromMap(Map<String, dynamic> from, {bool copyEntries = true}) {
+  void takeFromMap(Map<String, dynamic>? from, {bool copyEntries = true}) {
     if (copyEntries == true && from != null) {
       this.wrapped.addAll(from);
     }
   }
 
-  static MModel fromJson(json) {
+  static MModel? fromJson(json) {
     return mmodelRegistry.instantiate(json: json);
   }
 
-  T getByPath<T>(JsonPath path) {
+  T? getByPath<T>(JsonPath path) {
     dynamic value = this;
     for (var segment in path.segments) {
       if (value is MModel) {
@@ -126,23 +126,23 @@ abstract class MModel with DiffDelegateMixin implements Entity, MapModel {
         return null;
       }
     }
-    return value as T;
+    return value as T?;
   }
 
-  T jpath<T>(JsonPath<T> path, [T value]) {
+  T? jpath<T>(JsonPath<T> path, [T? value]) {
     if (value != null) {
       setByPath(path, value);
       return value;
     } else {
-      return getByPath(path) as T;
+      return getByPath(path) as T?;
     }
   }
 
-  T call<T>(final key) {
-    return (key is JsonPath) ? getByPath<T>(key) : (this["$key"] as T);
+  T? call<T>(final key) {
+    return (key is JsonPath) ? getByPath<T>(key) : (this["$key"] as T?);
   }
 
-  dynamic setByPath<T>(JsonPath<T> path, T value) {
+  dynamic setByPath<T>(JsonPath<T> path, T? value) {
     if (value == "") value = null;
     final lastSegment = path.last;
     final parents = path.chop;
@@ -162,9 +162,9 @@ abstract class MModel with DiffDelegateMixin implements Entity, MapModel {
   }
 
   /// For RouteParams - move at some point?
-  Map<String, dynamic> toMap() => wrapped ?? {};
+  Map<String, dynamic> toMap() => wrapped;
 
-  operator [](String key) => wrapped[key];
+  dynamic operator [](key) => wrapped[key];
 
   operator []=(String key, value) => wrapped[key] = value;
 
@@ -188,7 +188,7 @@ abstract class HasMverseMeta {
 }
 
 abstract class HasBaseCode {
-  String get baseCode;
+  String? get baseCode;
 }
 
 extension MEntityEquality on MEntity {
@@ -211,28 +211,28 @@ extension MEntityEquality on MEntity {
 /// Represents an entity defined by a json-schema that's backed by json value using the [wrapped] field.  A [MModel]
 /// is a non-persisted entity, where as [MEntity] represents a persisted entity that has an ID
 abstract class MEntity extends MModel implements HasMverseMeta {
-  MEntity(Map<String, dynamic> wrapped, {MSchemaRef mtype, bool update})
+  MEntity(Map<String, dynamic> wrapped, {MSchemaRef? mtype, bool? update})
       : super(wrapped, mtype: mtype, update: update);
 
-  MMeta _mmeta;
+  MMeta? _mmeta;
 
   MMeta get mmeta {
-    return _mmeta ??= MMeta.fromJson(wrapped["mmeta"]);
+    return _mmeta ??= MMeta.fromJson(wrapped["mmeta"])!;
   }
 
   set mmeta(MMeta mmeta) {
     _mmeta = mmeta;
   }
 
-  MKey get mkey => mmeta?.mkey;
+  MKey? get mkey => mmeta.mkey;
 
-  MKey get mkeyOrNull => mmeta?.mkey;
+  MKey? get mkeyOrNull => mmeta.mkey;
 
-  RecordKey get recordKey => mkeyOrNull?.recordKey;
+  RecordKey? get recordKey => mkeyOrNull?.recordKey;
 
-  String get id => mmeta?.mkey?.value;
+  String? get id => mmeta.mkey?.value;
 
-  static MEntity fromJson(json) {
+  static MEntity? fromJson(json) {
     return mmodelRegistry.instantiate(json: json);
   }
 
@@ -252,15 +252,15 @@ abstract class MEntity extends MModel implements HasMverseMeta {
           mmodified == other.mmodified;
 
   @override
-  int get hashCode => (mmodified?.hashCode ?? 31) ^ (mkeyOrNull.hashCode ?? 31);
+  int get hashCode => (mmodified?.hashCode ?? 31) ^ (mkeyOrNull.hashCode);
 
   Map<String, dynamic> toMap() => wrappedOrEmpty;
 }
 
 abstract class Entity {
-  static MKey toId(Entity _) => _.mkey;
+  static MKey? toId(Entity _) => _.mkey;
 
-  MKey get mkey;
+  MKey? get mkey;
 
   dynamic clone();
 
@@ -271,34 +271,31 @@ class RecordKey extends MLiteral<String> {
   final String domainId;
   final String mxid;
 
-  RecordKey(this.domainId, this.mxid)
-      : assert(domainId != null),
-        assert(mxid != null),
-        super("$domainId:$mxid");
+  RecordKey(this.domainId, this.mxid) : super("$domainId:$mxid");
 
-  factory RecordKey.fromJson(json, {String fallbackDomainId}) {
+  static RecordKey? fromJson(json, {String? fallbackDomainId}) {
     if (json == null) return null;
     if (json is RecordKey) return json;
     if (json is MKey) return json.recordKey;
     final _json = "$json";
     if (_json.contains("/")) {
-      return MKey.parsed("$json").recordKey;
+      return MKey.parsed("$json")!.recordKey;
     } else {
       return _parse(_json, fallbackDomainId: fallbackDomainId);
     }
   }
 
-  static RecordKey _parse(json, {String fallbackDomainId}) {
+  static RecordKey? _parse(json, {String? fallbackDomainId}) {
     if (json is RecordKey) return json;
     if (json == null) return null;
     final keyParts = "$json".split(":");
-    String domainId;
+    String? domainId;
     String mxid = keyParts.last;
     if (keyParts.length == 2) {
       domainId = keyParts.first;
     }
     domainId ??= fallbackDomainId;
-    return RecordKey(domainId, mxid);
+    return RecordKey(domainId!, mxid);
   }
 }
 
@@ -312,75 +309,70 @@ class MKey extends MLiteral<String> {
   final String mxid;
 
   const MKey(this.mtype, this.domainId, this.mxid)
-      : assert(mxid != null),
-        assert(mtype != null),
-        assert(domainId != null),
-        super("$mtype/$domainId:$mxid");
+      : super("$mtype/$domainId:$mxid");
 
   MKey.fromRecordKey(this.mtype, RecordKey rk)
-      : assert(mtype != null),
-        assert(rk != null),
-        domainId = rk.domainId,
+      : domainId = rk.domainId,
         mxid = rk.mxid,
         super("$mtype/$rk");
 
-  MKey.fromType(MSchemaRef mtype, String mxid, [String domainId])
+  MKey.fromType(MSchemaRef mtype, String mxid, [String? domainId])
       : this(mtype, domainId ?? mtype.domainId, mxid);
 
-  factory MKey.parsed(String value, {MSchemaRef mtype}) =>
-      _parse(value, mtype: mtype);
+  static MKey? parsed(String? value, {MSchemaRef? mtype}) =>
+      _parse(value, mtype: mtype)!;
 
-  factory MKey.fromJson(value, {MSchemaRef mtype}) {
+  static MKey? fromJson(value, {MSchemaRef? mtype}) {
     final v = value;
     if (v is MKey) return v;
     if (value == null) return null;
-    return _parse("$value", mtype: mtype);
+    return _parse("$value", mtype: mtype)!;
   }
 
   RecordKey get recordKey => RecordKey(domainId, mxid);
 
-  static MKey _parse(String value, {MSchemaRef mtype}) {
+  static MKey? _parse(String? value, {MSchemaRef? mtype}) {
     if (value.isNullOrBlank) return null;
-    assert(value.contains("/") || mtype != null,
+    assert(value!.contains("/") || mtype != null,
         "Invalid mkey.  Expected [type/domain:mxid] but found $value");
-    final parts = value?.split("/");
+    final List<String> parts = value?.split("/") ?? [];
     mtype ??= MSchemaRef.parsed(parts[0]);
     final rk =
         RecordKey.fromJson(parts.last, fallbackDomainId: mtype?.domainId);
-    return MKey.fromRecordKey(mtype, rk);
+    return MKey.fromRecordKey(mtype!, rk!);
   }
 }
 
 abstract class MMeta {
-  MKey get mkey;
+  MKey? get mkey;
 
-  MSchemaRef get mtype;
+  MSchemaRef? get mtype;
 
-  DateTime get mmodified;
+  DateTime? get mmodified;
 
-  String get maccount;
+  String? get maccount;
 
   bool get isDeleted;
 
   set isDeleted(bool isDeleted);
 
-  factory MMeta.fromJson(dyn) {
+  static MMeta? fromJson(dyn) {
     if (dyn == null) return null;
     final json = (dyn as Map).cast<String, dynamic>();
-    final mtype = MSchemaRef.fromJson(json["mtype"] as String);
+    final mtype = MSchemaRef.fromJson(json["mtype"] as String?);
     return _MMeta(
-        mkey: MKey.parsed(json["mkey"] as String, mtype: mtype),
+        mkey: MKey.parsed(json["mkey"] as String?, mtype: mtype),
         mtype: mtype,
         mmodified: withString([json["mmodified"] as String], DateTime.parse),
-        maccount: json["maccount"] as String,
+        maccount: json["maccount"] as String?,
         isDeleted: json["isDeleted"] == true);
   }
 
   factory MMeta(
-      {MKey mkey,
-      MSchemaRef mtype,
-      DateTime mmodified,
-      String maccount,
+      {MKey? mkey,
+      MSchemaRef? mtype,
+      DateTime? mmodified,
+      String? maccount,
       bool isDeleted = false}) {
     return _MMeta(
         mkey: mkey,
@@ -392,10 +384,10 @@ abstract class MMeta {
 }
 
 class _MMeta implements MMeta {
-  final MKey mkey;
-  final MSchemaRef mtype;
-  final DateTime mmodified;
-  final String maccount;
+  final MKey? mkey;
+  final MSchemaRef? mtype;
+  final DateTime? mmodified;
+  final String? maccount;
   bool isDeleted;
 
   _MMeta(
@@ -430,9 +422,9 @@ class MSchemaRef extends MArtifactRef implements HasBaseCode {
   MSchemaRef.ofNamed(MModuleRef module, String schemaName, String type)
       : this(module.developer, module.module, schemaName, module.version, type);
 
-  factory MSchemaRef.fromJson(json) => MSchemaRef.parsed(json?.toString());
+  static MSchemaRef? fromJson(json) => MSchemaRef.parsed(json?.toString());
 
-  factory MSchemaRef.parsed(String value) {
+  static MSchemaRef? parsed(String? value) {
     if (value == null) return null;
     return MSchemaRef._(MArtifactRef._parsed(value));
   }
@@ -465,23 +457,23 @@ class MSchemaRef extends MArtifactRef implements HasBaseCode {
     return MOperationRef(developer, module, operationName, version);
   }
 
-  MModel newInstance([json]) {
+  MModel? newInstance([json]) {
     return mmodelRegistry.instantiate(
         json: json ?? <String, dynamic>{}, type: this);
   }
 
-  RecordKey recordKey(String id) => mkey(id).recordKey;
+  RecordKey? recordKey(String id) => mkey(id)?.recordKey;
 
-  MKey mkey(id) {
+  MKey? mkey(id) {
     if (id is MKey) return id;
-    if (id is RecordKey) return MKey(this, id?.domainId, id?.mxid);
+    if (id is RecordKey) return MKey(this, id.domainId, id.mxid);
     if (id == null) return null;
     return MKey.parsed(id.toString(), mtype: this);
   }
 }
 
 List<Uri> parseUris(uris) {
-  return [...?(uris as Iterable).map((uri) => Uri.parse(uri.toString()))];
+  return [...(uris as Iterable).map((uri) => Uri.parse(uri.toString()))];
 }
 
 /// A reference that points to a versioned json-schema for an operation or action
@@ -493,16 +485,15 @@ class MOperationRef extends MArtifactRef {
   ]) : this(module.developer, module.module, operationName, module.version,
             type);
 
-  factory MOperationRef.fromJson(json) =>
-      MOperationRef.parsed(json?.toString());
+  static MOperationRef? fromJson(json) => MOperationRef.parsed(json.toString());
 
-  factory MOperationRef.parsed(String value) {
+  static MOperationRef? parsed(String? value) {
     if (value == null) return null;
     return MOperationRef._(MArtifactRef._parsed(value));
   }
 
   const MOperationRef(
-      String developer, String module, String artifactId, String version,
+      String? developer, String? module, String artifactId, String? version,
       [String type = "default"])
       : super(developer, module, operation, artifactId, version, type);
 
@@ -510,7 +501,7 @@ class MOperationRef extends MArtifactRef {
 
   toJson() => value;
 
-  String get operationName => artifactId;
+  String? get operationName => artifactId;
 
   /// Fetches (or uses a cached) schema from the server.  This would be a good target for an extension function
   /// if/when dart does that
@@ -521,11 +512,11 @@ const operation = "operation";
 const schema = "schema";
 
 abstract class MArtifactRef extends MLiteral<String> {
-  final String developer;
-  final String module;
-  final String artifactId;
-  final String version;
-  final String type;
+  final String? developer;
+  final String? module;
+  final String? artifactId;
+  final String? version;
+  final String? type;
   final String artifactType;
 
   const MArtifactRef(this.developer, this.module, this.artifactType,

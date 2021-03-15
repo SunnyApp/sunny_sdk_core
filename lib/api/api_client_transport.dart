@@ -2,11 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:pfile/pfile_api.dart';
-import 'package:sunny_dart/extensions.dart';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
-import 'package:sunny_sdk_core/auth/api_key_auth.dart';
-import 'package:sunny_sdk_core/auth/authentication.dart';
-import 'package:sunny_sdk_core/auth/oauth.dart';
 import 'package:sunny_sdk_core/query_param.dart';
 
 class ApiResponse {
@@ -26,16 +22,16 @@ abstract class ApiClientTransport with LoggingMixin {
   // If collectionFormat is 'multi' a key might appear multiple times.
   Future<ApiResponse> invokeAPI(
       String path,
-      String method,
+      String? method,
       QueryParams queryParams,
       Iterable<PFile> files,
-      Object body,
-      Map<String, String> headerParams,
+      Object? body,
+      Map<String, String?> headerParams,
       Map<String, String> formParams,
-      String contentType,
-      {String basePath});
+      String? contentType,
+      {String? basePath});
 
-  String serialize(Object obj) {
+  String serialize(Object? obj) {
     String serialized = '';
     if (obj == null) {
       serialized = '';

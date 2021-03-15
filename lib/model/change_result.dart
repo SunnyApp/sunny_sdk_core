@@ -14,20 +14,20 @@ class ChangeResult extends ChangeResultBase {
       ? wrapped
       : ChangeResult(wrapped as Map<String, dynamic>);
 
-  ChangeResult.of({@required bool changed, DiffLogEntry diff})
+  ChangeResult.of({required bool changed, DiffLogEntry? diff})
       : super.of(
           changed: changed,
           diff: diff,
         );
 
-  bool get changed => _changed;
-  set changed(bool changed) {
+  bool? get changed => _changed;
+  set changed(bool? changed) {
     this._changed = changed;
     wrapped['changed'] = jsonLiteral(changed);
   }
 
-  DiffLogEntry get diff => _diff;
-  set diff(DiffLogEntry diff) {
+  DiffLogEntry? get diff => _diff;
+  set diff(DiffLogEntry? diff) {
     this._diff = diff;
     wrapped['diff'] = jsonLiteral(diff);
   }
@@ -35,30 +35,30 @@ class ChangeResult extends ChangeResultBase {
 
 abstract class ChangeResultBase extends MModel {
   ChangeResultBase(Map<String, dynamic> wrapped,
-      {MSchemaRef mtype = ChangeResultRef, @required bool update})
+      {MSchemaRef mtype = ChangeResultRef, required bool update})
       : super(wrapped, mtype: mtype, update: false) {
     if (update == true) takeFromMap(wrapped, copyEntries: false);
   }
 
   ChangeResultBase.fromJson(wrapped)
       : this(wrapped as Map<String, dynamic>, update: true);
-  ChangeResultBase.of({bool changed, DiffLogEntry diff})
+  ChangeResultBase.of({bool? changed, DiffLogEntry? diff})
       : super(<String, dynamic>{}, mtype: ChangeResultRef) {
     if (changed != null) this.changed = changed;
     if (diff != null) this.diff = diff;
   }
 
-  bool _changed;
+  bool? _changed;
 
   /// Property getter and setter for changed:
-  bool get changed;
+  bool? get changed;
 
-  set changed(bool changed);
-  DiffLogEntry _diff;
+  set changed(bool? changed);
+  DiffLogEntry? _diff;
 
   /// Property getter and setter for diff:
-  DiffLogEntry get diff;
-  set diff(DiffLogEntry diff);
+  DiffLogEntry? get diff;
+  set diff(DiffLogEntry? diff);
 
   @override
   String toString() => json.encode(wrapped).toString();
@@ -66,7 +66,7 @@ abstract class ChangeResultBase extends MModel {
 
   @override
   operator [](key) {
-    switch (key) {
+    switch ("$key") {
       case "changed":
         return this.changed;
       case "diff":
@@ -96,14 +96,14 @@ abstract class ChangeResultBase extends MModel {
     if (source is Map<String, dynamic>) {
       takeFromMap(source, copyEntries: true);
     } else if (source is MModel) {
-      takeFromMap(source?.wrapped, copyEntries: true);
+      takeFromMap(source.wrapped, copyEntries: true);
     } else {
       throw ("Can't take values from unknown type ${source.runtimeType}");
     }
   }
 
   @override
-  void takeFromMap(Map<String, dynamic> from, {bool copyEntries = true}) {
+  void takeFromMap(Map<String, dynamic>? from, {bool copyEntries = true}) {
     if (from == null) return;
 
     super.takeFromMap(from, copyEntries: copyEntries);

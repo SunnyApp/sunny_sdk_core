@@ -11,18 +11,17 @@ class ApiConfig {
   final Map<String, dynamic> options;
   final String accessToken;
 
-  ApiConfig(this.basePath, this.basePaths, this.options, this.accessToken)
-      : assert(accessToken != null);
+  ApiConfig(this.basePath, this.basePaths, this.options, this.accessToken);
 
   factory ApiConfig.fromClient(ApiClient apiClient) {
     return ApiConfig(apiClient.basePath, apiClient.basePaths, {},
-        apiClient.currentAccessToken);
+        apiClient.currentAccessToken!);
   }
 
   /// Recreates an authentication state (usually done inside an isolate)
   ApiClient apiClient(
-      {@required ApiClientTransport apiClient,
-      @required ApiReader reader,
+      {required ApiClientTransport apiClient,
+      required ApiReader reader,
       bool logToFirebase = false}) {
     return ApiClient(
       transport: apiClient,
