@@ -63,7 +63,7 @@ packages:
       name: collection_diff
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.3+2"
+    version: "2.0.3+5"
   crypto:
     dependency: transitive
     description:
@@ -78,13 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.0"
-  dio:
+  dio2:
     dependency: "direct main"
     description:
-      name: dio
+      name: dio2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.10"
+    version: "5.0.0-nullsafety"
   equatable:
     dependency: "direct main"
     description:
@@ -178,7 +178,7 @@ packages:
     source: hosted
     version: "0.13.0"
   http_parser:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
       name: http_parser
       url: "https://pub.dartlang.org"
@@ -227,7 +227,7 @@ packages:
     source: hosted
     version: "0.12.10"
   meta:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: meta
       url: "https://pub.dartlang.org"

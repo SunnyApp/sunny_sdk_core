@@ -111,8 +111,7 @@ class Definition implements HasBaseCode {
 
   const Definition.of(
       String developer, String module, String definition, this.propType)
-      : assert(propType != null),
-        uri =
+      : uri =
             "mverse://schemas/$developer/$module/0.0.1/definitions.json#/definitions/$definition",
         baseCode = "$developer.$module.definitions.$definition";
 

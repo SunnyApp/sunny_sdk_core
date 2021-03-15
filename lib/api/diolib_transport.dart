@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dio2/dio2.dart';
 import 'package:pfile/pfile_api.dart';
 import 'package:sunny_dart/extensions.dart';
 
@@ -51,7 +51,8 @@ class DioLibTransport extends ApiClientTransport {
             contentType: contentType!,
             headers: headerParams,
           ));
-      return ApiResponse(_resp.statusCode, _resp.data);
+      return ApiResponse(
+          _resp.statusCode ?? 500, _resp.data?.toString() ?? 'Unknown error');
     } on DioError catch (e) {
       throw ApiException.response(e.response?.statusCode ?? 500,
           e.response?.data?.toString() ?? e.message,

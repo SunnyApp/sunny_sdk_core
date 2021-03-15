@@ -1,14 +1,11 @@
 import 'dart:async';
 
 import 'package:collection_diff/diff_equality.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:sunny_dart/sunny_dart.dart';
-import 'package:sunny_dart/typedefs.dart';
 
 /// A builder that passes in whether or not the current suggested item is the one that's presently selected.
-typedef SelectionWidgetBuilder = Widget Function(
-    BuildContext context, bool isSelected);
+// typedef SelectionWidgetBuilder = Widget Function(
+//     BuildContext context, bool isSelected);
 
 abstract class IKeyedOptionsHandler<K, V> {
   FutureOr<V> loadValue(K key);
@@ -22,13 +19,13 @@ abstract class IKeyedOptionsHandler<K, V> {
 /// Selects the given option
 typedef SelectOption<K, T> = void Function(KeyedOption<K, T> input);
 
-typedef RenderSuggestionTile<K, T> = Widget Function(
-  BuildContext context,
-  KeyedOption<K, T> suggestion, {
-  required bool isSelected,
-  required SelectOption<K, T> selectOption,
-  VoidCallback? onTap,
-});
+// typedef RenderSuggestionTile<K, T> = Widget Function(
+//   BuildContext context,
+//   KeyedOption<K, T> suggestion, {
+//   required bool isSelected,
+//   required SelectOption<K, T> selectOption,
+//   VoidCallback? onTap,
+// });
 
 abstract class TypeaheadOptionsAndHandler<K, T>
     implements TypeaheadHandler<K, T>, TypeaheadOptions {
@@ -44,7 +41,7 @@ abstract class TypeaheadOptions {
 
   String get noOptionsLabel => "Type a value";
 
-  Icon? get prefixIcon => null;
+  dynamic get prefixIcon => null;
 
   TypeaheadFocusMode get focusMode => TypeaheadFocusMode.showAll;
 
@@ -59,20 +56,19 @@ abstract class TypeaheadHandler<K, T> {
   String getSelection(KeyedOption<K, T> selectedOption);
 
   /// Renders the suffix for the selected item in the form control
-  Widget renderSelectedItemSuffix(
-      BuildContext context, KeyedOption<K, T> selected,
+  R renderSelectedItemSuffix<C, R>(C context, KeyedOption<K, T> selected,
       {required SelectOption<K, T> selectOption});
 
   /// Renders the suggested tile in the list of options
-  Widget renderSuggestionTile(
-    BuildContext context,
+  R renderSuggestionTile<C, R>(
+    C context,
     KeyedOption<K, T> suggestion, {
     required bool isSelected,
     required SelectOption<K, T> selectOption,
-    VoidCallback? onTap,
+    void onTap()?,
   });
 
-  Widget wrapSuggestionTile(Widget tile);
+  R wrapSuggestionTile<R>(R tile);
 
   const TypeaheadHandler();
 }
@@ -139,7 +135,7 @@ class KeyedAdhocOption<K, V> extends _KeyedOption<K, V> {
 
   bool get hasAdhocCreator => adhocCreator != null;
 
-  Future<V> runAdhocCreator(BuildContext context) async {
+  Future<V> runAdhocCreator(context) async {
     return await adhocCreator!.call(context, this);
   }
 
@@ -157,6 +153,11 @@ mixin KeyedAdhocOptionMixin<K, V> {
   KeyedAdhocBuilder<K, V> get adhocOptionBuilder =>
       (input) => createAdhocOption(input);
 }
+
+typedef AdhocOptionCreator<T> = Future<T> Function(
+    dynamic context, AdhocOption<T> option);
+typedef KeyedAdhocOptionCreator<K, T> = Future<T> Function(
+    dynamic context, KeyedAdhocOption<K, T> option);
 
 class AdhocOption<V> extends KeyedAdhocOption<V, V> {
   AdhocOption(
@@ -183,11 +184,6 @@ class AdhocOption<V> extends KeyedAdhocOption<V, V> {
   }
 }
 
-typedef AdhocOptionCreator<T> = Future<T> Function(
-    BuildContext context, AdhocOption<T> option);
-typedef KeyedAdhocOptionCreator<K, T> = Future<T> Function(
-    BuildContext context, KeyedAdhocOption<K, T> option);
-
 abstract class Option<V> extends KeyedOption<V, V> {
   static Option<String> ofString(String value, {icon}) =>
       _Option.ofString(value, icon: icon);
@@ -204,7 +200,7 @@ abstract class Option<V> extends KeyedOption<V, V> {
     List? subtitle,
     List<String>? extraTokens,
     String? selection,
-    Widget? icon,
+    dynamic icon,
   }) =>
       _KeyedOption(key, value,
           label: label,
@@ -280,7 +276,7 @@ abstract class KeyedOption<K, V> implements DiffDelegate {
 
   String get selection;
 
-  get icon;
+  dynamic get icon;
 
   List? get subtitle;
 
@@ -317,8 +313,7 @@ class _KeyedOption<K, V> with DiffDelegateMixin implements KeyedOption<K, V> {
     this.subtitle,
     required String? selection,
     this.extraTokens = const [],
-  })  : assert(label != null),
-        selection = selection ?? label;
+  }) : selection = selection ?? label;
 
   @override
   bool operator ==(Object other) =>
