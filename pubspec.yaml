@@ -1,36 +1,25 @@
 name: sunny_sdk_core
 author: eric@sunnyapp.co
-version: 2.0.0+3
-publish_to: none
+version: 2.0.0+4
 description: Core libraries for swagger-generated sdks
 repository: https://github.com/SunnyApp/sunny_sdk_core.git
-environment:
+environment: 
   sdk: '>=2.12.0 <3.0.0'
-  flutter: '2.0.0 <3.0.0'
-dependencies:
-  #  firebase_auth: ^0.20.0+1
+  flutter: '>=2.0.0 <3.0.0'
+dependencies: 
   firebase_auth: ^1.0.1
-  dio:
-    git:
-      url: https://github.com/SunnyApp/dio
-      path: dio
-
   buffer: ^1.1.0
   chunked_stream: ^1.4.0
   equatable: ^2.0.0
   pfile: any
-  #  google_maps_webservice: ^0.0.18
   http: ^0.13.0
   logging: ^1.0.0
   path_provider: ^2.0.1
   stream_transform: ^2.0.0
-  #  meta_forms:
-  #    path: ../meta_forms
   responsive_builder: ^0.3.0
   collection_diff: ^2.0.3
-  #  sunny_forms:
-  #    path: ../sunny_forms
-  #  sunny_core_widgets:
-  #    path: ../sunny_core_widgets
   sunny_dart: ^0.8.0+7
-#  m_entity: any
+  dio: 
+    git: 
+      url: https://github.com/SunnyApp/dio
+      path: dio
