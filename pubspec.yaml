@@ -1,6 +1,6 @@
 name: sunny_sdk_core
 author: eric@sunnyapp.co
-#version: 1.0.0+3
+version: 2.0.0+3
 publish_to: none
 description: Core libraries for swagger-generated sdks
 repository: https://github.com/SunnyApp/sunny_sdk_core.git
@@ -14,7 +14,7 @@ dependencies:
     git:
       url: https://github.com/SunnyApp/dio
       path: dio
-  
+
   buffer: ^1.1.0
   chunked_stream: ^1.4.0
   equatable: ^2.0.0
