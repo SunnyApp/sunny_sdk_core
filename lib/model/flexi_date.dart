@@ -1,4 +1,3 @@
-import 'package:dartxx/dartxx.dart';
 import 'package:flexidate/flexidate.dart';
 import 'package:intl/intl.dart';
 
@@ -12,17 +11,17 @@ typedef FlexiDateFormatter = String Function(FlexiDate date,
     bool? withYear,
     String? dateLabel});
 
-class FlexiDate2 extends FlexiDateData {
-  static FlexiDateFormatter fullFormatter = (
-    date, {
-    String? futureLabel = "in",
-    String? historyLabel = "ago",
-    bool? withYear = false,
-    String? dateLabel = "",
-  }) {
-    return date.formatted() ?? '';
-  };
+FlexiDateFormatter flexiDateFormatter = (
+  date, {
+  String? futureLabel = "in",
+  String? historyLabel = "ago",
+  bool? withYear = false,
+  String? dateLabel = "",
+}) {
+  return date.formatted() ?? '';
+};
 
+class FlexiDate2 extends FlexiDateData {
   FlexiDate2({int? day, int? month = 1, int? year})
       : super(day: day, month: month, year: year);
 
@@ -50,12 +49,10 @@ class FlexiDate2 extends FlexiDateData {
     if (json == null) return null;
     return FlexiDate2.from(json);
   }
+}
 
-  @override
-  FlexiDate withoutDay() => FlexiDate2(day: null, month: month, year: year);
-
-  @override
-  FlexiDate withoutYear() => FlexiDate2(day: day, month: month, year: null);
+extension DateComponentsFormat on FlexiDate {
+  String? formatted() => formatFlexiDate(this);
 
   String fullFormat({
     String futureLabel = "in",
@@ -63,22 +60,11 @@ class FlexiDate2 extends FlexiDateData {
     bool withYear = false,
     String dateLabel = "",
   }) {
-    return fullFormatter.call(this,
+    return flexiDateFormatter.call(this,
         futureLabel: futureLabel,
         historyLabel: historyLabel,
         withYear: withYear,
         dateLabel: dateLabel);
-  }
-}
-
-extension DateComponentsFormat on FlexiDate {
-  String? formatted() => formatFlexiDate(this);
-
-  DateTime toDateTime() {
-    final without = DateTime.now().withoutTime();
-
-    return DateTime(
-        year ?? without.year, month ?? without.month, day ?? without.day);
   }
 }
 
@@ -119,7 +105,7 @@ String? formatFlexiDate(
   bool withDay = true,
 }) {
   final flexi =
-      input is FlexiDate2 ? input : FlexiDate2.tryFrom(input?.toString());
+      input is FlexiDate ? input : FlexiDate.tryFrom(input?.toString());
   if (flexi == null) {
     return null;
   }
