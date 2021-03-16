@@ -78,6 +78,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.0"
+  dartxx:
+    dependency: "direct dev"
+    description:
+      name: dartxx
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.4+6"
   dio2:
     dependency: "direct main"
     description:
@@ -192,7 +199,7 @@ packages:
     source: hosted
     version: "0.5.3+1"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       url: "https://pub.dartlang.org"
@@ -407,7 +414,7 @@ packages:
     source: hosted
     version: "1.5.0-nullsafety.1"
   timezone:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: timezone
       url: "https://pub.dartlang.org"

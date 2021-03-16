@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
 import 'package:sunny_dart/helpers/safe_completer.dart';
-import 'package:sunny_dart/helpers/strings.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 
-class ProgressTracker<T> extends ChangeNotifier {
-  ProgressTracker._(FutureOr<num> total, [String? name])
-      : key = Key(name ?? uuid()),
+abstract class ChangeNotifierAdapter {
+  void notifyListeners();
+  void dispose();
+}
+
+abstract class ProgressTracker<T> {
+  ProgressTracker._(FutureOr<num> total, Object key, this.adapter)
+      : key = key,
         _total = total.resolveOrNull()?.toDouble() {
     total.futureValue().then((total) {
       this._total = total.toDouble();
@@ -16,19 +19,25 @@ class ProgressTracker<T> extends ChangeNotifier {
     });
   }
 
+  /// Allows us to shed the full flutter dependency for this library
+  final ChangeNotifierAdapter adapter;
+
   final SafeCompleter<T> _completer = SafeCompleter<T>();
 
   /// Creates
-  ProgressTracker(FutureOr<num> total, [String? name]) : this._(total, name);
+  ProgressTracker(
+      FutureOr<num> total, Object key, ChangeNotifierAdapter adapter)
+      : this._(total, key, adapter);
 
   /// Instead of counting towards an arbitrary count, we'll base the counter on a percent and the caller will
   /// make sure to send the appropriate ratios
-  ProgressTracker.ratio([String? name]) : this._(100.0, name);
+  ProgressTracker.ratio(Object key, ChangeNotifierAdapter adapter)
+      : this._(100.0, key, adapter);
 
   /// The total number of units working towards.  For percent/ratio based tracking, this will be 100
   double? _total = 0.0;
 
-  final Key key;
+  final Object key;
 
   double _progress = 0.0;
 
@@ -51,17 +60,16 @@ class ProgressTracker<T> extends ChangeNotifier {
   void updateTotal(double total) {
     if (total != _total) {
       _total = total;
-      notifyListeners();
+      adapter.notifyListeners();
     }
   }
 
   Future<T> get result => _completer.future;
 
-  @override
   void dispose() {
     if (!_isDisposed) {
       _isDisposed = true;
-      super.dispose();
+      adapter.dispose();
     }
   }
 
@@ -81,7 +89,7 @@ class ProgressTracker<T> extends ChangeNotifier {
     }
 
     if (isDifferent) {
-      notifyListeners();
+      adapter.notifyListeners();
     }
   }
 
@@ -106,7 +114,7 @@ class ProgressTracker<T> extends ChangeNotifier {
   void updateTask(String newTask) {
     if (newTask != this.task) {
       this._task = newTask;
-      notifyListeners();
+      adapter.notifyListeners();
     }
   }
 

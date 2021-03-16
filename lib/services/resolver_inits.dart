@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-
-typedef InstInitFn<T> = T Function(BuildContext context);
+typedef InstInitFn<T> = T Function(context);
 typedef InstDispose<T> = FutureOr Function(T t);
 
 typedef ShouldNotify<T> = bool Function(T a, T b);

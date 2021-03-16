@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 import 'package:sunny_sdk_core/mverse/imverse.dart';
 
@@ -202,22 +202,23 @@ class _MetaFieldConfig implements MetaFieldConfig {
 
 const _kTileIconSize = 24.0;
 
-typedef MetaDateFormatterFactory<F, C> = MetaDateFormatter<F, C> Function();
+typedef MetaDateFormatterFactory<F, C, I> = MetaDateFormatter<F, C, I>
+    Function();
 
 /// Overrides for meta date properties
-abstract class MetaDateFormatter<T, C> {
+abstract class MetaDateFormatter<T, C, I> {
   String title(T fact, C contact);
 
   String subtitle(T fact, C contact);
 
-  Icon icon(T fact, C contact, {double size = _kTileIconSize});
+  I icon(T fact, C contact, {double size = _kTileIconSize});
 
   factory MetaDateFormatter.of({
     required String Function(T fact, C contact) title,
     required String Function(T fact, C contact) subtitle,
-    required Icon Function(T fact, C contact, {double? size}) icon,
+    required I Function(T fact, C contact, {double? size}) icon,
   }) =>
-      _MetaDateFormatter<T, C>(title: title, subtitle: subtitle, icon: icon);
+      _MetaDateFormatter<T, C, I>(title: title, subtitle: subtitle, icon: icon);
 
   // static MetaDateFormatter<T, C> fallback<T extends Fact, C>() =>
   //     _MetaDateFormatter<T>(
@@ -228,13 +229,13 @@ abstract class MetaDateFormatter<T, C> {
   //     );
 }
 
-class _MetaDateFormatter<T, C> implements MetaDateFormatter<T, C> {
+class _MetaDateFormatter<T, C, I> implements MetaDateFormatter<T, C, I> {
   final String Function(T fact, C contact) _title;
   final String Function(T fact, C contact) _subtitle;
-  final Icon Function(T fact, C contact, {double size}) _icon;
+  final I Function(T fact, C contact, {double size}) _icon;
 
   @override
-  Icon icon(T fact, C contact, {double size = _kTileIconSize}) {
+  I icon(T fact, C contact, {double size = _kTileIconSize}) {
     return _icon(fact, contact, size: size);
   }
 
@@ -251,7 +252,7 @@ class _MetaDateFormatter<T, C> implements MetaDateFormatter<T, C> {
   _MetaDateFormatter({
     required String Function(T fact, C contact) title,
     required String Function(T fact, C contact) subtitle,
-    required Icon Function(T fact, C contact, {double? size}) icon,
+    required I Function(T fact, C contact, {double? size}) icon,
   })   : _title = title,
         _subtitle = subtitle,
         _icon = icon;

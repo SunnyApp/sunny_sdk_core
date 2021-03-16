@@ -1,13 +1,13 @@
 import 'dart:core';
 
 import 'package:collection_diff/collection_diff.dart';
-import 'package:quiver/core.dart';
 import 'package:sunny_dart/extensions/lang_extensions.dart';
 import 'package:sunny_dart/helpers/functions.dart';
 import 'package:sunny_dart/helpers/strings.dart';
 import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/json/map_model.dart';
 import 'package:sunny_dart/time.dart';
+import 'package:sunny_sdk_core/api_exports.dart';
 import 'package:timezone/timezone.dart';
 
 import 'entity_extensions.dart';
@@ -200,7 +200,7 @@ extension MEntityEquality on MEntity {
             mmodified == other.mmodified;
   }
 
-  int hashCodeByDateModified() => hash2(mmodified, mkeyOrNull);
+  int hashCodeByDateModified() => hashOf(mmodified, mkeyOrNull);
 
   get diffSourceByDateModified => {
         "id": id,
