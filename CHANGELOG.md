@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.9]
+ * Adding flutter dep
+
 ## [2.0.0-nullsafe.8]
  * Updating pfile dep
 
