@@ -1,3 +1,7 @@
+## [2.0.0-nullsafe.12]
+ * Update gemfile
+Tweaking flexidate
+
 ## [2.0.0-nullsafe.10]
  * Updating to latest sunny_dart
 
