@@ -1,6 +1,8 @@
 import 'dart:async';
 
-typedef InstInitFn<T> = T Function(context);
+import 'package:flutter/widgets.dart';
+
+typedef InstInitFn<T> = T Function(BuildContext context);
 typedef InstDispose<T> = FutureOr Function(T t);
 
 typedef ShouldNotify<T> = bool Function(T a, T b);
@@ -25,14 +27,6 @@ class Inst<T> {
         this.shouldUpdate = shouldNotify ?? _notEquals,
         dispose = null,
         t = T;
-
-  Inst._(
-      {this.instance,
-      this.t,
-      this.dispose,
-      this.factory,
-      this.shouldUpdate,
-      required this.skipIfRegistered});
 
   Inst.constant(this.instance, {this.skipIfRegistered = true})
       : assert(instance != null),

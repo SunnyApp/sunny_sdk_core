@@ -152,8 +152,8 @@ extension ApiSignalStream on Stream<ApiSignal>? {
 extension RepositoryExtensions<X extends Entity> on Repository<X> {
   Future<X> save(X toSave) async {
     if (toSave.mkey?.mxid != null) {
-      await this.update(this.keyToId(toSave.mkey), toSave);
-      return await this.load(keyToId(toSave.mkey));
+      await this.update(this.keyToId(toSave.mkey)!, toSave);
+      return await this.load(keyToId(toSave.mkey)!);
     } else {
       return await this.create(toSave);
     }

@@ -16,7 +16,7 @@ abstract class Repository<V extends Entity> {
 
   V instantiate([dynamic json]) => illegalState("Not implemented");
 
-  Future<ChangeResult> update(String? id, V body) =>
+  Future<ChangeResult> update(String id, V body) =>
       illegalState("Not implemented");
 
   Future<MModelList<V>> list({double? limit, double? offset}) =>
@@ -26,7 +26,7 @@ abstract class Repository<V extends Entity> {
 
   Future<DeleteResponse> delete(String id) => illegalState("Not implemented");
 
-  Future<V> load(String? id) => illegalState("Not implemented");
+  Future<V> load(String id) => illegalState("Not implemented");
 
   V initialize(V entity) => entity;
 
@@ -62,7 +62,7 @@ mixin SignalingApiMixin<V extends Entity> on Repository<V> {
       .futureValue();
 
   @override
-  Future<ChangeResult> update(String? id, V body) => super
+  Future<ChangeResult> update(String id, V body) => super
       .update(id, body)
       .also(
           ((result) => apis!.afterUpdate<V>(mtype.mkey(result)!, body, result)))

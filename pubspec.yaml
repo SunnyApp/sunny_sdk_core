@@ -8,6 +8,8 @@ environment:
   flutter: '>=2.0.0'
 dependencies: 
   firebase_auth: ^1.0.1
+  flutter:
+    sdk: flutter
   buffer: ^1.1.0
   chunked_stream: ^1.4.0
   equatable: ^2.0.0
