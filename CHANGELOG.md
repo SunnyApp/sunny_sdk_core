@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.8]
+ * Updating pfile dep
+
 ## [2.0.0+4]
  * bundle update
 Updating version
