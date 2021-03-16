@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:pfile/pfile.dart';
 import 'package:sunny_dart/extensions.dart';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
-import 'package:sunny_dart/helpers/tuple.dart';
 import 'package:sunny_sdk_core/api/api_client_transport.dart';
 import 'package:sunny_sdk_core/auth/api_key_auth.dart';
 import 'package:sunny_sdk_core/auth/authentication.dart';

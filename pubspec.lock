@@ -77,14 +77,14 @@ packages:
       name: dartx
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.0"
+    version: "0.7.0"
   dartxx:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: dartxx
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.4+6"
+    version: "0.4.5-nullsafety.1"
   dio2:
     dependency: "direct main"
     description:
@@ -162,8 +162,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  flexidate:
+    dependency: "direct main"
+    description:
+      name: flexidate
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.5-nullsafety.1"
   flutter:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -295,7 +302,7 @@ packages:
       name: pfile
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1+2"
+    version: "2.0.1-nullsafety.3"
   platform:
     dependency: transitive
     description:
@@ -391,7 +398,7 @@ packages:
       name: sunny_dart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.0+7"
+    version: "0.8.2+2"
   term_glyph:
     dependency: transitive
     description:
@@ -412,7 +419,7 @@ packages:
       name: time
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.0-nullsafety.1"
+    version: "2.0.0"
   timezone:
     dependency: "direct main"
     description:
