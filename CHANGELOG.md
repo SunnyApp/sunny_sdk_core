@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.10]
+ * Updating to latest sunny_dart
+
 ## [2.0.0-nullsafe.9]
  * Adding flutter dep
 
