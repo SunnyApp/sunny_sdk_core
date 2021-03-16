@@ -11,7 +11,7 @@ dependencies:
   buffer: ^1.1.0
   chunked_stream: ^1.4.0
   equatable: ^2.0.0
-  pfile: ^1.0.1+2
+  pfile: ^2.0.1-nullsafety.3
   meta: ^1.3.0
   intl: ^0.17.0
   http: ^0.13.0

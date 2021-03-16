@@ -21,7 +21,7 @@ class MModelRegistry with LoggingMixin {
 
   operator [](String mtype) => _factories[mtype];
 
-  M? instantiate<M extends MModel>({dynamic json, MSchemaRef? type}) {
+  M instantiate<M extends MModel>({dynamic json, MSchemaRef? type}) {
     final Map<String, dynamic> map =
         (json as Map<String, dynamic>?) ?? <String, dynamic>{};
     var mtype = map["mtype"];
@@ -39,7 +39,7 @@ class MModelRegistry with LoggingMixin {
     }
 
     final MModelFactory<M>? factory = _factories[mtype] as MModelFactory<M>?;
-    if (map.isEmpty && factory == null) return null;
+    if (map.isEmpty && factory == null) {}
     if (factory == null && map.isNotEmpty) {
       if (M == MEntity || M == MModel) {
         log.severe(

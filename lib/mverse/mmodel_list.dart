@@ -1,9 +1,9 @@
 import 'dart:core';
 
 abstract class MModelList<M> {
-  Iterable<M> get data;
+  Iterable<M>? get data;
 
-  int get count;
+  int? get count;
 }
 
 class DefaultMModelList<M> implements MModelList<M> {
