@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.13]
+ * Removing null requirement for ContactInfoPart
+
 ## [2.0.0-nullsafe.12]
  * Update gemfile
 Tweaking flexidate
