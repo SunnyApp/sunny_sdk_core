@@ -8,7 +8,7 @@ export 'model/diff_log_entry.dart';
 export 'model/flexi_date.dart';
 export 'model/progress_tracker.dart';
 export 'model/render_mode.dart';
-export 'options/select_option.dart';
+
 export 'model/sunny_place.dart';
 export 'model/time_unit.dart';
 export 'model/user_pref_key.dart';

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_dart/sunny_get.dart';
 import 'package:meta/meta.dart';
+import 'package:sunny_sdk_core/services/i_auth_state.dart';
 import 'package:sunny_sdk_core/services/lifecycle_aware.dart';
 import 'package:sunny_sdk_core/sunny_sdk_core.dart';
 

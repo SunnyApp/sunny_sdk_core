@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:sunny_dart/helpers.dart';
 import 'package:sunny_sdk_core/api.dart';
-import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
 import 'package:sunny_sdk_core/model/user_pref_key.dart';
 import 'package:sunny_sdk_core/model_exports.dart';
 
+import 'i_auth_state.dart';
 import 'resolver_inits.dart';
 
 export 'package:sunny_dart/sunny_get.dart';
@@ -37,7 +37,7 @@ extension SunnyCoreCastExt on SunnyGet {
 }
 
 /// Context holder for sunny-related services
-class SunnyCore<C, W> implements SunnyGet {
+class SunnyCore implements SunnyGet {
   SunnyCore({this.resolver});
 
   BuildContextResolver? resolver;
@@ -70,18 +70,4 @@ abstract class IUserPreferencesService {
   Future<String> get(UserPrefKey key);
 
   Future<T> set<T>(UserPrefKey key, T value);
-}
-
-abstract class IAuthState {
-  bool get isLoggedIn;
-
-  bool get isNotLoggedIn;
-
-  String get accountId;
-
-  UserDetails get currentUser;
-
-  AuthUserProfile get current;
-
-  Stream<AuthUserProfile> get userStateStream;
 }

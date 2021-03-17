@@ -125,7 +125,7 @@ class Definition implements HasBaseCode {
             "mverse://schemas/sunny/fact/0.0.1/definitions.json#/definitions/$definition",
         baseCode = "sunny.fact.definitions.$definition";
 
-  bool matches(IMSchemaProperty prop) {
+  bool matches(ISchemaProperty prop) {
     return prop.baseCode == this.baseCode || "${prop.uri}" == this.uri;
   }
 
