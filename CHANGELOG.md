@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.15]
+ * Updates for stubs
+
 ## [2.0.0-nullsafe.14]
  * Updating services
 
