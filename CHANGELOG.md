@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.14]
+ * Updating services
+
 ## [2.0.0-nullsafe.13]
  * Removing null requirement for ContactInfoPart
 
