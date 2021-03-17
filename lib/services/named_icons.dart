@@ -15,9 +15,10 @@ set NamedIcons(NamedIconContainer _) {
 }
 
 extension NamedIconContainerExt on NamedIconContainer {
-  NamedIcon operator [](String name) => iconResolver.getIcon(name);
+  NamedIcon? operator [](String? name) =>
+      name == null ? null : iconResolver.getIconOrNull(name);
 
-  NamedIcon getIconOrNull(name) => this[name.toString()];
+  NamedIcon? getIconOrNull(name) => this[name?.toString()];
 }
 
 /// Allows for simple lookup of icons by name.  Implement this container and add
