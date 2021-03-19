@@ -21,7 +21,7 @@ class PrimitiveApiReader implements ApiReader {
 
   static const _instance = PrimitiveApiReader._();
 
-  Deserializer? getReader(final input, String targetType) {
+  Deserializer? getReader(final input, String? targetType) {
     switch (targetType) {
       case 'String':
         return (value) => '$value';
@@ -43,16 +43,18 @@ abstract class CollectionAwareApiReader with CachingApiReaderMixin {
   static final _mapRegEx = RegExp(r'^Map<String,(.*)>$');
 
   /// Finds a deserializer for a single non-collection entity.
-  Deserializer findSingleReader(final input, String? targetType);
+  Deserializer? findSingleReader(final input, String? targetType);
 
   @override
-  Deserializer findReader(final input, String targetType) {
+  Deserializer? findReader(final input, String targetType) {
     Match? match;
     if (input is List && (match = _listRegEx.firstMatch(targetType)) != null) {
       return (v) {
         final value = v as List;
         var newTargetType = match![1];
-        return value.map((v) => findSingleReader(v, newTargetType)(v)).toList();
+        return value
+            .map((v) => findSingleReader(v, newTargetType)!(v))
+            .toList();
       };
     } else if (input is Map &&
         (match = _mapRegEx.firstMatch(targetType)) != null) {
@@ -62,7 +64,7 @@ abstract class CollectionAwareApiReader with CachingApiReaderMixin {
         return Map.fromIterables(
             value.keys,
             value.values
-                .map((v) => (v) => findSingleReader(v, newTargetType)(v)));
+                .map((v) => (v) => findSingleReader(v, newTargetType)!(v)));
       };
     } else {
       return findSingleReader(input, targetType);
@@ -138,9 +140,8 @@ extension ApiReaderExt on ApiReader {
     List values = value;
 
     // get the collection format
-    collectionFormat = collectionFormat.isEmpty
-        ? "csv"
-        : collectionFormat; // default: csv
+    collectionFormat =
+        collectionFormat.isEmpty ? "csv" : collectionFormat; // default: csv
 
     if (collectionFormat == "multi") {
       values.forEach((v) => params[name] = parameterToString(v));

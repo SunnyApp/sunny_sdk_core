@@ -2,6 +2,9 @@
 //
 // import '../mverse.dart';
 //
+import 'package:sunny_dart/json/json_path.dart';
+import 'package:sunny_sdk_core/mverse.dart';
+
 abstract class ISchemaProperty {
   String? get type;
 
@@ -16,6 +19,12 @@ abstract class ISchemaProperty {
   String? get baseCode;
 
   bool? get isRequired;
+
+  JsonPath get jsonPath;
+
+  bool isType(Definition definition);
+
+  bool get isNotRequired;
 }
 //
 // abstract class IMEntityDefinition implements IMSchemaDefinition {
