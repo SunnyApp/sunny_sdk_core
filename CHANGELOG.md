@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.16]
+ * Update for null-safety, sdk2
+
 ## [2.0.0-nullsafe.15]
  * Updates for stubs
 
