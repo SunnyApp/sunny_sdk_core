@@ -1,3 +1,6 @@
+## [2.0.0+1]
+ * Minor version bump
+
 ## [2.0.0-nullsafe.20]
  * Changing iface back
 
