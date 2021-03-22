@@ -90,8 +90,8 @@ class ApiClient with LoggingMixin {
   /// @param authNames The authentications to apply
   Future updateParamsForAuth(Set<String> authNames, QueryParams queryParams,
       Map<String, String?> headerParams) async {
-    for (var authName in authNames.orEmptyList()) {
-      Authentication? auth = authentications[authName!];
+    for (var authName in authNames.orEmptyIter().toList()) {
+      Authentication? auth = authentications[authName];
       if (auth == null) {
         throw ArgumentError("Authentication undefined: " +
             authName +

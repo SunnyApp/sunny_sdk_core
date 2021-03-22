@@ -25,7 +25,7 @@ extension BuildContextResolverExt on BuildContextResolver {
   }
 
   Widget registerBuilder<T>(
-      BuildContext? context, T create(BuildContext context),
+      BuildContext? context, T create(BuildContext? context),
       {Widget? child, Key? key, InstDispose<T>? dispose}) {
     return register(context, [Inst.factory(create, dispose: dispose)],
         child: child, key: key);
