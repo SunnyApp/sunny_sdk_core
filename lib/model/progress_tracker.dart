@@ -1,16 +1,12 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/cupertino.dart';
 import 'package:sunny_dart/helpers/safe_completer.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 
-abstract class ChangeNotifierAdapter {
-  void notifyListeners();
-  void dispose();
-}
-
-abstract class ProgressTracker<T> {
-  ProgressTracker._(FutureOr<num> total, Object key, this.adapter)
+class ProgressTracker<T> extends ChangeNotifier {
+  ProgressTracker._(FutureOr<num> total, [Object? key])
       : key = key,
         _total = total.resolveOrNull()?.toDouble() {
     total.futureValue().then((total) {
@@ -19,25 +15,19 @@ abstract class ProgressTracker<T> {
     });
   }
 
-  /// Allows us to shed the full flutter dependency for this library
-  final ChangeNotifierAdapter adapter;
-
   final SafeCompleter<T> _completer = SafeCompleter<T>();
 
   /// Creates
-  ProgressTracker(
-      FutureOr<num> total, Object key, ChangeNotifierAdapter adapter)
-      : this._(total, key, adapter);
+  ProgressTracker(FutureOr<num> total, Object key) : this._(total, key);
 
   /// Instead of counting towards an arbitrary count, we'll base the counter on a percent and the caller will
   /// make sure to send the appropriate ratios
-  ProgressTracker.ratio(Object key, ChangeNotifierAdapter adapter)
-      : this._(100.0, key, adapter);
+  ProgressTracker.ratio([Object? key]) : this._(100.0, key);
 
   /// The total number of units working towards.  For percent/ratio based tracking, this will be 100
   double? _total = 0.0;
 
-  final Object key;
+  final Object? key;
 
   double _progress = 0.0;
 
@@ -60,16 +50,17 @@ abstract class ProgressTracker<T> {
   void updateTotal(double total) {
     if (total != _total) {
       _total = total;
-      adapter.notifyListeners();
+      this.notifyListeners();
     }
   }
 
   Future<T> get result => _completer.future;
 
+  @override
   void dispose() {
     if (!_isDisposed) {
       _isDisposed = true;
-      adapter.dispose();
+      super.dispose();
     }
   }
 
@@ -89,7 +80,7 @@ abstract class ProgressTracker<T> {
     }
 
     if (isDifferent) {
-      adapter.notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -114,7 +105,7 @@ abstract class ProgressTracker<T> {
   void updateTask(String newTask) {
     if (newTask != this.task) {
       this._task = newTask;
-      adapter.notifyListeners();
+      this.notifyListeners();
     }
   }
 
