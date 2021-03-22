@@ -1,3 +1,6 @@
+## [2.0.0-nullsafe.19]
+ * Updated breaking compilation
+
 ## [2.0.0-nullsafe.18]
  * Updating for sunny_lifecycle
 
