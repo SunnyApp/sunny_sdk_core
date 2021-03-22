@@ -5,11 +5,11 @@ abstract class IAuthState {
 
   bool get isNotLoggedIn;
 
-  String get accountId;
+  String? get accountId;
 
-  UserDetails get currentUser;
+  UserDetails? get currentUser;
 
-  AuthUserProfile get current;
+  AuthUserProfile? get current;
 
   Stream<AuthUserProfile> get userStateStream;
 }
