@@ -1,3 +1,6 @@
+## [2.0.0+3]
+ * fixing a bad cast
+
 ## [2.0.0+1]
  * Minor version bump
 
