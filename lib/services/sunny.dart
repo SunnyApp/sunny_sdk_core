@@ -50,7 +50,7 @@ class SunnyCore implements SunnyGet {
       _resolveOrError<T>(name, context);
 
   T get<T>({dynamic context, String? name}) =>
-      _resolveOrError<T>(name, context as BuildContext);
+      _resolveOrError<T>(name, context as BuildContext?);
 
   T _resolveOrError<T>(String? name, BuildContext? context) =>
       _verifyResolver<T>().resolve<T>(context ?? buildContext) ??
