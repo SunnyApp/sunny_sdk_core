@@ -1,3 +1,7 @@
+## [2.0.0+4]
+ * Adding missing file
+Fixing nullability on resolver inits
+
 ## [2.0.0+3]
  * fixing a bad cast
 
