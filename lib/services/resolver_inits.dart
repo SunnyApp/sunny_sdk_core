@@ -12,7 +12,7 @@ bool _never<T>(T a, T b) => false;
 bool _notEquals<T>(T a, T b) => a != b;
 
 /// Class used for defining container instances
-class Inst<T> {
+class Inst<T extends Object> {
   final Type? t;
   final T? instance;
   final InstInitFn<T>? factory;
@@ -44,7 +44,7 @@ class Inst<T> {
 
   bool get isFactory => factory != null;
 
-  R typed<R>(R passed<X>(Inst<X> inst)) {
+  R typed<R>(R passed<X extends Object>(Inst<X> inst)) {
     return passed<T>(this);
   }
 }

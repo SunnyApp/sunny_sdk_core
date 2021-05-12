@@ -12,4 +12,8 @@ abstract class IAuthState {
   AuthUserProfile? get current;
 
   Stream<AuthUserProfile> get userStateStream;
+
+  void onPreLogout(Future<bool> onPreLogout());
+
+  Stream<AuthUserProfile?> get onUserChange;
 }
