@@ -565,7 +565,7 @@ jsonLiteral(element) {
   } else if (element is Uri) {
     return element.toString();
   } else if (element is TimeZone) {
-    return element.abbr;
+    return element.abbreviation;
   } else if (element is Location) {
     return element.name;
   } else if (element is double) {

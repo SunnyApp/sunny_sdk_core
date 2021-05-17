@@ -1,3 +1,6 @@
+## [2.0.0+5]
+ * Updated deps
+
 ## [2.0.0+4]
  * Adding missing file
 Fixing nullability on resolver inits
