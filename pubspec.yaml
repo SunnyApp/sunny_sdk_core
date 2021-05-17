@@ -12,7 +12,7 @@ dependencies:
   chunked_stream: ^1.4.1
   equatable: ^2.0.0
   pfile: ^2.1.0+2
-  flexidate: ^0.5.0+1
+  flexidate: ^0.6.0+2
   meta: ^1.3.0
   intl: ^0.17.0
   http: ^0.13.3
@@ -21,7 +21,7 @@ dependencies:
   stream_transform: ^2.0.0
   timezone: ^0.7.0
   collection_diff: ^2.0.3+6
-  sunny_dart: ^0.9.0+1
+  sunny_dart: ^0.10.0+1
   dartxx: ^0.5.0+2
   dio2: ^5.0.0-nullsafety
   flutter: 
