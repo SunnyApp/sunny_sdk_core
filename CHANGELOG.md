@@ -1,3 +1,6 @@
+## [2.0.0+7]
+ * Updated dependencies
+
 ## [2.0.0+5]
  * Updated deps
 
