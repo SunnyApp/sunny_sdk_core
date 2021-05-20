@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-// import 'package:trippi_app/base.dart';
 
 ///
 /// The combination of a firebase user + a reliveit user profile.  Most places in the
@@ -13,9 +12,13 @@ class AuthUserProfile with EquatableMixin {
   final fb.User? fbUser;
   final UserDetails? profile;
   final AuthEventSource source;
-  const AuthUserProfile(this.fbUser, this.profile, this.source);
+  final AuthStatus? status;
+
+  const AuthUserProfile(this.fbUser, this.profile, this.source, {this.status});
+
   const AuthUserProfile.empty(this.source)
       : fbUser = null,
+        status = AuthStatus.none,
         profile = null;
 
   Future<String> getIdToken({bool forceRefresh = false}) {
@@ -34,6 +37,12 @@ enum AuthEventSource {
   manual,
   framework,
   postSignup
+}
+
+enum AuthStatus {
+  none,
+  partial,
+  full,
 }
 
 class UserDetails {
