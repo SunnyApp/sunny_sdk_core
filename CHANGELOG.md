@@ -1,3 +1,6 @@
+## [2.0.0+9]
+ * Adding status to auth
+
 ## [2.0.0+8]
  * Updated dependencies
 
