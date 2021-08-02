@@ -1,3 +1,6 @@
+## [2.0.0+10]
+ * Updating firebase auth
+
 ## [2.0.0+9]
  * Adding status to auth
 
