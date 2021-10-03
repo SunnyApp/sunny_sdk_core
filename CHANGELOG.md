@@ -1,3 +1,6 @@
+## [2.0.0+12]
+ * Remove JsonObject
+
 ## [2.0.0+11]
  * Adding base model
 
