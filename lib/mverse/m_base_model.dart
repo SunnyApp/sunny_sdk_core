@@ -1,12 +1,9 @@
 import 'm_model.dart';
 
-typedef JsonObject = Map<String, dynamic>;
-typedef JsonValue = dynamic;
-
 abstract class MBaseModel implements Entity {
   String? get id;
 
-  JsonObject toMap();
+  Map<String, dynamic> toMap();
 
   MKey? get mkey;
 

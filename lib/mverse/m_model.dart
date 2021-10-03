@@ -156,7 +156,7 @@ class MModel with DiffDelegateMixin implements Entity, MapModel, MBaseModel {
   }
 
   /// For RouteParams - move at some point?
-  JsonObject toMap() => wrapped;
+  Map<String, dynamic> toMap() => wrapped;
 
   dynamic operator [](key) => wrapped[key];
 
