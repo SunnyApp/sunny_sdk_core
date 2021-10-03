@@ -1,3 +1,6 @@
+## [2.0.0+11]
+ * Adding base model
+
 ## [2.0.0+10]
  * Updating firebase auth
 
