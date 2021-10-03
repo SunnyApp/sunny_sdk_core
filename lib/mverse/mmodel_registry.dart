@@ -22,8 +22,7 @@ class MModelRegistry with LoggingMixin {
   operator [](String mtype) => _factories[mtype];
 
   M instantiate<M extends MModel>({dynamic json, MSchemaRef? type}) {
-    final Map<String, dynamic> map =
-        (json as Map<String, dynamic>?) ?? <String, dynamic>{};
+    final Map<String, dynamic> map = (json as Map<String, dynamic>?) ?? <String, dynamic>{};
     var mtype = map["mtype"];
     if (mtype == null) {
       final mmeta = map["mmeta"];
@@ -34,23 +33,25 @@ class MModelRegistry with LoggingMixin {
 
     mtype ??= "$type";
     if (mtype == null) {
-      nullPointer(
-          "No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
+      nullPointer("No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
     }
 
     final MModelFactory<M>? factory = _factories[mtype] as MModelFactory<M>?;
     if (map.isEmpty && factory == null) {}
     if (factory == null && map.isNotEmpty) {
       if (M == MEntity || M == MModel) {
-        log.severe(
-            "No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
+        log.severe("No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
         return DefaultMEntity(map) as M;
       } else {
-        throw Exception(
-            "No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
+        throw Exception("No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
       }
     }
-    return factory!(map);
+    if (factory == null) {
+      throw Exception("No factory was provided for type ${mtype}. "
+          "Make sure you call register[Library]Models(mmodelRegistry, mEnumRegistry). ");
+    } else {
+      return factory(map);
+    }
   }
 
   MModelRegistry._();

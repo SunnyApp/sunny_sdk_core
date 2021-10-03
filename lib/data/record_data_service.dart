@@ -120,8 +120,7 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   }
 
   Future<RType>? tryRefreshRecord(KType recordId) {
-    return exec(
-        (() => tryGetService(recordId)?.refresh()) as Future<RType> Function());
+    return exec((() => tryGetService(recordId)?.refresh()));
   }
 
   bool isLoaded(KType recordId) {

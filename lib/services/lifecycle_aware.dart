@@ -97,11 +97,11 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   Future doShutdown() async {}
 
   @override
-  R? exec<R>(R block()) {
+  R exec<R>(R block()) {
     if (isShuttingDown()) {
       log.severe("Trying to invoke function while shutting down", null,
           StackTrace.current);
-      return null;
+      return null as R;
     } else {
       return block();
     }
