@@ -1,21 +1,14 @@
 import 'm_model.dart';
 
-abstract class MBaseModel implements Entity {
-  String? get id;
+abstract class MBaseModel {
 
   Map<String, dynamic> toMap();
-
-  MKey? get mkey;
 
   dynamic operator [](key);
 
   void operator []=(String key, value);
 
   MSchemaRef get mtype;
-
-  dynamic clone();
-
-  void takeFrom(dynamic source);
 }
 
 mixin MBaseModelMixin implements MBaseModel {
@@ -27,5 +20,4 @@ mixin MBaseModelMixin implements MBaseModel {
     return id == null ? null : MKey.fromType(mtype, id!);
   }
 
-  void takeFrom(dynamic source) => throw UnimplementedError();
 }

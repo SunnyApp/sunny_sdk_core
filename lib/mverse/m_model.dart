@@ -252,9 +252,9 @@ abstract class Entity {
 
   MKey? get mkey;
 
-  dynamic clone();
-
-  void takeFrom(dynamic source);
+  // dynamic clone();
+  //
+  // void takeFrom(dynamic source);
 }
 
 class RecordKey extends MLiteral<String> {
