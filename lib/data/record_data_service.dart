@@ -32,25 +32,31 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   @protected
   KType getIdForRecord(RType record);
 
-  void addToStream(RType? record) {
+  void addToStream(RType? record, {bool silent =false}) {
     exec(() {
       if (record != null) {
         final id = getIdForRecord(record);
-        _getOrCreateStream(id).currentValue = record;
-        _changeStream.add(record);
+        final _recordStream = _getOrCreateStream(id);
+        if (silent) {
+          _recordStream.updateQuiet(record);
+        } else {
+          _recordStream.currentValue = record;
+          _changeStream.add(record);
+        }
       }
     });
   }
 
-  void updateRecord(KType id, Future update(RType? record)) {
+  void updateRecord(KType id, Future update(RType? record), {bool silent = false}) {
     exec(() async {
       final latest = await getRecord(id);
       final res = await update(latest);
       if (res is RType) {
-        addToStream(res);
+        addToStream(res, silent: silent);
       } else {
-        addToStream(latest);
+        addToStream(latest, silent: silent);
       }
+
     });
   }
 
@@ -63,14 +69,15 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
     _changeStream.close();
   }
 
-  Stream<RType?>? recordStream(KType recordId) {
+  /// @param: immediate Whether you want this stream to include the current value.  If false, only updates will be streamed.
+  Stream<RType?>? recordStream(KType recordId, {bool immediate = true}) {
     return exec(() {
-      return _getOrCreateStream(recordId).stream;
+      return immediate ? _getOrCreateStream(recordId).stream : _getOrCreateStream(recordId).updateStream;
     });
   }
 
   Stream<RType> get changeStream {
-    if (!isShuttingDown()) {
+    if (isShuttingDown()) {
       return Stream.empty();
     } else {
       return _changeStream.stream;
@@ -125,6 +132,15 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
 
   bool isLoaded(KType recordId) {
     return _recordStreams.containsKey(recordId);
+  }
+
+  bool isInitialized(KType recordId) {
+    final record = _recordStreams[recordId];
+    if (record==null) {
+      return false;
+    } else {
+      return record.isReady.isCompleted;
+    }
   }
 
   DataService<RType> _getOrCreateStream(KType recordId) {
@@ -187,8 +203,8 @@ mixin RecordDataServiceMixin<RType, KType>
 
   Iterable<RType?> get loadedRecords => delegate.loadedRecords;
 
-  void updateRecord(KType id, Future update(RType? record)) =>
-      delegate.updateRecord(id, update);
+  void updateRecord(KType id, Future update(RType? record), {bool silent = false}) =>
+      delegate.updateRecord(id, update, silent: silent);
 
   @override
   DataService<RType>? tryGetService(KType recordId) =>
@@ -198,7 +214,10 @@ mixin RecordDataServiceMixin<RType, KType>
   bool isLoaded(KType recordId) => delegate.isLoaded(recordId);
 
   @override
-  void addToStream(RType? record) => delegate.addToStream(record);
+  bool isInitialized(KType recordId) => delegate.isInitialized(recordId);
+
+  @override
+  void addToStream(RType? record, {bool silent = false}) => delegate.addToStream(record, silent: silent);
 
   @override
   Stream<RType> get changeStream => delegate.changeStream;
@@ -218,8 +237,8 @@ mixin RecordDataServiceMixin<RType, KType>
   RType? tryGet(KType recordId) => delegate.tryGet(recordId);
 
   @override
-  Stream<RType?>? recordStream(KType recordId) =>
-      delegate.recordStream(recordId);
+  Stream<RType?>? recordStream(KType recordId, {bool immediate = true}) =>
+      delegate.recordStream(recordId, immediate: true);
 
   @override
   Future<RType?> getRecord(KType recordId) => delegate.getRecord(recordId);

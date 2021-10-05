@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:meta/meta.dart';
+
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter/material.dart';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
@@ -15,7 +16,10 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   final SafeCompleter<T> isReady = SafeCompleter.stopped();
   T? _currentValue;
 
-  DataService({bool? isLazy}) {
+  DataService({bool isLazy = false}) {
+    if (!isLazy) {
+      loadInitial();
+    }
     onLogout(() => reset());
   }
 
@@ -27,13 +31,18 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     isReady.start();
     try {
       final data = await internalFetchData();
-      _currentValue = data;
-      isReady.complete(data);
+      this._internalUpdate(data);
       return data;
     } catch (e, stack) {
       log.severe("Error fetching data for service: $e", e, stack);
       isReady.completeError(e, stack);
       rethrow;
+    }
+  }
+
+  Stream<T> get updateStream async* {
+    await for (final data in _updateStream.stream) {
+      yield data;
     }
   }
 
@@ -82,11 +91,26 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   }
 
   set currentValue(T? value) {
+    this._internalUpdate(value);
     if (value != null) {
-      _currentValue = value;
       if (!controller.isClosed) controller.add(value);
     }
   }
+
+  /// Updates without pushing the new value to the stream
+  void updateQuiet(T? value) {
+    this._internalUpdate(value);
+  }
+
+  T? _internalUpdate(T? value) {
+    if (value != null) {
+      _currentValue = value;
+      if (!isReady.isStarted) isReady.start();
+      if (!isReady.isNotComplete) isReady.complete(value);
+    }
+    return _currentValue;
+  }
+
 
   @protected
   @override
@@ -95,17 +119,15 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   }
 
   /// Retrieves the current copy of this data, if it exists, or fetches it.
-  Future<T?> get() async {
+  Future<T?> get() {
     if (_currentValue != null) {
-      return _currentValue;
+      return Future.value(_currentValue);
     } else {
       try {
         if (isReady.isStarted) {
-          final result = await isReady.future;
-          return result;
+          return isReady.future;
         } else {
-          final initial = await loadInitial().timeout(Duration(seconds: 10));
-          return initial;
+          return loadInitial().timeout(Duration(seconds: 10));
         }
       } on TimeoutException catch (e, stack) {
         log.severe("Timeout fetching $T in ${this.runtimeType}", e, stack);
