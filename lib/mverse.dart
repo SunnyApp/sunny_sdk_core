@@ -7,3 +7,4 @@ export 'mverse/mmodel_list.dart';
 export 'mverse/mmodel_registry.dart';
 export 'mverse/record.dart';
 export 'mverse/shared_models.dart';
+export 'mverse/m_base_model.dart';
