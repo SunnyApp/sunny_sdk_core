@@ -1,3 +1,6 @@
+## [2.0.0+13]
+ * mixin
+
 ## [2.0.0+12]
  * Remove JsonObject
 
