@@ -1,3 +1,6 @@
+## [2.0.0+15]
+ * Modified model
+
 ## [2.0.0+14]
  * Adding export
 
