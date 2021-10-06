@@ -7,7 +7,8 @@ abstract class MBaseModel {
 
   void operator []=(String key, value);
 
-  void takeFromMap(Map<String, dynamic> map);
+  /// Used for meta-forms in setting deep properties
+  void takeFromMap(Map<String, dynamic> map, {bool copyEntries = true});
 
   MSchemaRef get mtype;
 }
