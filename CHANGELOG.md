@@ -1,3 +1,6 @@
+## [2.1.0+3]
+ * Adding export
+
 ## [2.1.0+2]
  * Adding mutable service
 
