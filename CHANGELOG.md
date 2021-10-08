@@ -1,3 +1,6 @@
+## [2.1.0+2]
+ * Adding mutable service
+
 ## [2.1.0+1]
  * WIP
 
