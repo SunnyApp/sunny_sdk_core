@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:meta/meta.dart'; // ignore: unused_import, directives_ordering
 import 'package:sunny_dart/helpers/maps.dart';
-import 'package:sunny_dart/json.dart';
+import 'package:dartxx/json_path.dart';
 import 'package:sunny_sdk_core/mverse.dart';
 import 'package:timezone/timezone.dart'; // ignore: unused_import, directives_ordering
 

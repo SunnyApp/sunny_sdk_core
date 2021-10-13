@@ -2,7 +2,7 @@
 //
 // import '../mverse.dart';
 //
-import 'package:sunny_dart/json/json_path.dart';
+import 'package:dartxx/dartxx.dart';
 import 'package:sunny_sdk_core/mverse.dart';
 
 abstract class ISchemaProperty {

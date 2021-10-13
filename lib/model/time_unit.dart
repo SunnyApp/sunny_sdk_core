@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:sunny_dart/json.dart';
+import 'package:dartxx/dartxx.dart';
 
 class TimeUnit extends TimeUnitBase {
   const TimeUnit._internal(String value) : super._internal(value);

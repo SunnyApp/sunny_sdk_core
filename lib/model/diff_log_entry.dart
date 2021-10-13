@@ -6,19 +6,16 @@ import 'package:meta/meta.dart'; // ignore: unused_import, directives_ordering
 import 'package:sunny_sdk_core/mverse.dart';
 import 'package:sunny_dart/helpers/lists.dart';
 import 'package:sunny_dart/helpers/maps.dart';
-import 'package:sunny_dart/json.dart';
+import 'package:dartxx/json_path.dart';
 
 import 'change.dart';
 
 class DiffLogEntry extends DiffLogEntryBase {
   ///
-  DiffLogEntry(Map<String, dynamic> wrapped,
-      {MSchemaRef mtype = DiffLogEntryRef, bool update = true})
+  DiffLogEntry(Map<String, dynamic> wrapped, {MSchemaRef mtype = DiffLogEntryRef, bool update = true})
       : super(wrapped, mtype: mtype, update: update);
 
-  factory DiffLogEntry.fromJson(wrapped) => wrapped is DiffLogEntry
-      ? wrapped
-      : DiffLogEntry(wrapped as Map<String, dynamic>);
+  factory DiffLogEntry.fromJson(wrapped) => wrapped is DiffLogEntry ? wrapped : DiffLogEntry(wrapped as Map<String, dynamic>);
 
   DiffLogEntry.of({List<Change>? changes})
       : super.of(
@@ -33,16 +30,13 @@ class DiffLogEntry extends DiffLogEntryBase {
 }
 
 abstract class DiffLogEntryBase extends MModel {
-  DiffLogEntryBase(Map<String, dynamic> wrapped,
-      {MSchemaRef mtype = DiffLogEntryRef, required bool update})
+  DiffLogEntryBase(Map<String, dynamic> wrapped, {MSchemaRef mtype = DiffLogEntryRef, required bool update})
       : super(wrapped, mtype: mtype, update: false) {
     if (update == true) takeFromMap(wrapped, copyEntries: false);
   }
 
-  DiffLogEntryBase.fromJson(wrapped)
-      : this(wrapped as Map<String, dynamic>, update: true);
-  DiffLogEntryBase.of({List<Change>? changes})
-      : super(<String, dynamic>{}, mtype: DiffLogEntryRef) {
+  DiffLogEntryBase.fromJson(wrapped) : this(wrapped as Map<String, dynamic>, update: true);
+  DiffLogEntryBase.of({List<Change>? changes}) : super(<String, dynamic>{}, mtype: DiffLogEntryRef) {
     if (changes != null) this.changes = changes;
   }
 
@@ -117,10 +111,8 @@ class DiffLogEntryFields {
 }
 
 class DiffLogEntryPaths {
-  static const JsonPath<List<Change>> changes =
-      JsonPath.internal(["changes"], "/changes");
+  static const JsonPath<List<Change>> changes = JsonPath.internal(["changes"], "/changes");
   static final Set<JsonPath> values = {changes};
 }
 
-const DiffLogEntryRef =
-    MSchemaRef("mverse", "mthing", "diffLogEntry", "0.0.1", "ephemeral");
+const DiffLogEntryRef = MSchemaRef("mverse", "mthing", "diffLogEntry", "0.0.1", "ephemeral");

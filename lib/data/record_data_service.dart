@@ -158,6 +158,7 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
             final RType loaded = await this.internalFetchRecord(outerRecordId);
             return loaded;
           },
+          
         );
       },
     );
@@ -246,6 +247,15 @@ mixin RecordDataServiceMixin<RType, KType>
 
 extension RecordDateServiceUpdate<RType, KType>
     on RecordDataService<RType, KType> {
+
+  FutureOr<RType?> getRecordOr(KType recordId) {
+    if (this.isInitialized(recordId)) {
+      return tryGet(recordId);
+    } else {
+      return getRecord(recordId);
+    }
+  }
+
   Future<bool>? tryUpdateRecord(KType recordId, Future update(RType? input)) {
     return exec(() async {
       final svc = tryGetService(recordId);

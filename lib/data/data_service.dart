@@ -23,21 +23,20 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     onLogout(() => reset());
   }
 
-  factory DataService.of({required _AsyncValueGetter<T> factory}) =>
-      _DataService(factory);
+  factory DataService.of({required _AsyncValueGetter<T> factory}) => _DataService(factory);
 
   @protected
-  Future<T> loadInitial() async {
+  Future<T> loadInitial() {
     isReady.start();
-    try {
-      final data = await internalFetchData();
+
+    return internalFetchData().then((data) {
       this._internalUpdate(data);
       return data;
-    } catch (e, stack) {
+    }).catchError((Object e, StackTrace stack) {
       log.severe("Error fetching data for service: $e", e, stack);
       isReady.completeError(e, stack);
-      rethrow;
-    }
+      throw e;
+    });
   }
 
   Stream<T> get updateStream async* {
@@ -52,8 +51,8 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
       yield initialLoad;
     } else if (currentValue == null && isReady.isStarted) {
       try {
-        final trips = await isReady.future;
-        yield trips;
+        final isReadyResult = await isReady.future;
+        yield isReadyResult;
       } catch (e, stack) {
         log.severe("Error fetching data for service: $e", e, stack);
         isReady.completeError(e, stack);
@@ -106,11 +105,10 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     if (value != null) {
       _currentValue = value;
       if (!isReady.isStarted) isReady.start();
-      if (!isReady.isNotComplete) isReady.complete(value);
+      if (isReady.isNotComplete) isReady.complete(value);
     }
     return _currentValue;
   }
-
 
   @protected
   @override

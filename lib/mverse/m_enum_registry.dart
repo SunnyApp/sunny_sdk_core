@@ -1,4 +1,3 @@
-import 'package:sunny_dart/json.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 
 typedef MEnumFactory<M> = M Function(String literal);
@@ -34,10 +33,8 @@ class MEnumRegistry with LoggingMixin {
     return _factories[key] as MEnumFactory<T>? ?? ((String _) => null);
   }
 
-  M instantiate<M extends MLiteral<String>>(dynamic json,
-      {required String type}) {
-    final MEnumFactory<M> factory = _factories[type] as MEnumFactory<M>? ??
-        nullPointer("No enum factory found for $type}");
+  M instantiate<M extends MLiteral<String>>(dynamic json, {required String type}) {
+    final MEnumFactory<M> factory = _factories[type] as MEnumFactory<M>? ?? nullPointer("No enum factory found for $type}");
     return factory(json as String);
   }
 
