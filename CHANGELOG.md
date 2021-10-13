@@ -1,3 +1,6 @@
+## [2.2.0+4]
+ * Update jsonPath
+
 ## [2.1.0+3]
  * Adding export
 
