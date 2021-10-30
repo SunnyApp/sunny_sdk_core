@@ -1,3 +1,6 @@
+## [2.4.0+7]
+ * Prepare for publish
+
 ## [2.2.0+6]
  * Updated fastlane
 
