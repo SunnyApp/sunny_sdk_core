@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:dartxx/json_path.dart';
 import 'package:logging/logging.dart';
 import 'package:sunny_dart/extensions.dart';
 import 'package:sunny_dart/helpers/error_methods.dart';
-import 'package:dartxx/json_path.dart';
 import 'package:sunny_sdk_core/request_builder.dart';
 
 final Logger _log = Logger("apiExceptions");
@@ -20,25 +20,24 @@ abstract class ApiException implements Exception {
 
   RequestBuilder? get builder;
 
-  const factory ApiException.socket(
-    Object error,
-    StackTrace stackTrace, [
-    RequestBuilder? builder,
-  ]) = ApiSocketException;
+  const factory ApiException.socket(Object error,
+      StackTrace stackTrace, [
+        RequestBuilder? builder,
+      ]) = ApiSocketException;
 
-  const factory ApiException.runtimeError(
-    Object error,
-    StackTrace stackTrace, [
-    RequestBuilder? builder,
-  ]) = ApiWrappedException;
+  const factory ApiException.runtimeError(Object error,
+      StackTrace stackTrace, [
+        RequestBuilder? builder,
+      ]) = ApiWrappedException;
 
   factory ApiException.response(int statusCode, String message,
-      {RequestBuilder? builder}) {
+      {ApiErrorPayload? errors, RequestBuilder? builder}) {
     if (statusCode == 400) {
+      assert(errors == null);
       return BadRequestException.parsed(message, builder: builder);
     } else {
       return ApiResponseException._(statusCode,
-          message: message, builder: builder);
+        message: message, builder: builder, payload: errors,);
     }
   }
 
@@ -85,13 +84,13 @@ class ApiResponseException extends ApiException {
   final RequestBuilder? builder;
   ApiErrorPayload? _payload;
 
-  ApiResponseException._(this.statusCode, {this.message, this.builder});
+  ApiResponseException._(this.statusCode, {this.message, this.builder, ApiErrorPayload? payload}) : _payload = payload;
 
   bool get isAuthError => statusCode == 401 || statusCode == 403;
 
   @override
   String toString() =>
-      "${builder?.path?.plus(": ") ?? ''}$statusCode: $message";
+      "${builder?.path?.plus(": ") ?? ''}$statusCode: $message${_payload == null ? '' : '\n\nPAYLOAD:\n${_payload}'}";
 
   ApiErrorPayload get payload => _payload ??= ApiErrorPayload.fromJson(message);
 }
@@ -117,12 +116,12 @@ class BadRequestException extends ApiResponseException {
   BadRequestException.singleField(String path, String message,
       {String? keyword})
       : _validationErrors = [
-          ValidationError(
-            path: JsonPath.parsed(path),
-            message: message,
-            keyword: keyword,
-          )
-        ],
+    ValidationError(
+      path: JsonPath.parsed(path),
+      message: message,
+      keyword: keyword,
+    )
+  ],
         super._(400, message: message);
 
   List<ValidationError> get validationErrors {
@@ -137,8 +136,9 @@ class BadRequestException extends ApiResponseException {
       for (final e in payload.errors!)
         if (e.body["error"] is Iterable)
           ValidationError.ofJson(e.body["error"].first)
-        else if (e.body is Map)
-          ValidationError.ofJson(e.body),
+        else
+          if (e.body is Map)
+            ValidationError.ofJson(e.body),
     ];
     return _;
   }
@@ -167,15 +167,15 @@ class BadRequestException extends ApiResponseException {
     try {
       final decoded = json.decode(message);
       final Map<String, dynamic>? errors =
-          decoded["errors"] as Map<String, dynamic>?;
+      decoded["errors"] as Map<String, dynamic>?;
       if (errors == null) {
         return const [];
       }
       final mapped = [
         ...errors.entries.expand(
-          (entry) {
+              (entry) {
             final errorPath =
-                JsonPath.parsed(entry.key, relativeTo: inputSchemaPath);
+            JsonPath.parsed(entry.key, relativeTo: inputSchemaPath);
 
             return <ValidationError>[
               if (entry.value is! Iterable)
@@ -188,17 +188,17 @@ class BadRequestException extends ApiResponseException {
                 ),
               if (entry.value is Iterable)
                 ...entry.value.map(
-                  (final error) {
+                      (final error) {
                     return error is Map<String, dynamic>
                         ? ValidationError(
-                            path: errorPath,
-                            message: error["message"]?.toString(),
-                            keyword: error["keyword"]?.toString(),
-                            code: error["code"]?.toString(),
-                            arguments: error["arguments"] as List?,
-                          )
+                      path: errorPath,
+                      message: error["message"]?.toString(),
+                      keyword: error["keyword"]?.toString(),
+                      code: error["code"]?.toString(),
+                      arguments: error["arguments"] as List?,
+                    )
                         : ValidationError.ofString(
-                            JsonPath.of(error), "$error");
+                        JsonPath.of(error), "$error");
                   },
                 ),
             ];
@@ -240,12 +240,12 @@ class ValidationError {
     this.value,
   });
 
-  ValidationError.ofString(
-    this.path,
-    this.message, {
-    this.debugMessage,
-    this.arguments = const [],
-  })  : code = "unknown",
+  ValidationError.ofString(this.path,
+      this.message, {
+        this.debugMessage,
+        this.arguments = const [],
+      })
+      : code = "unknown",
         keyword = "unknown",
         value = null;
 
@@ -253,16 +253,16 @@ class ValidationError {
 
   ValidationError._ofMap(Map<String, dynamic> map)
       : this(
-          path: JsonPath.of(
-              map["pointerToViolation"]?.toString().substring(1) ??
-                  map["field"]),
-          message: map['message'] as String?,
-          debugMessage: (map['message'] ?? map['error']) as String?,
-          code: map['code'] as String?,
-          keyword: map['keyword'] as String?,
-          arguments: map['arguments'] as List?,
-          value: map['value'],
-        );
+    path: JsonPath.of(
+        map["pointerToViolation"]?.toString().substring(1) ??
+            map["field"]),
+    message: map['message'] as String?,
+    debugMessage: (map['message'] ?? map['error']) as String?,
+    code: map['code'] as String?,
+    keyword: map['keyword'] as String?,
+    arguments: map['arguments'] as List?,
+    value: map['value'],
+  );
 
   @override
   String toString() {
@@ -302,11 +302,25 @@ class ValidationError {
       value: value,
     );
   }
+
+  Map<String, dynamic> toMap() =>
+      {
+        "message": message,
+        "path": path,
+        "keyword": keyword,
+        "message": message,
+        "debugMessage": debugMessage,
+        "code": code,
+        "arguments": arguments,
+        "value": value
+      };
 }
 
 class ApiErrorPayload {
   final String? errorType;
   final List<ApiErrorItem>? errors;
+
+  ApiErrorPayload({this.errorType, this.errors});
 
   ApiErrorPayload._({this.errorType, this.errors});
 
@@ -329,11 +343,35 @@ class ApiErrorPayload {
       ],
     );
   }
+
+  @override
+  String toString() {
+    var error = '  Error Type: ${errorType ?? 'General Error'}';
+    if(errors.isNotNullOrEmpty) {
+      errors!.forEachIndexed((item, idx) {
+        error += '\n';
+        error += '    #${idx+1}: ${item.message}\n      - ';
+        item.body.forEach((k, v) {
+          if(v != null) {
+            error += '[$k=${v.toString().removeNewlines()}]; ';
+          }
+        });
+      });
+    }
+    return error;
+  }
+
+
 }
 
 class ApiErrorItem {
   final Map<String, dynamic> _body;
   final String? _message;
+
+  ApiErrorItem({required String message, Map<String, dynamic> body = const {}})
+      : _message = message,
+        _body = body;
+
 
   ApiErrorItem._({String? message, Map? body})
       : _message = message,

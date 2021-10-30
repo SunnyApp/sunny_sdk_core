@@ -20,7 +20,7 @@ import 'mmodel_registry.dart';
 class MModel with DiffDelegateMixin implements Entity, MapModel, MBaseModel {
   final Map<String, dynamic> wrapped;
 
-  MModel clone() => illegalState("Mutation not supported for base MModel.  Perhaps you are "
+  dynamic clone() => illegalState("Mutation not supported for base MModel.  Perhaps you are "
       "attempting to mutate an abstract class?");
 
   // ignore: avoid_unused_constructor_parameters
@@ -107,7 +107,7 @@ class MModel with DiffDelegateMixin implements Entity, MapModel, MBaseModel {
     return mmodelRegistry.instantiate(json: json);
   }
 
-  T? getByPath<T>(JsonPath path) {
+  T getByPath<T>(JsonPath path) {
     dynamic value = this;
     for (var segment in path.segments) {
       if (value is MModel) {
@@ -118,10 +118,10 @@ class MModel with DiffDelegateMixin implements Entity, MapModel, MBaseModel {
         throw Exception("Illegal path: $path at segment $segment.  Expected Map or MModel but found ${value.runtimeType}");
       }
       if (value == null) {
-        return null;
+        return null as T;
       }
     }
-    return value as T?;
+    return value as T;
   }
 
   T? jpath<T>(JsonPath<T> path, [T? value]) {

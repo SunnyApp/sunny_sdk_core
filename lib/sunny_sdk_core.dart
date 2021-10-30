@@ -11,3 +11,4 @@ export 'rproxy.dart';
 export 'services.dart';
 
 export 'package:meta/meta.dart';
+export 'path.dart';
