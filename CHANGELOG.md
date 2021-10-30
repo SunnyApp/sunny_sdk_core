@@ -1,3 +1,6 @@
+## [2.2.0+5]
+ * Updated versions/model
+
 ## [2.2.0+4]
  * Update jsonPath
 
