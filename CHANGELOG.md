@@ -1,3 +1,6 @@
+## [2.2.0+6]
+ * Updated fastlane
+
 ## [2.2.0+5]
  * Updated versions/model
 
