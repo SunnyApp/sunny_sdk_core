@@ -1,27 +1,27 @@
 name: sunny_sdk_core
 author: eric@sunnyapp.co
-version: 2.2.0+6
+version: 2.4.0+6
 description: Core libraries for swagger-generated sdks
 repository: https://github.com/SunnyApp/sunny_sdk_core.git
 environment: 
-  sdk: '>=2.13.0 <3.0.0'
+  sdk: '>=2.14.0 <3.0.0'
   flutter: '>=2.0.0'
 dependencies: 
-  firebase_auth: ^3.0.1
+  firebase_auth: ^3.1.4
   buffer: ^1.1.1
   chunked_stream: ^1.4.1
   equatable: ^2.0.3
   pfile: ^2.1.0+4
-  flexidate: ^0.6.0+2
-  meta: '>=1.3.0'
+  flexidate: ^0.8.0+3
+  meta: ^1.7.0
   intl: ^0.17.0
-  http: ^0.13.3
+  http: ^0.13.4
   logging: ^1.0.2
-  path_provider: ^2.0.2
+  path_provider: ^2.0.6
   stream_transform: ^2.0.0
-  timezone: ^0.7.0
+  timezone: ^0.8.0
   collection_diff: ^2.0.3+6
-  sunny_dart: ^0.11.0+5
+  sunny_dart: ^0.11.0+6
   dartxx: ^0.5.3+2
   dio2: ^5.0.0-nullsafety
   flutter: 
