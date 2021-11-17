@@ -1,3 +1,7 @@
+## [2.4.0+8]
+ * Prepare for publish
+Updating disposer references
+
 ## [2.4.0+7]
  * Prepare for publish
 
