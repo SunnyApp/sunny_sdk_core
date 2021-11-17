@@ -1,5 +1,4 @@
 name: sunny_sdk_core
-author: eric@sunnyapp.co
 version: 2.4.0+7
 description: Core libraries for swagger-generated sdks
 repository: https://github.com/SunnyApp/sunny_sdk_core.git
@@ -22,7 +21,7 @@ dependencies:
   timezone: ^0.8.0
   collection_diff: ^2.0.3+6
   sunny_dart: ^0.11.0+6
-  dartxx: ^0.5.3+2
+  dartxx: ^0.5.4
   dio2: ^5.0.0-nullsafety
   flutter: 
     sdk: flutter
