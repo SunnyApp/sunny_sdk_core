@@ -27,7 +27,8 @@ class RecordEventService with LoggingMixin, LifecycleAwareMixin {
   }
 
   Stream<RecordEvent> get events => _controller.stream;
-  void onCreate(String recordType, String recordId, RecordEventType type) {
+
+  void publish(String recordType, String recordId, RecordEventType type) {
     _controller.add(RecordEvent(recordType, recordId, type));
   }
 }
