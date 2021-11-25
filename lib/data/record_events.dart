@@ -4,16 +4,15 @@ import 'package:equatable/equatable.dart';
 import 'package:sunny_sdk_core/api_exports.dart';
 import 'package:sunny_sdk_core/services.dart';
 
-class RecordEvent with EquatableMixin {
-  final String recordType;
-  final String recordId;
+class RecordEvent<D extends Object> with EquatableMixin {
+  final D payload;
   final RecordEventType eventType;
 
-  const RecordEvent(this.recordType, this.recordId, this.eventType);
+  const RecordEvent(this.payload, this.eventType);
 
   @override
   List<Object> get props {
-    return [recordType, eventType, recordId];
+    return [eventType, payload];
   }
 }
 
@@ -28,14 +27,14 @@ class RecordEventService with LoggingMixin, LifecycleAwareMixin {
 
   Stream<RecordEvent> get events => _controller.stream;
 
-  void publish(String recordType, String recordId, RecordEventType type) {
-    _controller.add(RecordEvent(recordType, recordId, type));
+  void publish<D extends Object>(D payload, RecordEventType type) {
+    _controller.add(RecordEvent<D>(payload, type));
   }
 }
 
-extension StreamOfEventExt on Stream<RecordEvent> {
-  Stream<RecordEvent> forRecordType(String recordType) => where((event) => event.recordType == recordType);
-  Stream<RecordEvent> get delete => where((event) => event.eventType == RecordEventType.delete);
-  Stream<RecordEvent> get create => where((event) => event.eventType == RecordEventType.create);
-  Stream<RecordEvent> get update => where((event) => event.eventType == RecordEventType.update);
+extension StreamOfEventExt<D extends Object> on Stream<RecordEvent<D>> {
+  Stream<RecordEvent<DD>> recordType<DD extends Object>() => where((event) => event is RecordEvent<DD>).cast<RecordEvent<DD>>();
+  Stream<RecordEvent<D>> get delete => where((event) => event.eventType == RecordEventType.delete);
+  Stream<RecordEvent<D>> get create => where((event) => event.eventType == RecordEventType.create);
+  Stream<RecordEvent<D>> get update => where((event) => event.eventType == RecordEventType.update);
 }
