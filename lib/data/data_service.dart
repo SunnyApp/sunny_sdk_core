@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:meta/meta.dart';
 
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_dart/helpers/safe_completer.dart';
 import 'package:sunny_sdk_core/services.dart';
@@ -15,7 +13,7 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   final _updateStream = StreamController<T>.broadcast();
   final SafeCompleter<T> isReady = SafeCompleter.stopped();
   T? _currentValue;
-
+  
   DataService({bool isLazy = false}) {
     if (!isLazy) {
       loadInitial();

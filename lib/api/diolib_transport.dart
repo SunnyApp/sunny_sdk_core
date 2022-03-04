@@ -54,11 +54,9 @@ class DioLibTransport extends ApiClientTransport {
       return ApiResponse(
           _resp.statusCode ?? 500, _resp.data?.toString() ?? 'Unknown error');
     } on DioError catch (e) {
-      throw ApiException.response(e.response?.statusCode ?? 500,
-          e.response?.data?.toString() ?? e.message,
-          builder: RequestBuilder()
-            ..basePath = basePath
-            ..path = path);
+      return ApiResponse(
+        e.response?.statusCode ?? 500,
+          e.response?.data?.toString() ?? e.message,);
     }
   }
 }
