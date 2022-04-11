@@ -1,6 +1,6 @@
 import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_sdk_core/api/api_exceptions.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'auth_user.dart' as fb;
 import 'package:sunny_sdk_core/auth/authentication.dart';
 import 'package:sunny_sdk_core/query_param.dart';
 

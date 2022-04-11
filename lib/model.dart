@@ -3,6 +3,7 @@ export 'model/change.dart';
 export 'model/change_result.dart';
 export 'model/contact_info_part.dart';
 export 'model/geo_location.dart';
+export 'model/media_service.dart';
 export 'model/delete_response.dart';
 export 'model/diff_log_entry.dart';
 export 'model/flexi_date.dart';

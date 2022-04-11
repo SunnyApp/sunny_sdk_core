@@ -60,7 +60,7 @@ class UserDetails {
   P source<P>() {
     return _source as P;
   }
-  
+
   P? sourceOrNull<P>() {
     return _source is P && _source is! String ? _source as P : null;
   }

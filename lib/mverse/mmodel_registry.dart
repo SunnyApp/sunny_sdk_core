@@ -1,8 +1,9 @@
 import 'package:sunny_dart/helpers/functions.dart';
+import 'package:sunny_dart/helpers/lists.dart';
 import 'package:sunny_dart/helpers/logging_mixin.dart';
-import 'package:sunny_sdk_core/api_exports.dart';
 import 'package:sunny_sdk_core/mverse/mmodel_registry_mverse.dart';
 export 'mmodel_registry_mverse.dart';
+import 'm_base_model.dart';
 import 'm_model.dart';
 
 /// Contains all registered [MBaseModel] types to support deserialization.  The registry reads the mtype property in
@@ -35,15 +36,19 @@ class MModelRegistry with LoggingMixin, MModelFactoryRegistry {
 
   MModelFactory? lookupFactory(Object mtype) {
     final key = "$mtype";
-    final factory = _resolvers.map((resolver) => resolver(key)).firstWhere(notNull(), orElse: () {
+    final factory = _resolvers
+        .map((resolver) => resolver(key))
+        .firstWhere(notNull(), orElse: () {
       return lookupFactory(mtype);
     });
     return factory;
   }
 
   M instantiate<M extends MBaseModel>({dynamic json, MSchemaRef? type}) {
-    final Map<String, dynamic> map = (json as Map<String, dynamic>?) ?? <String, dynamic>{};
-    final mtype = _typeExtractors.map((extract) => extract(map)).firstWhere(notNull(),
+    final Map<String, dynamic> map =
+        (json as Map<String, dynamic>?) ?? <String, dynamic>{};
+    final mtype = _typeExtractors.map((extract) => extract(map)).firstWhere(
+        notNull(),
         orElse: () =>
             type?.toString() ??
             nullPointer<String>(
@@ -52,10 +57,12 @@ class MModelRegistry with LoggingMixin, MModelFactoryRegistry {
     final factory = lookupFactory(mtype!);
     if (factory == null && map.isNotEmpty) {
       if (M == MEntity || M == MModel || M == MBaseModel) {
-        log.severe("No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
+        log.severe(
+            "No mmodel type could be extracted from json payload.  Set either the mtype or mmeta/mtype properties");
         return DefaultMEntity(map) as M;
       } else {
-        throw Exception("No mmodel type could be extracted from json payload. Set either the mtype or mmeta/mtype properties");
+        throw Exception(
+            "No mmodel type could be extracted from json payload. Set either the mtype or mmeta/mtype properties");
       }
     }
     if (factory == null) {
@@ -64,7 +71,8 @@ class MModelRegistry with LoggingMixin, MModelFactoryRegistry {
     } else {
       final generated = factory(map);
       if (generated is! M) {
-        throw Exception("Factory was found, but did not generate the correct type");
+        throw Exception(
+            "Factory was found, but did not generate the correct type");
       }
       return generated;
     }

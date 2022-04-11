@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dartxx/json_path.dart';
 import 'package:logging/logging.dart';
 import 'package:sunny_dart/extensions.dart';
 import 'package:sunny_dart/helpers/error_methods.dart';
@@ -32,7 +31,8 @@ abstract class ApiException implements Exception {
     RequestBuilder? builder,
   ]) = ApiWrappedException;
 
-  factory ApiException.response(int statusCode, String message, {ApiErrorPayload? errors, RequestBuilder? builder}) {
+  factory ApiException.response(int statusCode, String message,
+      {ApiErrorPayload? errors, RequestBuilder? builder}) {
     if (statusCode == 400) {
       assert(errors == null);
       return BadRequestException.parsed(message, builder: builder);
@@ -49,16 +49,20 @@ abstract class ApiException implements Exception {
   const ApiException();
 
   @override
-  String toString() => builder == null ? message! : "${builder!.path}: $message";
+  String toString() =>
+      builder == null ? message! : "${builder!.path}: $message";
 }
 
 class ApiSocketException extends ApiWrappedException {
-  const ApiSocketException(this.exception, StackTrace trace, [RequestBuilder? builder]) : super(exception, trace, builder);
+  const ApiSocketException(this.exception, StackTrace trace,
+      [RequestBuilder? builder])
+      : super(exception, trace, builder);
 
   final Object exception;
 
   @override
-  String get message => "${(exception as dynamic).osError.message}: ${builder?.basePath ?? 'no base url'}";
+  String get message =>
+      "${(exception as dynamic).osError.message}: ${builder?.basePath ?? 'no base url'}";
 }
 
 class ApiWrappedException extends ApiException {
@@ -85,7 +89,9 @@ class ApiResponseException extends ApiException {
   final RequestBuilder? builder;
   ApiErrorPayload? _payload;
 
-  ApiResponseException._(this.statusCode, {this.message, this.builder, ApiErrorPayload? payload}) : _payload = payload;
+  ApiResponseException._(this.statusCode,
+      {this.message, this.builder, ApiErrorPayload? payload})
+      : _payload = payload;
 
   bool get isAuthError => statusCode == 401 || statusCode == 403;
 
@@ -103,16 +109,19 @@ class BadRequestException extends ApiResponseException {
       : _validationErrors = const [],
         super._(400);
 
-  BadRequestException(String? message, this._validationErrors, {RequestBuilder? builder})
+  BadRequestException(String? message, this._validationErrors,
+      {RequestBuilder? builder})
       : super._(400, message: message, builder: builder);
 
-  BadRequestException.parsed(String message, {RequestBuilder? builder}) : super._(400, message: message, builder: builder);
+  BadRequestException.parsed(String message, {RequestBuilder? builder})
+      : super._(400, message: message, builder: builder);
 
   BadRequestException.single(ValidationError error)
       : _validationErrors = [error],
         super._(400, message: error.message);
 
-  BadRequestException.singleField(String path, String message, {String? keyword})
+  BadRequestException.singleField(String path, String message,
+      {String? keyword})
       : _validationErrors = [
           ValidationError(
             path: JsonPath.parsed(path),
@@ -147,11 +156,13 @@ class BadRequestException extends ApiResponseException {
         other,
       ]);
     } else if (other is Iterable<ValidationError>) {
-      return BadRequestException(this.message, [..._validationErrors!, ...other]);
+      return BadRequestException(
+          this.message, [..._validationErrors!, ...other]);
     } else if (other is String) {
       return BadRequestException(other, _validationErrors);
     } else if (other is BadRequestException) {
-      return BadRequestException(other.message ?? this.message, [...this._validationErrors!, ...other._validationErrors!]);
+      return BadRequestException(other.message ?? this.message,
+          [...this._validationErrors!, ...other._validationErrors!]);
     } else {
       return wrongType("other", other, [Iterable, String, BadRequestException]);
     }
@@ -161,14 +172,16 @@ class BadRequestException extends ApiResponseException {
   static List<ValidationError> parseErrors(String message) {
     try {
       final decoded = json.decode(message);
-      final Map<String, dynamic>? errors = decoded["errors"] as Map<String, dynamic>?;
+      final Map<String, dynamic>? errors =
+          decoded["errors"] as Map<String, dynamic>?;
       if (errors == null) {
         return const [];
       }
       final mapped = [
         ...errors.entries.expand(
           (entry) {
-            final errorPath = JsonPath.parsed(entry.key, relativeTo: inputSchemaPath);
+            final errorPath =
+                JsonPath.parsed(entry.key, relativeTo: inputSchemaPath);
 
             return <ValidationError>[
               if (entry.value is! Iterable)
@@ -190,7 +203,8 @@ class BadRequestException extends ApiResponseException {
                             code: error["code"]?.toString(),
                             arguments: error["arguments"] as List?,
                           )
-                        : ValidationError.ofString(JsonPath.of(error), "$error");
+                        : ValidationError.ofString(
+                            JsonPath.of(error), "$error");
                   },
                 ),
             ];
@@ -245,7 +259,9 @@ class ValidationError {
 
   ValidationError._ofMap(Map<String, dynamic> map)
       : this(
-          path: JsonPath.of(map["pointerToViolation"]?.toString().substring(1) ?? map["field"]),
+          path: JsonPath.of(
+              map["pointerToViolation"]?.toString().substring(1) ??
+                  map["field"]),
           message: map['message'] as String?,
           debugMessage: (map['message'] ?? map['error']) as String?,
           code: map['code'] as String?,
@@ -269,7 +285,8 @@ class ValidationError {
       case formatCode:
         return "Invalid format";
       default:
-        _log.info("$path: ${debugMessage ?? "Falling back to default renderer"} for '$code' error; message: $message");
+        _log.info(
+            "$path: ${debugMessage ?? "Falling back to default renderer"} for '$code' error; message: $message");
         return message!;
     }
   }
