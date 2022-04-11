@@ -1,3 +1,9 @@
+## [2.4.0+14]
+ * Prepare for publish
+adding back fb auth
+Cleanup for gruntv2
+Before regrunt
+
 ## [2.4.0+13]
  * Prepare for publish
 Updating exports
