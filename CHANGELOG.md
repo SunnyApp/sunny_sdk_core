@@ -1,3 +1,7 @@
+## [2.4.0+16]
+ * Prepare for publish
+Removing unnecessary generics
+
 ## [2.4.0+14]
  * Prepare for publish
 adding back fb auth
