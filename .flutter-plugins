@@ -1,8 +1,4 @@
 # This is a generated file; do not edit or check into version control.
-firebase_auth=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_auth-3.2.0/
-firebase_auth_web=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-3.2.0/
-firebase_core=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.10.0/
-firebase_core_web=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.2.0/
 libphonenumber2=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/libphonenumber2-2.0.2+2/
 path_provider=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider-2.0.7/
 path_provider_android=/Users/ericm/.pub-cache/hosted/pub.dartlang.org/path_provider_android-2.0.7/
