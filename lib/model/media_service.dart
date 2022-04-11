@@ -1,14 +1,18 @@
 import 'dart:async';
 
-import 'package:dartxx/json_path.dart';
 import 'package:equatable/equatable.dart';
 import 'package:sunny_dart/sunny_dart.dart';
+import 'package:sunny_sdk_core/model.dart';
 
 IMediaService get mediaService => sunny.get<IMediaService>();
 
-abstract class IMediaService<Reporter> {
-  Reporter uploadMedia(final dynamic file, MediaContentType contentType,
-      {mediaType, String? mediaId, Reporter? progress, bool isDebug});
+abstract class IMediaService {
+  ProgressTracker<Uri> uploadMedia(
+      final dynamic file, MediaContentType contentType,
+      {mediaType,
+      String? mediaId,
+      ProgressTracker<Uri>? progress,
+      bool isDebug});
 
   /// Gets a relative path to the picture
   FutureOr<String> getMediaPath(MediaContentType contentType, String mediaId,
