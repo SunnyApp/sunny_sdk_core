@@ -13,7 +13,7 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   final _updateStream = StreamController<T>.broadcast();
   final SafeCompleter<T> isReady = SafeCompleter.stopped();
   T? _currentValue;
-  
+
   DataService({bool isLazy = false}) {
     if (!isLazy) {
       loadInitial();
@@ -21,7 +21,8 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     onLogout(() => reset());
   }
 
-  factory DataService.of({required _AsyncValueGetter<T> factory}) => _DataService(factory);
+  factory DataService.of({required _AsyncValueGetter<T> factory}) =>
+      _DataService(factory);
 
   @protected
   Future<T> loadInitial() {
@@ -32,7 +33,9 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
       return data;
     }).catchError((Object e, StackTrace stack) {
       log.severe("Error fetching data for service: $e", e, stack);
+      if (isReady.isNotStarted) isReady.start();
       isReady.completeError(e, stack);
+      this.reset();
       throw e;
     });
   }
@@ -71,7 +74,12 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   void reset() {
     _currentValue = null;
     isReady..reset();
-    if (!controller.isClosed) controller.add(null);
+    try {
+      if (!controller.isClosed && T.toString().endsWith('?'))
+        controller.add(null);
+    } catch (e) {
+      log.info('Unable to send a null value to stream: $e');
+    }
   }
 
   @protected

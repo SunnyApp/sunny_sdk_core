@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:sunny_dart/helpers.dart';
+import 'package:sunny_dart/info_x.dart';
 import 'package:sunny_sdk_core/api.dart';
 import 'package:sunny_sdk_core/model/user_pref_key.dart';
-import 'package:sunny_sdk_core/model_exports.dart';
 
 import 'i_auth_state.dart';
 import 'resolver_inits.dart';

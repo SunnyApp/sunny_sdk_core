@@ -16,6 +16,8 @@ class GeoLocation extends Equatable {
     if (dyn["lat"] != null && dyn["lon"] != null) {
       return GeoLocation(
           lat: dyn["lat"] as double?, lon: dyn["lon"] as double?);
+    } else {
+      return null;
     }
   }
 }

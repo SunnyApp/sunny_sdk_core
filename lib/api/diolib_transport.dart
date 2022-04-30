@@ -1,11 +1,9 @@
-import 'package:dio2/dio2.dart';
+import 'package:dio/dio.dart';
 import 'package:pfile/pfile_api.dart';
 import 'package:sunny_dart/extensions.dart';
 
 import '../query_param.dart';
-import '../request_builder.dart';
 import 'api_client_transport.dart';
-import 'api_exceptions.dart';
 
 extension MultipartFilePFile on PFile {
   MultipartFile toMultipartFile() {
@@ -56,7 +54,8 @@ class DioLibTransport extends ApiClientTransport {
     } on DioError catch (e) {
       return ApiResponse(
         e.response?.statusCode ?? 500,
-          e.response?.data?.toString() ?? e.message,);
+        e.response?.data?.toString() ?? e.message,
+      );
     }
   }
 }

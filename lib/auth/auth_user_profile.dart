@@ -21,12 +21,17 @@ class AuthUserProfile with EquatableMixin {
         status = AuthStatus.none,
         profile = null;
 
+  const AuthUserProfile.error(this.source)
+      : fbUser = null,
+        status = AuthStatus.error,
+        profile = null;
+
   Future<String> getIdToken({bool forceRefresh = false}) {
     return fbUser!.getIdToken(forceRefresh);
   }
 
   @override
-  List<Object?> get props => [fbUser?.uid, profile?.id];
+  List<Object?> get props => [fbUser?.uid, profile?.id, status,];
 }
 
 enum AuthEventSource {
@@ -40,6 +45,7 @@ enum AuthEventSource {
 }
 
 enum AuthStatus {
+  error,
   none,
   partial,
   full,

@@ -1,5 +1,7 @@
 // import 'package:sunny_sdk_core/mverse.dart';
 import 'package:meta/meta.dart';
+import 'package:sunny_sdk_core/api_exports.dart';
+import 'package:sunny_sdk_core/model.dart';
 import 'package:sunny_sdk_core/mverse/m_model.dart';
 import 'package:sunny_sdk_core/mverse/mmodel_registry.dart';
 
@@ -32,6 +34,10 @@ class PrimitiveApiReader implements ApiReader {
             value is bool ? value : '$value'.toLowerCase() == 'true';
       case 'double':
         return (value) => value is double ? value : double.parse('$value');
+      case 'Duration':
+        return (value) => timeSpanOf('${value}');
+      case 'TimeSpan':
+        return (value) => timeSpanOf('${value}');
       default:
         return null;
     }

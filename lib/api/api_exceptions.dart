@@ -143,7 +143,7 @@ class BadRequestException extends ApiResponseException {
       for (final e in payload.errors!)
         if (e.body["error"] is Iterable)
           ValidationError.ofJson(e.body["error"].first)
-        else if (e.body is Map)
+        else
           ValidationError.ofJson(e.body),
     ];
     return _;

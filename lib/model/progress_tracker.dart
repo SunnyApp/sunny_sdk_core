@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
-import 'package:sunny_dart/helpers/safe_completer.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 
 class ProgressTracker<T> extends ChangeNotifier {

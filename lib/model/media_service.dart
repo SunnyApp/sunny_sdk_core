@@ -23,7 +23,7 @@ abstract class IMediaService {
       {mediaType});
 }
 
-abstract class MediaContentType<F> extends Equatable {
+abstract class MediaContentType<F extends Object> {
   String get name;
 
   /// Probably same as name, but not always.
@@ -35,14 +35,19 @@ abstract class MediaContentType<F> extends Equatable {
 
   Uri? mediaUri(F fact);
 
-  F uriToMedia(Uri? uri);
+  F uriToMedia(Uri uri);
 
   List<String> get acceptedFileTypes;
-
-  @override
-  List<Object> get props => [name];
 
   F newContent();
 
   const MediaContentType();
+}
+
+/// Adds equality
+abstract class BaseMediaContentType<F extends Object>
+    extends MediaContentType<F> with EquatableMixin {
+  List get props => [name];
+
+  const BaseMediaContentType() : super();
 }

@@ -85,13 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.5.4"
-  dio2:
+  dio:
     dependency: "direct main"
     description:
-      name: dio2
+      name: dio
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0-nullsafety"
+    version: "4.0.6"
   equatable:
     dependency: "direct main"
     description:

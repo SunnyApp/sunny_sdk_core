@@ -10,6 +10,7 @@ import 'package:timezone/timezone.dart';
 import 'entity_extensions.dart';
 
 import 'm_base_model.dart';
+import 'mmodel_registry.dart';
 
 final _equalsChecker = DeepCollectionEquality.unordered();
 
@@ -107,9 +108,9 @@ class MModel with DiffDelegateMixin implements Entity, MapModel, MBaseModel {
     }
   }
 
-  // static MModel? fromJson(json) {
-  //   return mmodelRegistry.instantiate(json: json);
-  // }
+  static MModel? fromJson(json) {
+    return mmodelRegistry.instantiate(json: json);
+  }
 
   T getByPath<T>(JsonPath path) {
     dynamic value = this;
@@ -177,7 +178,7 @@ class MModel with DiffDelegateMixin implements Entity, MapModel, MBaseModel {
   bool operator ==(other) {
     if (other is! MModel) return false;
     final isEqual = _equalsChecker.equals(wrapped, other.wrapped);
-    return other is MModel && isEqual;
+    return isEqual;
   }
 
   Set<JsonPath> get ignoredPaths => const {};
@@ -232,9 +233,9 @@ abstract class MEntity extends MModel implements HasMverseMeta {
 
   String? get id => mmeta.mkey?.value;
 
-  // static MEntity? fromJson(json) {
-  //   return mmodelRegistry.instantiate(json: json);
-  // }
+  static MEntity? fromJson(json) {
+    return mmodelRegistry.instantiate(json: json);
+  }
 
   /// For [Diffable]
   dynamic get diffSource => {
@@ -458,11 +459,6 @@ class MSchemaRef extends MArtifactRef implements HasBaseCode {
     final operationName = "${artifactId}List";
     return MOperationRef(developer, module, operationName, version);
   }
-  //
-  // MModel? newInstance([json]) {
-  //   return mmodelRegistry.instantiate(
-  //       json: json ?? <String, dynamic>{}, type: this);
-  // }
 
   RecordKey? recordKey(String id) => mkey(id)?.recordKey;
 

@@ -1,9 +1,6 @@
 import 'package:sunny_sdk_core/api/api_client_transport.dart';
 import 'package:sunny_sdk_core/api_exports.dart';
 
-import '../api.dart';
-import '../auth.dart';
-
 /// A portable object for passing api configuration across isolates.
 class ApiConfig {
   final String basePath;

@@ -4,7 +4,6 @@ import 'package:dartxx/disposable.dart';
 import 'package:meta/meta.dart';
 import 'package:logging/logging.dart';
 import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
-import 'package:sunny_dart/sunny_get.dart';
 import 'package:sunny_sdk_core/services/sunny.dart';
 
 import 'i_auth_state.dart';
@@ -38,7 +37,8 @@ abstract class LifecycleAwareBase implements HasDisposers {
 
 typedef AsyncOrCallback = FutureOr Function();
 mixin LifecycleAwareMixin implements LifecycleAwareBase {
-  Stream<AuthUserProfile> get userStateStream => sunny.authState.userStateStream;
+  Stream<AuthUserProfile> get userStateStream =>
+      sunny.authState.userStateStream;
   @override
   Logger get log;
 
@@ -98,7 +98,8 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   @override
   R exec<R>(R block()) {
     if (isShuttingDown()) {
-      log.severe("Trying to invoke function while shutting down", null, StackTrace.current);
+      log.severe("Trying to invoke function while shutting down", null,
+          StackTrace.current);
       return null as R;
     } else {
       return block();
@@ -126,7 +127,8 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
         await shutdown();
       }
     } else {
-      log.warning("  - ${log.name} was already shutting down and we tried to shutdown again");
+      log.warning(
+          "  - ${log.name} was already shutting down and we tried to shutdown again");
     }
   }
 }
@@ -158,7 +160,8 @@ extension LifecycleAwareBaseExt on LifecycleAwareBase {
     });
   }
 
-  Future autoSubscribe(String name, LifecycleCallback<StreamSubscription> generate) async {
+  Future autoSubscribe(
+      String name, LifecycleCallback<StreamSubscription> generate) async {
     onStartup(() async {
       final subscribe = await generate();
 
@@ -168,7 +171,8 @@ extension LifecycleAwareBaseExt on LifecycleAwareBase {
     });
   }
 
-  Future autoStream<T>(LifecycleCallback<Stream<T>> stream, {bool cancelOnError = false}) async {
+  Future autoStream<T>(LifecycleCallback<Stream<T>> stream,
+      {bool cancelOnError = false}) async {
     onStartup(() async {
       final subscribe = (await stream()).listen((_) {}, cancelOnError: false);
 
