@@ -1,7 +1,9 @@
-# melos_managed_dependency_overrides: dartxx,pfile,sunny_dart
+# melos_managed_dependency_overrides: dartxx,pfile,sunny_dart,flexidate
 dependency_overrides:
   dartxx:
     path: ../dartxx
+  flexidate:
+    path: ../flexidate
   pfile:
     path: ../pfile
   sunny_dart:
