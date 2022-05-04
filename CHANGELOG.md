@@ -1,3 +1,35 @@
+## 2.5.0
+
+ - Graduate package to a stable release. See pre-releases prior to this version for changelog entries.
+
+## 2.5.0-dev.6
+
+ - **FEAT**: bumping version.
+
+## 2.5.0-dev.5
+
+ - **FEAT**: bumping version.
+
+## 2.5.0-dev.4
+
+ - **FEAT**: bumping version.
+
+## 2.5.0-dev.3
+
+ - **FEAT**: bumping version.
+
+## 2.5.0-dev.2
+
+ - **FEAT**: bumping version.
+
+## 2.5.0-dev.1
+
+ - **FEAT**: bumping version.
+
+## 2.5.0-dev.0
+
+ - **FEAT**: bumping version.
+
 ## [2.4.0+16]
  * Prepare for publish
 Removing unnecessary generics
