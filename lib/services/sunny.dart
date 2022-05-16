@@ -52,6 +52,15 @@ class SunnyCore implements SunnyGet {
   T get<T>({dynamic context, String? name}) =>
       _resolveOrError<T>(name, context as BuildContext?);
 
+  T? find<T extends Object>({dynamic context, String? name}) {
+    try {
+      return _verifyResolver<T>()
+          .resolve<T>(context as BuildContext? ?? buildContext);
+    } catch (e) {
+      return null;
+    }
+  }
+
   T _resolveOrError<T>(String? name, BuildContext? context) =>
       _verifyResolver<T>().resolve<T>(context ?? buildContext) ??
       illegalState("Cannot locate ${name ?? "$T"}");

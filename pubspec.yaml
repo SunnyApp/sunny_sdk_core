@@ -6,13 +6,11 @@ environment:
   sdk: '>=2.14.0 <3.0.0'
   flutter: '>=2.0.0'
 dependencies: 
-  firebase_auth: ^3.3.17
+  firebase_auth: ^3.3.18
   buffer: ^1.1.1
   chunked_stream: ^1.4.1
-  collection: ^1.15.0
+  collection: ^1.16.0
   equatable: ^2.0.3
-  pfile: ^2.2.0
-  flexidate: ^0.8.0+3
   meta: ^1.7.0
   intl: ^0.17.0
   http: ^0.13.4
@@ -20,9 +18,16 @@ dependencies:
   path_provider: ^2.0.7
   stream_transform: ^2.0.0
   timezone: ^0.8.0
-  collection_diff: ^2.0.3+6
   dio: ^4.0.6
-  sunny_dart: ^0.11.1
-  dartxx: ^0.5.5
+  collection_diff: 
+    path: /Users/ericm/sunny/player_rank/packages/collection_diff
+  pfile: 
+    path: /Users/ericm/sunny/player_rank/packages/pfile
+  flexidate: 
+    path: /Users/ericm/sunny/player_rank/packages/flexidate
+  sunny_dart: 
+    path: /Users/ericm/sunny/player_rank/packages/sunny_dart
+  dartxx: 
+    path: /Users/ericm/sunny/player_rank/packages/dartxx
   flutter: 
     sdk: flutter

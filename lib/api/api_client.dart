@@ -109,7 +109,16 @@ class ApiClient with LoggingMixin {
     // Remove all spaces.  Ne|cessary for reg expressions as well.
     final targetType = "$T".replaceAll(' ', '');
 
-    var decodedJson = json.decode(jsonVal);
+    late dynamic decodedJson;
+    try {
+      decodedJson = json.decode(jsonVal);
+    } catch (e, stack) {
+      log.severe('Error decoding $T from response: $e', e, stack);
+      log.severe('---  VALUE ---');
+      log.severe(jsonVal);
+      log.severe('-------------');
+      throw ApiException.runtimeError(e, stack);
+    }
     return _deserialize(decodedJson, targetType) as T?;
   }
 

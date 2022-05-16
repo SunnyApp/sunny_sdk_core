@@ -42,6 +42,9 @@ abstract class MediaContentType<F extends Object> {
   F newContent();
 
   const MediaContentType();
+
+  @override
+  String toString() => fileType;
 }
 
 /// Adds equality
@@ -50,4 +53,7 @@ abstract class BaseMediaContentType<F extends Object>
   List get props => [name];
 
   const BaseMediaContentType() : super();
+
+  @override
+  String toString() => fileType;
 }
