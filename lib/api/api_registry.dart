@@ -11,7 +11,6 @@ import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
 import 'package:sunny_sdk_core/model/change_result.dart';
 import 'package:sunny_sdk_core/model/delete_response.dart';
 import 'package:sunny_sdk_core/services/lifecycle_aware.dart';
-import 'package:sunny_sdk_core/services/sunny.dart';
 
 ApiRegistry get apiRegistry => sunny.get();
 

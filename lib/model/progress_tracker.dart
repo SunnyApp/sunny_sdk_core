@@ -93,6 +93,10 @@ class ProgressTracker<T> extends ChangeNotifier {
     update(progress - 1.0);
   }
 
+  void increment([double amount = 1.0]) {
+    update(progress + amount);
+  }
+
   void reset() {
     update(0.0);
   }

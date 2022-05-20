@@ -4,8 +4,9 @@ import 'package:dartxx/disposable.dart';
 import 'package:meta/meta.dart';
 import 'package:logging/logging.dart';
 import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
-import 'package:sunny_sdk_core/services/sunny.dart';
+import 'package:sunny_sdk_core/sunny_sdk_core.dart';
 
+import '../model_exports.dart';
 import 'i_auth_state.dart';
 
 typedef _AsyncCallback = FutureOr Function();

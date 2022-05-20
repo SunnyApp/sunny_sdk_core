@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:sunny_sdk_core/api_exports.dart';
+import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_sdk_core/services.dart';
 
 class RecordEvent<D extends Object> with EquatableMixin {
@@ -33,8 +33,12 @@ class RecordEventService with LoggingMixin, LifecycleAwareMixin {
 }
 
 extension StreamOfEventExt<D extends Object> on Stream<RecordEvent<D>> {
-  Stream<RecordEvent<DD>> recordType<DD extends Object>() => where((event) => event is RecordEvent<DD>).cast<RecordEvent<DD>>();
-  Stream<RecordEvent<D>> get delete => where((event) => event.eventType == RecordEventType.delete);
-  Stream<RecordEvent<D>> get create => where((event) => event.eventType == RecordEventType.create);
-  Stream<RecordEvent<D>> get update => where((event) => event.eventType == RecordEventType.update);
+  Stream<RecordEvent<DD>> recordType<DD extends Object>() =>
+      where((event) => event is RecordEvent<DD>).cast<RecordEvent<DD>>();
+  Stream<RecordEvent<D>> get delete =>
+      where((event) => event.eventType == RecordEventType.delete);
+  Stream<RecordEvent<D>> get create =>
+      where((event) => event.eventType == RecordEventType.create);
+  Stream<RecordEvent<D>> get update =>
+      where((event) => event.eventType == RecordEventType.update);
 }

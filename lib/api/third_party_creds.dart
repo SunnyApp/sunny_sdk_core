@@ -1,4 +1,4 @@
-import 'package:sunny_sdk_core/api_exports.dart';
+import 'package:sunny_dart/helpers/functions.dart';
 
 class ThirdPartyApi<C> {
   final String key;
@@ -47,5 +47,6 @@ class ClientIdSecretCredentials {
   final String? clientSecret;
   final String? redirectUrl;
 
-  ClientIdSecretCredentials({this.clientId, this.clientSecret, this.redirectUrl});
+  ClientIdSecretCredentials(
+      {this.clientId, this.clientSecret, this.redirectUrl});
 }

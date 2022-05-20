@@ -1,5 +1,6 @@
+import 'package:dartxx/dartxx.dart';
 import 'package:equatable/equatable.dart';
-import 'package:sunny_sdk_core/model_exports.dart';
+import 'package:sunny_dart/helpers/functions.dart';
 
 RProxyServer? _rp;
 

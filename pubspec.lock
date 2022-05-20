@@ -60,7 +60,7 @@ packages:
   collection_diff:
     dependency: "direct main"
     description:
-      path: "/Users/ericm/sunny/player_rank/packages/collection_diff"
+      path: "/Users/ericm/sunny/local_plugins/collection_diff"
       relative: false
     source: path
     version: "2.0.3+6"
@@ -81,7 +81,7 @@ packages:
   dartxx:
     dependency: "direct main"
     description:
-      path: "/Users/ericm/sunny/player_rank/packages/dartxx"
+      path: "/Users/ericm/sunny/local_plugins/dartxx"
       relative: false
     source: path
     version: "0.5.5"
@@ -165,7 +165,7 @@ packages:
   flexidate:
     dependency: "direct main"
     description:
-      path: "/Users/ericm/sunny/player_rank/packages/flexidate"
+      path: "/Users/ericm/sunny/local_plugins/flexidate"
       relative: false
     source: path
     version: "0.8.0+3"
@@ -206,9 +206,9 @@ packages:
     source: hosted
     version: "0.5.3+2"
   info_x:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "/Users/ericm/sunny/player_rank/packages/info_x"
+      path: "/Users/ericm/sunny/local_plugins/info_x"
       relative: false
     source: path
     version: "0.8.0+3"
@@ -229,9 +229,9 @@ packages:
   libphonenumber2:
     dependency: transitive
     description:
-      name: libphonenumber2
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "/Users/ericm/sunny/local_plugins/flutter-libphonenumber"
+      relative: false
+    source: path
     version: "2.0.2+2"
   logging:
     dependency: "direct main"
@@ -274,7 +274,7 @@ packages:
       name: path_provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.7"
+    version: "2.0.10"
   path_provider_android:
     dependency: transitive
     description:
@@ -295,7 +295,7 @@ packages:
       name: path_provider_linux
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.2"
   path_provider_macos:
     dependency: transitive
     description:
@@ -316,7 +316,7 @@ packages:
       name: path_provider_windows
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.6"
   pedantic:
     dependency: transitive
     description:
@@ -327,7 +327,7 @@ packages:
   pfile:
     dependency: "direct main"
     description:
-      path: "/Users/ericm/sunny/player_rank/packages/pfile"
+      path: "/Users/ericm/sunny/local_plugins/pfile"
       relative: false
     source: path
     version: "2.2.0"
@@ -341,9 +341,9 @@ packages:
   platform_detect2:
     dependency: transitive
     description:
-      name: platform_detect2
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../platform_detect"
+      relative: true
+    source: path
     version: "1.5.0+2"
   plugin_platform_interface:
     dependency: transitive
@@ -365,7 +365,7 @@ packages:
       name: pub_semver
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.1"
   quiver:
     dependency: transitive
     description:
@@ -423,7 +423,7 @@ packages:
   sunny_dart:
     dependency: "direct main"
     description:
-      path: "/Users/ericm/sunny/player_rank/packages/sunny_dart"
+      path: "/Users/ericm/sunny/local_plugins/sunny_dart"
       relative: false
     source: path
     version: "0.11.1"
@@ -475,7 +475,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.5"
+    version: "3.0.6"
   vector_math:
     dependency: transitive
     description:
@@ -498,5 +498,5 @@ packages:
     source: hosted
     version: "0.2.0"
 sdks:
-  dart: ">=2.17.0-0 <3.0.0"
+  dart: ">=2.17.0 <3.0.0"
   flutter: ">=2.5.0"
