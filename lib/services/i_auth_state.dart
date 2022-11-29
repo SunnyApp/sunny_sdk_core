@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
 
 abstract class IAuthState {
@@ -8,6 +9,8 @@ abstract class IAuthState {
   String? get accountId;
 
   UserDetails? get currentUser;
+  
+  set currentUser(UserDetails? currentUser);
 
   AuthUserProfile? get current;
 
@@ -16,4 +19,6 @@ abstract class IAuthState {
   void onPreLogout(Future<bool> onPreLogout());
 
   Stream<AuthUserProfile?> get onUserChange;
+
+  Future refreshUserProfile(BuildContext context);
 }

@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
+
 class QueryParams extends MapMixin<String, dynamic> {
   final Map<String, List<String>> _values = {};
 
@@ -11,6 +13,14 @@ class QueryParams extends MapMixin<String, dynamic> {
   Iterable<MapEntry<String, String>> flattened() {
     return _values.entries.expand(
         (element) => element.value.map((v) => MapEntry(element.key, v)));
+  }
+
+  Map<String, dynamic> compact() {
+    return {
+      for (var entry in _values.entries)
+        entry.key:
+            entry.value.length > 1 ? entry.value : entry.value.firstOrNull,
+    };
   }
 
   @override

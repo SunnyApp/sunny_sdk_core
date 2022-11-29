@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dartxx/dartxx.dart';
 import 'package:meta/meta.dart';
 
 import 'package:sunny_dart/helpers/logging_mixin.dart';
@@ -8,21 +9,34 @@ import 'package:sunny_sdk_core/services.dart';
 
 typedef _AsyncValueGetter<R> = Future<R> Function();
 
+const _kMaxRetries = 15;
+
 /// Container for data that allows easy subscriptions and rendering
 abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   final _updateStream = StreamController<T>.broadcast();
   final SafeCompleter<T> isReady = SafeCompleter.stopped();
   T? _currentValue;
+  var _errorCount = 0;
 
-  DataService({bool isLazy = false}) {
+  DataService({bool isLazy = false, bool resetOnLogout = true}) {
     if (!isLazy) {
       loadInitial();
     }
-    onLogout(() => reset());
+    if (resetOnLogout == true)
+      onLogout(() {
+        reset();
+      });
   }
 
-  factory DataService.of({required _AsyncValueGetter<T> factory}) =>
-      _DataService(factory);
+  factory DataService.of(
+          {required _AsyncValueGetter<T> factory,
+          bool isLazy = false,
+          bool resetOnLogout = true}) =>
+      _DataService(
+        factory,
+        isLazy: isLazy,
+        resetOnLogout: resetOnLogout,
+      );
 
   @protected
   Future<T> loadInitial() {
@@ -30,14 +44,39 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
 
     return internalFetchData().then((data) {
       this._internalUpdate(data);
+      if (_errorCount > 0) {
+        log.warning('Record fetched after failing $_errorCount times');
+        _errorCount = 0;
+      }
+
       return data;
     }).catchError((Object e, StackTrace stack) {
       log.severe("Error fetching data for service: $e", e, stack);
       if (isReady.isNotStarted) isReady.start();
       isReady.completeError(e, stack);
       this.reset();
+      _errorCount++;
+      _scheduleRetry();
       throw e;
     });
+  }
+
+  _scheduleRetry() {
+    if (_errorCount < _kMaxRetries) {
+      var duration = Duration(milliseconds: 500 + (100 * (2 ^ _errorCount)));
+      Future.delayed(
+        duration,
+        () {
+          if (_errorCount > 0) {
+            log.warning(
+                'Retry after waiting ${(duration.inMilliseconds / 1000).roundTo(3)} seconds');
+            loadInitial();
+          }
+        },
+      );
+    } else {
+      log.severe('Failed after $_currentValue attempts');
+    }
   }
 
   Stream<T> get updateStream async* {
@@ -149,5 +188,12 @@ class _DataService<T> extends DataService<T> {
     return _internalFetchData();
   }
 
-  _DataService(this._internalFetchData) : super();
+  _DataService(
+    this._internalFetchData, {
+    bool isLazy = false,
+    bool resetOnLogout = true,
+  }) : super(
+          isLazy: isLazy,
+          resetOnLogout: resetOnLogout,
+        );
 }

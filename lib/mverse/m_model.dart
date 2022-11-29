@@ -149,7 +149,7 @@ class MModel with DiffDelegateMixin implements Entity, MapModel, MBaseModel {
     final parents = path.chop;
     dynamic container = this;
     for (var segment in parents.segments) {
-      container = container.get(segment);
+      container = container.getVideoDetails(segment);
       if (container == null) {
         throw Exception(
             "Missing container in heirarchy.  Full path: $path.  Error found at segment $segment");

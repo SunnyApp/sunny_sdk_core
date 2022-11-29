@@ -43,7 +43,6 @@ class DioLibTransport extends ApiClientTransport {
     try {
       final _resp = await dio.request<String>(url,
           data: _body,
-          queryParameters: queryParams,
           options: Options(
             method: method!,
             contentType: contentType!,
@@ -55,6 +54,49 @@ class DioLibTransport extends ApiClientTransport {
       return ApiResponse(
         e.response?.statusCode ?? 500,
         e.response?.data?.toString() ?? e.message,
+      );
+    }
+  }
+
+  @override
+  Future<ApiStreamResponse> streamAPI(
+      String path,
+      String? method,
+      QueryParams queryParams,
+      Iterable<PFile> files,
+      Object? body,
+      Map<String, String?> headerParams,
+      Map<String, String> formParams,
+      String? contentType,
+      {String? basePath}) async {
+    basePath ??= this.basePath;
+
+    String url = basePath + path;
+
+    final _body = (contentType == "application/x-www-form-urlencoded" ||
+            files.isNotNullOrEmpty)
+        ? FormData.fromMap({
+            for (var f in files) f.name!: f.toMultipartFile(),
+            ...formParams,
+          })
+        : serialize(body);
+
+    try {
+      final _resp = await dio.request<ResponseBody>(url,
+          data: _body,
+          queryParameters: queryParams,
+          options: Options(
+            method: method!,
+            contentType: contentType!,
+            headers: headerParams,
+          ));
+      var rdata = _resp.data;
+
+      return ApiStreamResponse(_resp.statusCode!, rdata!.stream);
+    } on DioError catch (e) {
+      return ApiStreamResponse(
+        e.response?.statusCode ?? 500,
+        Stream.value((e.response?.data?.toString() ?? e.message).codeUnits),
       );
     }
   }

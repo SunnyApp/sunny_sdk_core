@@ -55,6 +55,8 @@ class ProgressTracker<T> extends ChangeNotifier {
 
   Future<T> get result => _completer.future;
 
+  Timer? _timer;
+
   @override
   void dispose() {
     if (!_isDisposed) {
@@ -67,7 +69,24 @@ class ProgressTracker<T> extends ChangeNotifier {
     update(progress, newTask: newTask);
   }
 
-  void update(double progress, {String? newTask, double? total}) {
+  ///
+  /// Updates towards a certain value by half of the remaining each period
+  void updateTowards(double progress,
+      {String? newTask,
+      double? total,
+      Duration duration = const Duration(milliseconds: 750)}) {
+    _timer?.cancel();
+    _timer = Timer.periodic(duration, (timer) {
+      var nextAmount = (this.progress - progress) / 2;
+      update(nextAmount, newTask: newTask, total: total, clearTimer: false);
+    });
+  }
+
+  void update(double progress,
+      {String? newTask, double? total, bool clearTimer = true}) {
+    if (clearTimer && _timer != null) {
+      _timer!.cancel();
+    }
     bool isDifferent =
         this.progress != progress || (newTask != null && newTask != this.task);
     if (total != null) {

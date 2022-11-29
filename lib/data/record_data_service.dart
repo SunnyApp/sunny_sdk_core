@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:sunny_dart/helpers/logging_mixin.dart';
+import 'package:sunny_sdk_core/model_exports.dart';
 import 'package:sunny_sdk_core/sunny_sdk_core.dart';
 
 typedef RecordLoader<RType, KType> = Future<RType> Function(KType id);
@@ -19,7 +20,10 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   /// This stream contains updates only - no loads
   final _allChangeStream = StreamController<StreamChange<RType>>.broadcast();
 
-  RecordDataService();
+  final bool isLazy;
+  final bool resetOnLogout;
+
+  RecordDataService({this.resetOnLogout = true, this.isLazy = false});
 
   factory RecordDataService.of(
           {required KeyMapper<RType, KType> idMapper,
@@ -116,13 +120,11 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
     return s.currentValue;
   }
 
-  Iterable<RType?> get loadedRecords {
+  Iterable<RType> get loadedRecords {
     final copy = [
-      ..._recordStreams.values
-          .map((_) => _.currentValue)
-          .where((_) => _ != null)
+      ..._recordStreams.values.map((_) => _.currentValue).whereNotNull(),
     ];
-    return copy;
+    return copy.cast();
   }
 
   @override
@@ -169,6 +171,8 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
       () {
         final KType outerRecordId = recordId;
         return DataService.of(
+          isLazy: isLazy,
+          resetOnLogout: resetOnLogout,
           factory: () async {
             log.info("Fetching $RType with id: $outerRecordId");
             final RType loaded = await this.internalFetchRecord(outerRecordId);
@@ -218,7 +222,7 @@ mixin RecordDataServiceMixin<RType, KType>
   Future<RType>? tryRefreshRecord(KType recordId) =>
       delegate.tryRefreshRecord(recordId);
 
-  Iterable<RType?> get loadedRecords => delegate.loadedRecords;
+  Iterable<RType> get loadedRecords => delegate.loadedRecords;
 
   Future updateRecord(KType id, Future update(RType? record),
           {bool silent = false}) =>
@@ -261,6 +265,10 @@ mixin RecordDataServiceMixin<RType, KType>
 
   @override
   Future<RType?> getRecord(KType recordId) => delegate.getRecord(recordId);
+
+  Stream<RType> get dataStream => delegate.dataStream;
+  bool get isLazy => delegate.isLazy;
+  bool get resetOnLogout => delegate.resetOnLogout;
 }
 
 extension RecordDateServiceUpdate<RType, KType>
