@@ -142,7 +142,91 @@ class ApiClient with LoggingMixin {
         request.headerParams,
         request.formParams,
         request.contentType,
-        basePath: request.basePath);
+        basePath: request.basePath ?? this.basePath);
+  }
+
+  // We don't use a Map<String, String> for queryParams.
+  // If collectionFormat is 'multi' a key might appear multiple times.
+  Future<ApiStreamResponse> invokeStreamRequest(RequestBuilder request) async {
+    final authNames = request.authNames ??
+        [
+          if (defaultAuthName != null) defaultAuthName!,
+        ];
+
+    await updateParamsForAuth(
+        authNames.toSet(), request.queryParams, request.headerParams);
+
+    return transport.streamAPI(
+        request.requestRelativeUrl,
+        request.method.enumValue,
+        request.queryParams,
+        request.files,
+        request.body,
+        request.headerParams,
+        request.formParams,
+        request.contentType,
+        basePath: request.basePath ?? this.basePath);
+  }
+
+  Future<ApiResponse> buildRequest(void build(RequestBuilder builder)) {
+    var base = RequestBuilder()
+      ..method = HttpMethod.GET
+      ..basePath = this.basePath
+      ..contentType = 'application/json';
+    build(base);
+    return invokeRequest(base);
+  }
+
+  Future<ApiStreamResponse> stream(void build(RequestBuilder builder)) {
+    var base = RequestBuilder()
+      ..method = HttpMethod.GET
+      ..basePath = this.basePath
+      ..contentType = 'application/json';
+    build(base);
+    return invokeStreamRequest(base);
+  }
+
+  Future<dynamic> post(void build(RequestBuilder builder)) async {
+    var base = RequestBuilder()
+      ..method = HttpMethod.POST
+      ..basePath = this.basePath
+      ..contentType = 'application/json';
+    build(base);
+    var resp = await invokeRequest(base);
+    if (resp.statusCode != 200) {
+      throw ApiException.response(resp.statusCode, await resp.body);
+    } else {
+      return json.decode(await resp.body);
+    }
+  }
+
+  Future<dynamic> put(void build(RequestBuilder builder)) async {
+    var base = RequestBuilder()
+      ..method = HttpMethod.PUT
+      ..basePath = this.basePath
+      ..contentType = 'application/json';
+    build(base);
+    var resp = await invokeRequest(base);
+    if (resp.statusCode != 200) {
+      throw ApiException.response(resp.statusCode, await resp.body);
+    } else {
+      return await resp.json;
+    }
+  }
+
+  Future<dynamic> get(void build(RequestBuilder builder)) async {
+    var base = RequestBuilder()
+      ..method = HttpMethod.GET
+      ..contentType = 'application/json'
+      ..basePath = this.basePath;
+    build(base);
+    var resp = await invokeRequest(base);
+
+    if (resp.statusCode != 200) {
+      throw ApiException.response(resp.statusCode, await resp.body);
+    } else {
+      return await resp.json;
+    }
   }
 
   // We don't use a Map<String, String> for queryParams.

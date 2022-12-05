@@ -19,7 +19,10 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   /// This stream contains updates only - no loads
   final _allChangeStream = StreamController<StreamChange<RType>>.broadcast();
 
-  RecordDataService();
+  final bool isLazy;
+  final bool resetOnLogout;
+
+  RecordDataService({this.resetOnLogout = true, this.isLazy = false});
 
   factory RecordDataService.of(
           {required KeyMapper<RType, KType> idMapper,
@@ -169,6 +172,8 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
       () {
         final KType outerRecordId = recordId;
         return DataService.of(
+          isLazy: isLazy,
+          resetOnLogout: resetOnLogout,
           factory: () async {
             log.info("Fetching $RType with id: $outerRecordId");
             final RType loaded = await this.internalFetchRecord(outerRecordId);
@@ -261,6 +266,10 @@ mixin RecordDataServiceMixin<RType, KType>
 
   @override
   Future<RType?> getRecord(KType recordId) => delegate.getRecord(recordId);
+
+  Stream<RType> get dataStream => delegate.dataStream;
+  bool get isLazy => delegate.isLazy;
+  bool get resetOnLogout => delegate.resetOnLogout;
 }
 
 extension RecordDateServiceUpdate<RType, KType>

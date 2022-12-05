@@ -31,7 +31,11 @@ class AuthUserProfile with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [fbUser?.uid, profile?.id, status,];
+  List<Object?> get props => [
+        fbUser?.uid,
+        profile?.id,
+        status,
+      ];
 }
 
 enum AuthEventSource {
@@ -40,6 +44,7 @@ enum AuthEventSource {
   failed,
   initial,
   manual,
+  refreshProfile,
   framework,
   postSignup
 }
@@ -69,5 +74,25 @@ class UserDetails {
 
   P? sourceOrNull<P>() {
     return _source is P && _source is! String ? _source as P : null;
+  }
+
+  UserDetails copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? phone,
+    String? pictureUrl,
+    String? firebaseId,
+    source,
+  }) {
+    return UserDetails(
+      source ?? this._source,
+      id ?? this.id,
+      name ?? this.name,
+      email ?? this.email,
+      pictureUrl ?? this.pictureUrl,
+      phone ?? this.phone,
+      firebaseId ?? this.firebaseId,
+    );
   }
 }

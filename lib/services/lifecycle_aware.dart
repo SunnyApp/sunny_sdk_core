@@ -46,9 +46,13 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   bool _isShuttingDown = false;
   bool? _isLoggedIn;
 
+  bool get isLoggedIn => _isLoggedIn == true;
+
   final _onShutdown = <AsyncOrCallback>[];
   final _onLogin = <AsyncOrCallback>[];
   final _onLogout = <AsyncOrCallback>[];
+
+  bool get isDisposing => _isShuttingDown;
 
   @protected
   void onShutdown(_AsyncCallback callback) {
@@ -67,7 +71,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
     if (_isLoggedIn == null) {
       _isLoggedIn = false;
       userStateStream.listen((state) async {
-        final isLoggedIn = state.fbUser == null;
+        final isLoggedIn = state.fbUser != null;
         if (isLoggedIn != _isLoggedIn) {
           this._isLoggedIn = isLoggedIn;
           final callbacks = isLoggedIn ? _onLogin : _onLogout;

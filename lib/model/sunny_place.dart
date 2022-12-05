@@ -1,6 +1,8 @@
 import 'package:sunny_dart/helpers/lists.dart';
 import 'package:sunny_sdk_core/mverse/m_model.dart';
 
+import 'geo_location.dart';
+
 Iterable<String>? addressToString(SunnyPlace? address) {
   if (address == null) {
     return null;
@@ -21,7 +23,8 @@ Iterable<String>? addressToString(SunnyPlace? address) {
 
 /// Represents a physical location.  Represented by a few different generated models.  See [Location]
 /// and [ContactAddress]
-abstract class SunnyPlace implements MModel {
+abstract class SunnyPlace {
+  GeoLocation? get geo;
   String? get name;
 
   String? get googlePlaceId;
@@ -44,6 +47,7 @@ abstract class SunnyPlace implements MModel {
 
   String? get countryCode;
 
+  set geo(GeoLocation? geo);
   set googlePlaceId(String? googlePlaceId);
 
   set name(String? name);
@@ -66,6 +70,39 @@ abstract class SunnyPlace implements MModel {
 
   set countryCode(String? countryCode);
 
+  void prune(Set<String> values);
 // PlaceDetails get placeDetails;
 // set placeDetails(PlaceDetails placeDetails);
+}
+
+extension SunnyPlaceHelperExt on SunnyPlace {
+  bool get hasGeo => geo?.lat != null && geo?.lon != null;
+}
+
+class DefaultSunnyPlace implements SunnyPlace {
+  GeoLocation? geo;
+  String? name;
+
+  String? googlePlaceId;
+
+  String? description;
+
+  String? type;
+
+  String? streetLineOne;
+
+  String? streetLineTwo;
+
+  String? streetLineThree;
+
+  String? locality;
+
+  String? region;
+
+  String? postalCode;
+
+  String? countryCode;
+
+  @override
+  void prune(Set<String> values) {}
 }

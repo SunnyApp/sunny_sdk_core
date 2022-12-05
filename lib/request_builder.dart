@@ -27,7 +27,16 @@ class RequestBuilder {
   String get requestRelativeUrl {
     var ps = queryParams.entries
         .where((entry) => entry.value != null)
-        .map((entry) => '${entry.key}=${entry.value}');
+        .expand((e) {
+      return e.value is Iterable
+          ? [
+              ...(e.value)
+                  .where((v) => v != null)
+                  .map((v) => MapEntry(e.key, v))
+            ]
+          : [MapEntry(e.key, e.value)];
+    }).map((entry) =>
+            '${entry.key}=${Uri.encodeQueryComponent(entry.value.toString())}');
     String queryString = ps.isNotEmpty ? '?' + ps.join('&') : '';
 
     var requestPath = path;

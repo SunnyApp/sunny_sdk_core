@@ -9,7 +9,7 @@ class HttpLibTransport extends ApiClientTransport {
   final Client client;
   final String basePath;
 
-  Future<ApiResponse> invokeAPI(
+  Future<ApiStreamResponse> streamAPI(
       String path,
       String? method,
       QueryParams queryParams,
@@ -70,7 +70,11 @@ class HttpLibTransport extends ApiClientTransport {
     //         ..basePath = basePath
     //         ..path = path);
     // } else {
-    return ApiResponse(response.statusCode, response.body);
+    return ApiStreamResponse(
+        response.statusCode,
+        Stream.value(
+          response.bodyBytes,
+        ));
     // }
   }
 
