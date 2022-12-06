@@ -1,43 +1,34 @@
 name: sunny_sdk_core
 author: eric@sunnyapp.co
-#version: 1.0.0+3
 publish_to: none
 description: Core libraries for swagger-generated sdks
 repository: https://github.com/SunnyApp/sunny_sdk_core.git
 environment: 
   sdk: '>=2.9.0 <3.0.0'
   flutter: '>=1.17.0 <3.0.0'
-dependencies:
-#  firebase_auth: ^0.20.0+1
-  firebase_auth: ^0.18.4+1
-  dio: ^3.0.10
+dependencies: 
+  firebase_auth: ^3.9.0
+  dio: ^4.0.6
   buffer: ^1.0.7
   chunked_stream: ^1.2.0
-  equatable: ^1.2.5
-
-  pfile: any
-#  google_maps_webservice: ^0.0.18
-  http: ^0.12.2
-  logging: ^0.11.4
-  path_provider: ^1.6.27
-  stream_transform: ^1.2.0
-#  meta_forms:
-#    path: ../meta_forms
-  responsive_builder: ^0.3.0
-  collection_diff: ^1.0.3
-#  sunny_forms:
-#    path: ../sunny_forms
-#  sunny_core_widgets:
-#    path: ../sunny_core_widgets
-  sunny_dart: ^0.6.0+4
-  m_entity: any
-dependency_overrides:
-#  flutter:
-#    path: ../flutter_fake
-  pfile:
+  equatable: ^2.0.5
+  http: ^0.13.5
+  logging: ^1.0.2
+  path_provider: ^2.0.11
+  stream_transform: ^2.0.0
+  responsive_builder: ^0.4.2
+  pfile: 
+    path: /Users/ericm/reliveit/checkout/SunnyApp/pfile
+  collection_diff: 
+    path: /Users/ericm/reliveit/checkout/SunnyApp/collection_diff
+  sunny_dart: 
+    path: /Users/ericm/reliveit/checkout/SunnyApp/sunny_dart
+  m_entity: 
+    path: /Users/ericm/reliveit/checkout/SunnyApp/sunny_entities/m_entity
+dependency_overrides: 
+  pfile: 
     path: ../pfile
-  sunny_dart:
+  sunny_dart: 
     path: ../sunny_dart
-  m_entity:
+  m_entity: 
     path: ../sunny_entities/m_entity
-
