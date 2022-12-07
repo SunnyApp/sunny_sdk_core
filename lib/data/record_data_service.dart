@@ -1,27 +1,32 @@
 import 'dart:async';
 
 import 'package:sunny_dart/helpers/logging_mixin.dart';
-import 'package:sunny_dart/sunny_get.dart';
-import 'package:meta/meta.dart';
-import 'package:sunny_sdk_core/services/lifecycle_aware.dart';
 import 'package:sunny_sdk_core/sunny_sdk_core.dart';
-
-import 'data_service.dart';
 
 typedef RecordLoader<RType, KType> = Future<RType> Function(KType id);
 typedef KeyMapper<RType, KType> = KType Function(RType input);
+
+class StreamChange<RType> {
+  final bool isLoad;
+  final RType? record;
+
+  StreamChange(this.isLoad, this.record);
+}
 
 abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   final _recordStreams = <KType, DataService<RType>>{};
 
   /// This stream contains updates only - no loads
-  final _changeStream = StreamController<RType>.broadcast();
+  final _allChangeStream = StreamController<StreamChange<RType>>.broadcast();
 
-  RecordDataService();
+  final bool isLazy;
+  final bool resetOnLogout;
+
+  RecordDataService({this.resetOnLogout = true, this.isLazy = false});
 
   factory RecordDataService.of(
-          {KeyMapper<RType, KType> idMapper,
-          RecordLoader<RType, KType> loader}) =>
+          {required KeyMapper<RType, KType> idMapper,
+          required RecordLoader<RType, KType> loader}) =>
       _RecordDataService(idMapper, loader);
 
   /// Retrieves the latest copy of the data from an external source
@@ -32,24 +37,30 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   @protected
   KType getIdForRecord(RType record);
 
-  void addToStream(RType record) {
+  void addToStream(RType? record, {bool isLoad = false, bool silent = false}) {
     exec(() {
       if (record != null) {
         final id = getIdForRecord(record);
-        _getOrCreateStream(id).currentValue = record;
-        _changeStream.add(record);
+        final _recordStream = _getOrCreateStream(id);
+        if (silent) {
+          _recordStream.updateQuiet(record);
+        } else {
+          _recordStream.currentValue = record;
+          _allChangeStream.add(StreamChange(isLoad, record));
+        }
       }
     });
   }
 
-  void updateRecord(KType id, Future update(RType record)) {
-    exec(() async {
+  Future updateRecord(KType id, Future update(RType? record),
+      {bool silent = false}) {
+    return exec(() async {
       final latest = await getRecord(id);
       final res = await update(latest);
       if (res is RType) {
-        addToStream(res);
+        addToStream(res, silent: silent);
       } else {
-        addToStream(latest);
+        addToStream(latest, silent: silent);
       }
     });
   }
@@ -60,24 +71,39 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
     for (final e in _recordStreams.entries) {
       await e.value.dispose();
     }
-    _changeStream.close();
+    _allChangeStream.close();
   }
 
-  Stream<RType> recordStream(KType recordId) {
+  /// @param: immediate Whether you want this stream to include the current value.  If false, only updates will be streamed.
+  Stream<RType?>? recordStream(KType recordId, {bool immediate = true}) {
     return exec(() {
-      return _getOrCreateStream(recordId).stream;
+      return immediate
+          ? _getOrCreateStream(recordId).stream.asBroadcastStream()
+          : _getOrCreateStream(recordId).updateStream.asBroadcastStream();
     });
   }
 
   Stream<RType> get changeStream {
-    if (!isShuttingDown()) {
+    if (isShuttingDown()) {
       return Stream.empty();
     } else {
-      return _changeStream.stream;
+      return _allChangeStream.stream
+          .where((r) => !r.isLoad && r.record != null)
+          .map((r) => r.record!);
     }
   }
 
-  Future<RType> getRecord(KType recordId) async {
+  /// Returns all changes/loads
+  /// use [changeStream] if you only want updates
+  Stream<RType> get dataStream {
+    if (isShuttingDown()) {
+      return Stream.empty();
+    } else {
+      return _allChangeStream.stream.map((r) => r.record!);
+    }
+  }
+
+  Future<RType?> getRecord(KType recordId) async {
     if (recordId == null) {
       log.warning("Null recordId passed for $RType");
       return null;
@@ -87,13 +113,13 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
     return got;
   }
 
-  RType tryGet(KType recordId) {
+  RType? tryGet(KType recordId) {
     if (recordId == null) return null;
     var s = _getOrCreateStream(recordId);
     return s.currentValue;
   }
 
-  Iterable<RType> get loadedRecords {
+  Iterable<RType?> get loadedRecords {
     final copy = [
       ..._recordStreams.values
           .map((_) => _.currentValue)
@@ -106,25 +132,34 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   Stream<AuthUserProfile> get userStateStream =>
       sunny.get<IAuthState>().userStateStream;
 
-  DataService<RType> tryGetService(KType recordId) {
+  DataService<RType>? tryGetService(KType recordId) {
     return _recordStreams[recordId];
   }
 
   @protected
-  DataService<RType> getService(KType recordId) {
+  DataService<RType>? getService(KType recordId) {
     return _recordStreams[recordId];
   }
 
-  Future<RType> refreshRecord(KType recordId) {
-    return exec(() => getService(recordId).refresh());
+  Future<RType>? refreshRecord(KType recordId) {
+    return exec(() => getService(recordId)!.refresh());
   }
 
-  Future<RType> tryRefreshRecord(KType recordId) {
-    return exec(() => tryGetService(recordId)?.refresh());
+  Future<RType>? tryRefreshRecord(KType recordId) {
+    return exec((() => tryGetService(recordId)?.refresh()));
   }
 
   bool isLoaded(KType recordId) {
     return _recordStreams.containsKey(recordId);
+  }
+
+  bool isInitialized(KType recordId) {
+    final record = _recordStreams[recordId];
+    if (record == null) {
+      return false;
+    } else {
+      return record.isReady.isCompleted;
+    }
   }
 
   DataService<RType> _getOrCreateStream(KType recordId) {
@@ -135,11 +170,14 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
     return _recordStreams.putIfAbsent(
       recordId,
       () {
-        final outerRecordId = recordId;
+        final KType outerRecordId = recordId;
         return DataService.of(
+          isLazy: isLazy,
+          resetOnLogout: resetOnLogout,
           factory: () async {
             log.info("Fetching $RType with id: $outerRecordId");
-            final loaded = await this.internalFetchRecord(outerRecordId);
+            final RType loaded = await this.internalFetchRecord(outerRecordId);
+            addToStream(loaded, isLoad: true);
             return loaded;
           },
         );
@@ -148,9 +186,10 @@ abstract class RecordDataService<RType, KType> with LifecycleAwareMixin {
   }
 }
 
-T _null<T>() => null;
+T? _null<T>() => null;
 
-DataService<T> nullDataService<T>() => DataService.of(factory: _null);
+DataService<T> nullDataService<T>() =>
+    DataService.of(factory: _null as Future<T> Function());
 
 /// Default implementation that uses closures to implement
 class _RecordDataService<RType, KType> extends RecordDataService<RType, KType>
@@ -168,10 +207,7 @@ class _RecordDataService<RType, KType> extends RecordDataService<RType, KType>
     return loader(id);
   }
 
-  _RecordDataService(this.idMapper, this.loader)
-      : assert(idMapper != null),
-        assert(loader != null),
-        super();
+  _RecordDataService(this.idMapper, this.loader) : super();
 }
 
 /// Can be used to apply the delegate pattern in cases where inheritance doesn't make sense.
@@ -180,27 +216,32 @@ mixin RecordDataServiceMixin<RType, KType>
   RecordDataService<RType, KType> get delegate;
 
   @override
-  Future<RType> refreshRecord(KType recordId) =>
+  Future<RType>? refreshRecord(KType recordId) =>
       delegate.refreshRecord(recordId);
 
   @override
-  Future<RType> tryRefreshRecord(KType recordId) =>
+  Future<RType>? tryRefreshRecord(KType recordId) =>
       delegate.tryRefreshRecord(recordId);
 
-  Iterable<RType> get loadedRecords => delegate.loadedRecords;
+  Iterable<RType?> get loadedRecords => delegate.loadedRecords;
 
-  void updateRecord(KType id, Future update(RType record)) =>
-      delegate.updateRecord(id, update);
+  Future updateRecord(KType id, Future update(RType? record),
+          {bool silent = false}) =>
+      delegate.updateRecord(id, update, silent: silent);
 
   @override
-  DataService<RType> tryGetService(KType recordId) =>
+  DataService<RType>? tryGetService(KType recordId) =>
       delegate.tryGetService(recordId);
 
   @override
   bool isLoaded(KType recordId) => delegate.isLoaded(recordId);
 
   @override
-  void addToStream(RType record) => delegate.addToStream(record);
+  bool isInitialized(KType recordId) => delegate.isInitialized(recordId);
+
+  @override
+  void addToStream(RType? record, {bool isLoad = false, bool silent = false}) =>
+      delegate.addToStream(record, isLoad: isLoad, silent: silent);
 
   @override
   Stream<RType> get changeStream => delegate.changeStream;
@@ -209,7 +250,7 @@ mixin RecordDataServiceMixin<RType, KType>
   KType getIdForRecord(RType record) => delegate.getIdForRecord(record);
 
   @override
-  DataService<RType> getService(KType recordId) =>
+  DataService<RType>? getService(KType recordId) =>
       delegate.getService(recordId);
 
   @override
@@ -217,29 +258,48 @@ mixin RecordDataServiceMixin<RType, KType>
       delegate.internalFetchRecord(id);
 
   @override
-  RType tryGet(KType recordId) => delegate.tryGet(recordId);
+  RType? tryGet(KType recordId) => delegate.tryGet(recordId);
 
   @override
-  Stream<RType> recordStream(KType recordId) => delegate.recordStream(recordId);
+  Stream<RType?>? recordStream(KType recordId, {bool immediate = true}) =>
+      delegate.recordStream(recordId, immediate: true);
 
   @override
-  Future<RType> getRecord(KType recordId) => delegate.getRecord(recordId);
+  Future<RType?> getRecord(KType recordId) => delegate.getRecord(recordId);
+
+  Stream<RType> get dataStream => delegate.dataStream;
+  bool get isLazy => delegate.isLazy;
+  bool get resetOnLogout => delegate.resetOnLogout;
 }
 
 extension RecordDateServiceUpdate<RType, KType>
     on RecordDataService<RType, KType> {
-  Future<bool> tryUpdateRecord(KType recordId, Future update(RType input)) {
+  FutureOr<RType?> getRecordOr(KType recordId) {
+    if (this.isInitialized(recordId)) {
+      return tryGet(recordId);
+    } else {
+      return getRecord(recordId);
+    }
+  }
+
+  Future<bool>? tryUpdateRecord(KType recordId, Future update(RType? input)) {
     return exec(() async {
       final svc = tryGetService(recordId);
       if (svc?.currentValue == null) {
         return false;
       } else {
-        var currValue = svc.currentValue;
+        var currValue = svc!.currentValue;
         final res = await update(currValue);
         if (res is RType) {
           svc.currentValue = res;
+
+          /// Adds it to the outer stream
+          addToStream(res);
         } else {
           svc.currentValue = currValue;
+
+          /// Adds it to the outer stream
+          addToStream(currValue);
         }
         return true;
       }

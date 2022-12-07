@@ -1,14 +1,11 @@
 // import 'package:sunny_sdk_core/mverse.dart';
-import 'package:meta/meta.dart';
-import 'package:sunny_sdk_core/mverse/m_model.dart';
-import 'package:sunny_sdk_core/mverse/mmodel_registry.dart';
+import 'package:sunny_sdk_core/api_exports.dart';
 
-import '../query_param.dart';
 
 typedef Deserializer = dynamic Function(dynamic input);
 
 abstract class ApiReader {
-  Deserializer getReader(final input, String targetType);
+  Deserializer? getReader(final input, String targetType);
 
   const factory ApiReader.mmodel() = MModelRegistryReader;
 }
@@ -21,7 +18,7 @@ class PrimitiveApiReader implements ApiReader {
 
   static const _instance = PrimitiveApiReader._();
 
-  Deserializer getReader(final input, String targetType) {
+  Deserializer? getReader(final input, String? targetType) {
     switch (targetType) {
       case 'String':
         return (value) => '$value';
@@ -32,6 +29,10 @@ class PrimitiveApiReader implements ApiReader {
             value is bool ? value : '$value'.toLowerCase() == 'true';
       case 'double':
         return (value) => value is double ? value : double.parse('$value');
+      case 'Duration':
+        return (value) => timeSpanOf('${value}');
+      case 'TimeSpan':
+        return (value) => timeSpanOf('${value}');
       default:
         return null;
     }
@@ -43,26 +44,28 @@ abstract class CollectionAwareApiReader with CachingApiReaderMixin {
   static final _mapRegEx = RegExp(r'^Map<String,(.*)>$');
 
   /// Finds a deserializer for a single non-collection entity.
-  Deserializer findSingleReader(final input, String targetType);
+  Deserializer? findSingleReader(final input, String? targetType);
 
   @override
-  Deserializer findReader(final input, String targetType) {
-    Match match;
+  Deserializer? findReader(final input, String targetType) {
+    Match? match;
     if (input is List && (match = _listRegEx.firstMatch(targetType)) != null) {
       return (v) {
         final value = v as List;
-        var newTargetType = match[1];
-        return value.map((v) => findSingleReader(v, newTargetType)(v)).toList();
+        var newTargetType = match![1];
+        return value
+            .map((v) => findSingleReader(v, newTargetType)!(v))
+            .toList();
       };
     } else if (input is Map &&
         (match = _mapRegEx.firstMatch(targetType)) != null) {
       return (v) {
         final value = v as Map;
-        var newTargetType = match[1];
+        var newTargetType = match![1];
         return Map.fromIterables(
             value.keys,
             value.values
-                .map((v) => (v) => findSingleReader(v, newTargetType)(v)));
+                .map((v) => (v) => findSingleReader(v, newTargetType)!(v)));
       };
     } else {
       return findSingleReader(input, targetType);
@@ -71,36 +74,36 @@ abstract class CollectionAwareApiReader with CachingApiReaderMixin {
 }
 
 mixin CachingApiReaderMixin implements ApiReader {
-  final Map<String, Deserializer> _cached = {};
+  final Map<String, Deserializer?> _cached = {};
 
   @mustCallSuper
   @override
-  Deserializer getReader(final input, String targetType) {
+  Deserializer? getReader(final input, String targetType) {
     return getOrCacheReader(input, targetType);
   }
 
-  Deserializer getOrCacheReader(final input, String targetType) {
+  Deserializer? getOrCacheReader(final input, String targetType) {
     return _cached.putIfAbsent(targetType, () => findReader(input, targetType));
   }
 
-  Deserializer findReader(final input, String targetType);
+  Deserializer? findReader(final input, String targetType);
 }
 
 class AggregateApiReader with CachingApiReaderMixin {
-  final Iterable<ApiReader> _readers;
+  final Iterable<ApiReader?> _readers;
 
   AggregateApiReader([
-    ApiReader reader1,
-    ApiReader reader2,
-    ApiReader reader3,
-    ApiReader reader4,
-    ApiReader reader5,
+    ApiReader? reader1,
+    ApiReader? reader2,
+    ApiReader? reader3,
+    ApiReader? reader4,
+    ApiReader? reader5,
   ]) : _readers = [reader1, reader2, reader3, reader4, reader5]
             .where((element) => element != null);
 
-  Deserializer findReader(input, String targetType) {
+  Deserializer? findReader(input, String targetType) {
     for (final reader in _readers) {
-      final _ = reader.getReader(input, targetType);
+      final _ = reader!.getReader(input, targetType);
       if (_ != null) {
         return _;
       }
@@ -128,19 +131,18 @@ extension ApiReaderExt on ApiReader {
     var params = QueryParams();
 
     // preconditions
-    if (name == null || name.isEmpty || value == null) return params;
+    if (name.isEmpty || value == null) return params;
 
     if (value is! List) {
       params.add(name, parameterToString(value));
       return params;
     }
 
-    List values = value as List;
+    List values = value;
 
     // get the collection format
-    collectionFormat = (collectionFormat == null || collectionFormat.isEmpty)
-        ? "csv"
-        : collectionFormat; // default: csv
+    collectionFormat =
+        collectionFormat.isEmpty ? "csv" : collectionFormat; // default: csv
 
     if (collectionFormat == "multi") {
       values.forEach((v) => params[name] = parameterToString(v));

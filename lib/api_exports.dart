@@ -3,7 +3,7 @@ export 'dart:convert';
 export 'package:meta/meta.dart';
 export 'package:sunny_dart/helpers.dart';
 export 'package:sunny_dart/json.dart';
-export 'package:sunny_dart/time.dart';
+export 'package:flexidate/flexidate.dart';
 
 export 'api.dart';
 export 'auth.dart';

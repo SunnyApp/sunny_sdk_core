@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-// import 'package:trippi_app/base.dart';
 
 ///
 /// The combination of a firebase user + a reliveit user profile.  Most places in the
@@ -10,20 +9,33 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 /// But, some cases also need access to the underlying firebase authentication, possibly
 /// to get a token.
 class AuthUserProfile with EquatableMixin {
-  final fb.User fbUser;
-  final UserDetails profile;
+  final fb.User? fbUser;
+  final UserDetails? profile;
   final AuthEventSource source;
-  const AuthUserProfile(this.fbUser, this.profile, this.source);
+  final AuthStatus? status;
+
+  const AuthUserProfile(this.fbUser, this.profile, this.source, {this.status});
+
   const AuthUserProfile.empty(this.source)
       : fbUser = null,
+        status = AuthStatus.none,
+        profile = null;
+
+  const AuthUserProfile.error(this.source)
+      : fbUser = null,
+        status = AuthStatus.error,
         profile = null;
 
   Future<String> getIdToken({bool forceRefresh = false}) {
-    return fbUser.getIdToken(forceRefresh);
+    return fbUser!.getIdToken(forceRefresh);
   }
 
   @override
-  List<Object> get props => [fbUser?.uid, profile?.id];
+  List<Object?> get props => [
+        fbUser?.uid,
+        profile?.id,
+        status,
+      ];
 }
 
 enum AuthEventSource {
@@ -32,8 +44,16 @@ enum AuthEventSource {
   failed,
   initial,
   manual,
+  refreshProfile,
   framework,
   postSignup
+}
+
+enum AuthStatus {
+  error,
+  none,
+  partial,
+  full,
 }
 
 class UserDetails {
@@ -50,5 +70,29 @@ class UserDetails {
 
   P source<P>() {
     return _source as P;
+  }
+
+  P? sourceOrNull<P>() {
+    return _source is P && _source is! String ? _source as P : null;
+  }
+
+  UserDetails copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? phone,
+    String? pictureUrl,
+    String? firebaseId,
+    source,
+  }) {
+    return UserDetails(
+      source ?? this._source,
+      id ?? this.id,
+      name ?? this.name,
+      email ?? this.email,
+      pictureUrl ?? this.pictureUrl,
+      phone ?? this.phone,
+      firebaseId ?? this.firebaseId,
+    );
   }
 }

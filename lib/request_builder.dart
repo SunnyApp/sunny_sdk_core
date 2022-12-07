@@ -3,18 +3,18 @@ import 'package:pfile/pfile_api.dart';
 import 'query_param.dart';
 
 class RequestBuilder {
-  String path;
-  HttpMethod method;
-  String basePath;
+  String? path;
+  HttpMethod? method;
+  String? basePath;
 
   final queryParams = QueryParams();
   final List<PFile> files = [];
   final Map<String, Object> pathParams = {};
-  Object body;
-  final Map<String, String> headerParams = {};
+  Object? body;
+  final Map<String, String?> headerParams = {};
   final Map<String, String> formParams = {};
-  Iterable<String> authNames;
-  String contentType;
+  Iterable<String>? authNames;
+  String? contentType;
 
   String get requestUrl {
     String url = joinString((_) {
@@ -27,12 +27,21 @@ class RequestBuilder {
   String get requestRelativeUrl {
     var ps = queryParams.entries
         .where((entry) => entry.value != null)
-        .map((entry) => '${entry.key}=${entry.value}');
+        .expand((e) {
+      return e.value is Iterable
+          ? [
+              ...(e.value)
+                  .where((v) => v != null)
+                  .map((v) => MapEntry(e.key, v))
+            ]
+          : [MapEntry(e.key, e.value)];
+    }).map((entry) =>
+            '${entry.key}=${Uri.encodeQueryComponent(entry.value.toString())}');
     String queryString = ps.isNotEmpty ? '?' + ps.join('&') : '';
 
     var requestPath = path;
     pathParams.forEach((key, value) =>
-        requestPath = requestPath.replaceAll("{$key}", "$value"));
+        requestPath = requestPath!.replaceAll("{$key}", "$value"));
     String url = joinString((_) {
       _ += requestPath;
       _ += queryString;

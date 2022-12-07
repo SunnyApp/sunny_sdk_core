@@ -1,57 +1,105 @@
 import 'dart:async';
 
+import 'package:dartxx/dartxx.dart';
 import 'package:meta/meta.dart';
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
+
 import 'package:sunny_dart/helpers/logging_mixin.dart';
 import 'package:sunny_dart/helpers/safe_completer.dart';
 import 'package:sunny_sdk_core/services.dart';
 
 typedef _AsyncValueGetter<R> = Future<R> Function();
 
+const _kMaxRetries = 15;
+
 /// Container for data that allows easy subscriptions and rendering
 abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   final _updateStream = StreamController<T>.broadcast();
   final SafeCompleter<T> isReady = SafeCompleter.stopped();
-  T _currentValue;
+  T? _currentValue;
+  var _errorCount = 0;
 
-  DataService({bool isLazy}) {
-    onLogout(() => reset());
+  DataService({bool isLazy = false, bool resetOnLogout = true}) {
+    if (!isLazy) {
+      loadInitial();
+    }
+    if (resetOnLogout == true)
+      onLogout(() {
+        reset();
+      });
   }
 
-  factory DataService.of({_AsyncValueGetter<T> factory}) =>
-      _DataService(factory);
+  factory DataService.of(
+          {required _AsyncValueGetter<T> factory,
+          bool isLazy = false,
+          bool resetOnLogout = true}) =>
+      _DataService(
+        factory,
+        isLazy: isLazy,
+        resetOnLogout: resetOnLogout,
+      );
 
   @protected
-  Future<T> loadInitial() async {
+  Future<T> loadInitial() {
     isReady.start();
-    try {
-      final data = await internalFetchData();
-      _currentValue = data;
-      isReady.complete(data);
+
+    return internalFetchData().then((data) {
+      this._internalUpdate(data);
+      if (_errorCount > 0) {
+        log.warning('Record fetched after failing $_errorCount times');
+        _errorCount = 0;
+      }
+
       return data;
-    } catch (e, stack) {
+    }).catchError((Object e, StackTrace stack) {
       log.severe("Error fetching data for service: $e", e, stack);
+      if (isReady.isNotStarted) isReady.start();
       isReady.completeError(e, stack);
-      rethrow;
+      this.reset();
+      _errorCount++;
+      _scheduleRetry();
+      throw e;
+    });
+  }
+
+  _scheduleRetry() {
+    if (_errorCount < _kMaxRetries) {
+      var duration = Duration(milliseconds: 500 + (100 * (2 ^ _errorCount)));
+      Future.delayed(
+        duration,
+        () {
+          if (_errorCount > 0) {
+            log.warning(
+                'Retry after waiting ${(duration.inMilliseconds / 1000).roundTo(3)} seconds');
+            loadInitial();
+          }
+        },
+      );
+    } else {
+      log.severe('Failed after $_currentValue attempts');
     }
   }
 
-  Stream<T> get stream async* {
+  Stream<T> get updateStream async* {
+    await for (final data in _updateStream.stream) {
+      yield data;
+    }
+  }
+
+  Stream<T?> get stream async* {
     if (currentValue == null && isReady.isNotStarted) {
       final initialLoad = await loadInitial();
       yield initialLoad;
     } else if (currentValue == null && isReady.isStarted) {
       try {
-        final trips = await isReady.future;
-        yield trips;
+        final isReadyResult = await isReady.future;
+        yield isReadyResult;
       } catch (e, stack) {
         log.severe("Error fetching data for service: $e", e, stack);
         isReady.completeError(e, stack);
         yield null;
       }
     } else {
-      yield currentValue;
+      yield currentValue!;
     }
 
     await for (final data in _updateStream.stream) {
@@ -65,11 +113,16 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   void reset() {
     _currentValue = null;
     isReady..reset();
-    if (!controller.isClosed) controller.add(null);
+    try {
+      if (!controller.isClosed && T.toString().endsWith('?'))
+        controller.add(null);
+    } catch (e) {
+      log.info('Unable to send a null value to stream: $e');
+    }
   }
 
   @protected
-  StreamController<T> get controller => _updateStream;
+  StreamController<T?> get controller => _updateStream;
 
   Future<T> refresh() async {
     final result = await internalFetchData();
@@ -77,15 +130,29 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
     return result;
   }
 
-  T get currentValue {
+  T? get currentValue {
     return _currentValue;
   }
 
-  set currentValue(T value) {
+  set currentValue(T? value) {
+    this._internalUpdate(value);
     if (value != null) {
-      _currentValue = value;
       if (!controller.isClosed) controller.add(value);
     }
+  }
+
+  /// Updates without pushing the new value to the stream
+  void updateQuiet(T? value) {
+    this._internalUpdate(value);
+  }
+
+  T? _internalUpdate(T? value) {
+    if (value != null) {
+      _currentValue = value;
+      if (!isReady.isStarted) isReady.start();
+      if (isReady.isNotComplete) isReady.complete(value);
+    }
+    return _currentValue;
   }
 
   @protected
@@ -95,17 +162,15 @@ abstract class DataService<T> with LifecycleAwareMixin, LoggingMixin {
   }
 
   /// Retrieves the current copy of this data, if it exists, or fetches it.
-  Future<T> get() async {
+  Future<T?> get() {
     if (_currentValue != null) {
-      return _currentValue;
+      return Future.value(_currentValue);
     } else {
       try {
         if (isReady.isStarted) {
-          final result = await isReady.future;
-          return result;
+          return isReady.future;
         } else {
-          final initial = await loadInitial().timeout(Duration(seconds: 10));
-          return initial;
+          return loadInitial().timeout(Duration(seconds: 10));
         }
       } on TimeoutException catch (e, stack) {
         log.severe("Timeout fetching $T in ${this.runtimeType}", e, stack);
@@ -123,7 +188,12 @@ class _DataService<T> extends DataService<T> {
     return _internalFetchData();
   }
 
-  _DataService(this._internalFetchData)
-      : assert(_internalFetchData != null),
-        super();
+  _DataService(
+    this._internalFetchData, {
+    bool isLazy = false,
+    bool resetOnLogout = true,
+  }) : super(
+          isLazy: isLazy,
+          resetOnLogout: resetOnLogout,
+        );
 }

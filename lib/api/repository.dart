@@ -1,26 +1,24 @@
 import 'dart:async';
 
-import 'package:sunny_sdk_core/mverse.dart';
-
-import 'package:sunny_dart/helpers/functions.dart';
 import 'package:sunny_dart/sunny_dart.dart';
 import 'package:sunny_sdk_core/api/api_registry.dart';
 import 'package:sunny_sdk_core/model/change_result.dart';
 import 'package:sunny_sdk_core/model/delete_response.dart';
+import 'package:sunny_sdk_core/mverse.dart';
 
 typedef PersistenceLifecycleEvent<T> = dynamic Function(T input);
 
 /// Base interface for defining persistence endpoints.  Can be plugged into [SunnyStore] for convenient API access
 abstract class Repository<V extends Entity> {
   /// A reference back to the api registry
-  ApiRegistry get apis => null;
+  ApiRegistry? get apis => null;
 
   V instantiate([dynamic json]) => illegalState("Not implemented");
 
   Future<ChangeResult> update(String id, V body) =>
       illegalState("Not implemented");
 
-  Future<MModelList<V>> list({double limit, double offset}) =>
+  Future<MModelList<V>> list({double? limit, double? offset}) =>
       illegalState("Not implemented");
 
   Future<V> create(V body) => illegalState("Not implemented");
@@ -40,7 +38,8 @@ abstract class Repository<V extends Entity> {
   /// but want to inject new values from [source]
   void takeFrom(V source, V target) => illegalState("Not implemented");
 
-  String keyToId(MKey key);
+  String? keyToId(MKey? key);
+
   MSchemaRef get mtype;
 }
 
@@ -50,19 +49,23 @@ mixin SignalingApiMixin<V extends Entity> on Repository<V> {
   @override
   Future<V> create(V body) => super
       .create(body)
-      .also((result) => apis.afterCreate(result.mkey, result))
+      .also(((result) => apis!.afterCreate(result.mkey, result)))
+      .filterNotNull()
       .futureValue();
 
   @override
   Future<DeleteResponse> delete(String id) => super
       .delete(id)
-      .also((result) => apis.afterDelete<V>(mtype.mkey(id), result))
+      .also(((result) => apis!.afterDelete<V>(mtype.mkey(id)!, result)))
+      .filterNotNull()
       .futureValue();
 
   @override
   Future<ChangeResult> update(String id, V body) => super
       .update(id, body)
-      .also((result) => apis.afterUpdate<V>(mtype.mkey(result), body, result))
+      .also(
+          ((result) => apis!.afterUpdate<V>(mtype.mkey(result)!, body, result)))
+      .filterNotNull()
       .futureValue();
 }
 

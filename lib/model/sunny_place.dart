@@ -1,7 +1,9 @@
 import 'package:sunny_dart/helpers/lists.dart';
 import 'package:sunny_sdk_core/mverse/m_model.dart';
 
-Iterable<String> addressToString(SunnyPlace address) {
+import 'geo_location.dart';
+
+Iterable<String>? addressToString(SunnyPlace? address) {
   if (address == null) {
     return null;
   }
@@ -21,49 +23,86 @@ Iterable<String> addressToString(SunnyPlace address) {
 
 /// Represents a physical location.  Represented by a few different generated models.  See [Location]
 /// and [ContactAddress]
-abstract class SunnyPlace implements MModel {
-  String get name;
-  String get googlePlaceId;
+abstract class SunnyPlace {
+  GeoLocation? get geo;
+  String? get name;
 
-  String get description;
+  String? get googlePlaceId;
 
-  String get type;
+  String? get description;
 
-  String get streetLineOne;
+  String? get type;
 
-  String get streetLineTwo;
+  String? get streetLineOne;
 
-  String get streetLineThree;
+  String? get streetLineTwo;
 
-  String get locality;
+  String? get streetLineThree;
 
-  String get region;
+  String? get locality;
 
-  String get postalCode;
+  String? get region;
 
-  String get countryCode;
+  String? get postalCode;
 
-  set googlePlaceId(String googlePlaceId);
+  String? get countryCode;
 
-  set name(String name);
-  set description(String description);
+  set geo(GeoLocation? geo);
+  set googlePlaceId(String? googlePlaceId);
 
-  set type(String type);
+  set name(String? name);
 
-  set streetLineOne(String streetLineOne);
+  set description(String? description);
 
-  set streetLineTwo(String streetLineTwo);
+  set type(String? type);
 
-  set streetLineThree(String streetLineThree);
+  set streetLineOne(String? streetLineOne);
 
-  set locality(String locality);
+  set streetLineTwo(String? streetLineTwo);
 
-  set region(String region);
+  set streetLineThree(String? streetLineThree);
 
-  set postalCode(String postalCode);
+  set locality(String? locality);
 
-  set countryCode(String countryCode);
+  set region(String? region);
 
-  // PlaceDetails get placeDetails;
-  // set placeDetails(PlaceDetails placeDetails);
+  set postalCode(String? postalCode);
+
+  set countryCode(String? countryCode);
+
+  void prune(Set<String> values);
+// PlaceDetails get placeDetails;
+// set placeDetails(PlaceDetails placeDetails);
+}
+
+extension SunnyPlaceHelperExt on SunnyPlace {
+  bool get hasGeo => geo?.lat != null && geo?.lon != null;
+}
+
+class DefaultSunnyPlace implements SunnyPlace {
+  GeoLocation? geo;
+  String? name;
+
+  String? googlePlaceId;
+
+  String? description;
+
+  String? type;
+
+  String? streetLineOne;
+
+  String? streetLineTwo;
+
+  String? streetLineThree;
+
+  String? locality;
+
+  String? region;
+
+  String? postalCode;
+
+  String? countryCode;
+
+  @override
+  void prune(Set<String> values) {}
 }

@@ -1,7 +1,8 @@
+import 'package:dartxx/dartxx.dart';
 import 'package:equatable/equatable.dart';
-import 'package:sunny_sdk_core/model_exports.dart';
+import 'package:sunny_dart/helpers/functions.dart';
 
-RProxyServer _rp;
+RProxyServer? _rp;
 
 RProxyServer get rproxy =>
     _rp ??
@@ -19,7 +20,7 @@ class RProxy {
     if (!server.isProxied) {
       return toProxy.startsWith("/") ? "$proxiedUrl$toProxy" : toProxy;
     }
-    final uri = toProxy.toUri();
+    final uri = toProxy.toUri()!;
     var url = "${server.baseUrl}/$path${uri.path}".trimEnd('/');
     if (uri.query.isNotNullOrBlank) {
       url += "?${uri.query}";

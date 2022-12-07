@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:dartxx/disposable.dart';
 import 'package:meta/meta.dart';
 import 'package:logging/logging.dart';
-import 'package:sunny_dart/helpers/disposable.dart';
 import 'package:sunny_sdk_core/auth/auth_user_profile.dart';
-import 'package:sunny_dart/sunny_get.dart';
-import 'package:sunny_sdk_core/services/sunny.dart';
+import 'package:sunny_sdk_core/sunny_sdk_core.dart';
+
+import '../model_exports.dart';
+import 'i_auth_state.dart';
 
 typedef _AsyncCallback = FutureOr Function();
 
@@ -24,7 +26,7 @@ abstract class LifecycleAwareBase implements HasDisposers {
 
   Future doShutdown();
 
-  R exec<R>(R block());
+  R? exec<R>(R block());
 
   void registerLoginHooks(IAuthState state);
 
@@ -42,11 +44,15 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
   Logger get log;
 
   bool _isShuttingDown = false;
-  bool _isLoggedIn;
+  bool? _isLoggedIn;
+
+  bool get isLoggedIn => _isLoggedIn == true;
 
   final _onShutdown = <AsyncOrCallback>[];
   final _onLogin = <AsyncOrCallback>[];
   final _onLogout = <AsyncOrCallback>[];
+
+  bool get isDisposing => _isShuttingDown;
 
   @protected
   void onShutdown(_AsyncCallback callback) {
@@ -65,7 +71,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
     if (_isLoggedIn == null) {
       _isLoggedIn = false;
       userStateStream.listen((state) async {
-        final isLoggedIn = state?.fbUser == null;
+        final isLoggedIn = state.fbUser != null;
         if (isLoggedIn != _isLoggedIn) {
           this._isLoggedIn = isLoggedIn;
           final callbacks = isLoggedIn ? _onLogin : _onLogout;
@@ -99,7 +105,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
     if (isShuttingDown()) {
       log.severe("Trying to invoke function while shutting down", null,
           StackTrace.current);
-      return null;
+      return null as R;
     } else {
       return block();
     }
@@ -135,7 +141,7 @@ mixin LifecycleAwareMixin implements LifecycleAwareBase {
 typedef LifecycleCallback<T> = FutureOr<T> Function();
 
 extension LifecycleAwareBaseExt on LifecycleAwareBase {
-  void onDestroy(String name, LifecycleCallback destroy, {Duration wait}) {
+  void onDestroy(String name, LifecycleCallback destroy, {Duration? wait}) {
     // if (_onDestroy.containsKey(name)) {
     //   throw "Initializer $name already exists for $runtimeType";
     // }

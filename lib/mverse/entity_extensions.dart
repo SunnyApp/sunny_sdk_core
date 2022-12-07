@@ -1,4 +1,6 @@
-import 'package:sunny_dart/helpers.dart';
+// import 'package:sunny_dart/helpers.dart';
+
+import 'package:sunny_dart/helpers/functions.dart';
 
 import 'm_model.dart';
 
@@ -9,30 +11,30 @@ extension MSchemaRefExtensions on MSchemaRef {
 }
 
 extension HasMMetaExt on HasMverseMeta {
-  DateTime get mmodified => mmeta?.mmodified;
+  DateTime? get mmodified => mmeta.mmodified;
 
-  MKey get mkeyOrNull => mmeta?.mkey;
+  MKey? get mkeyOrNull => mmeta.mkey;
 
-  MSchemaRef get mtype => mmeta?.mtype;
+  MSchemaRef? get mtype => mmeta.mtype;
 
   /// Contains just the domainId and the mxid (no type)
-  RecordKey get recordKey => mkeyOrNull?.recordKey;
+  RecordKey? get recordKey => mkeyOrNull?.recordKey;
 
   /// A fully qualified key that includes the type
-  String get qualifiedKey => mkeyOrNull?.value;
+  String? get qualifiedKey => mkeyOrNull?.value;
 }
 
 /// Fields in the json payload that are metadata (not values)
 const metaFields = {"mtype", "mmeta"};
 
-extension MModelExt on MModel {
+extension MModelExt on MModel? {
   Map<String, dynamic> get wrappedOrEmpty =>
       this?.wrapped ?? <String, dynamic>{};
 
   /// Returns the json payload, but omits any metadata values
   Map<String, dynamic> get wrappedValues {
     final values = <String, dynamic>{};
-    this?.wrapped?.forEach((key, value) {
+    this?.wrapped.forEach((key, value) {
       if (!metaFields.contains(key)) {
         values[key] = value;
       }
@@ -42,8 +44,8 @@ extension MModelExt on MModel {
   }
 }
 
-extension ObjectBaseCodeExtension on Object {
-  String get baseCode {
+extension ObjectBaseCodeExtension on Object? {
+  String? get baseCode {
     final self = this;
     if (self == null) return null;
     if (self is HasBaseCode) {

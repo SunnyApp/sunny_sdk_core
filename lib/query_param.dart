@@ -1,11 +1,13 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
+
 class QueryParams extends MapMixin<String, dynamic> {
   final Map<String, List<String>> _values = {};
 
   void add(String key, value) {
     if (value == null) return;
-    _values.putIfAbsent(key, () => []).add(value?.toString());
+    _values.putIfAbsent(key, () => []).add(value.toString());
   }
 
   Iterable<MapEntry<String, String>> flattened() {
@@ -13,11 +15,19 @@ class QueryParams extends MapMixin<String, dynamic> {
         (element) => element.value.map((v) => MapEntry(element.key, v)));
   }
 
+  Map<String, dynamic> compact() {
+    return {
+      for (var entry in _values.entries)
+        entry.key:
+            entry.value.length > 1 ? entry.value : entry.value.firstOrNull,
+    };
+  }
+
   @override
-  dynamic operator [](Object key) {
-    final v = _values[key];
+  dynamic operator [](Object? key) {
+    final v = _values[key as String];
     if (v?.isNotEmpty != true) return null;
-    if (v.length == 1) {
+    if (v!.length == 1) {
       return v.first;
     } else {
       return v;
@@ -42,7 +52,7 @@ class QueryParams extends MapMixin<String, dynamic> {
   Iterable<String> get keys => _values.keys;
 
   @override
-  dynamic remove(Object key) {
+  dynamic remove(Object? key) {
     _values.remove(key);
   }
 }

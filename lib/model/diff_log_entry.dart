@@ -6,58 +6,52 @@ import 'package:meta/meta.dart'; // ignore: unused_import, directives_ordering
 import 'package:sunny_sdk_core/mverse.dart';
 import 'package:sunny_dart/helpers/lists.dart';
 import 'package:sunny_dart/helpers/maps.dart';
-import 'package:sunny_dart/json.dart';
+import 'package:dartxx/json_path.dart';
 
 import 'change.dart';
 
 class DiffLogEntry extends DiffLogEntryBase {
   ///
-  DiffLogEntry(Map<String, dynamic> wrapped,
-      {MSchemaRef mtype = DiffLogEntryRef, bool update = true})
+  DiffLogEntry(Map<String, dynamic> wrapped, {MSchemaRef mtype = DiffLogEntryRef, bool update = true})
       : super(wrapped, mtype: mtype, update: update);
 
-  factory DiffLogEntry.fromJson(wrapped) => wrapped is DiffLogEntry
-      ? wrapped
-      : DiffLogEntry(wrapped as Map<String, dynamic>);
+  factory DiffLogEntry.fromJson(wrapped) => wrapped is DiffLogEntry ? wrapped : DiffLogEntry(wrapped as Map<String, dynamic>);
 
-  DiffLogEntry.of({List<Change> changes})
+  DiffLogEntry.of({List<Change>? changes})
       : super.of(
           changes: changes,
         );
 
-  List<Change> get changes => _changes;
-  set changes(List<Change> changes) {
+  List<Change>? get changes => _changes;
+  set changes(List<Change>? changes) {
     this._changes = changes;
     wrapped['changes'] = jsonLiteral(changes);
   }
 }
 
 abstract class DiffLogEntryBase extends MModel {
-  DiffLogEntryBase(Map<String, dynamic> wrapped,
-      {MSchemaRef mtype = DiffLogEntryRef, @required bool update})
+  DiffLogEntryBase(Map<String, dynamic> wrapped, {MSchemaRef mtype = DiffLogEntryRef, required bool update})
       : super(wrapped, mtype: mtype, update: false) {
     if (update == true) takeFromMap(wrapped, copyEntries: false);
   }
 
-  DiffLogEntryBase.fromJson(wrapped)
-      : this(wrapped as Map<String, dynamic>, update: true);
-  DiffLogEntryBase.of({List<Change> changes})
-      : super(<String, dynamic>{}, mtype: DiffLogEntryRef) {
+  DiffLogEntryBase.fromJson(wrapped) : this(wrapped as Map<String, dynamic>, update: true);
+  DiffLogEntryBase.of({List<Change>? changes}) : super(<String, dynamic>{}, mtype: DiffLogEntryRef) {
     if (changes != null) this.changes = changes;
   }
 
-  List<Change> _changes;
+  List<Change>? _changes;
 
   /// Property getter and setter for changes:
-  List<Change> get changes;
-  set changes(List<Change> changes);
+  List<Change>? get changes;
+  set changes(List<Change>? changes);
 
   @override
   String toString() => json.encode(wrapped).toString();
   dynamic toJson() => wrapped;
 
   operator [](key) {
-    switch (key) {
+    switch ("$key") {
       case "changes":
         return this.changes;
       default:
@@ -81,13 +75,13 @@ abstract class DiffLogEntryBase extends MModel {
     if (source is Map<String, dynamic>) {
       takeFromMap(source, copyEntries: true);
     } else if (source is MModel) {
-      takeFromMap(source?.wrapped, copyEntries: true);
+      takeFromMap(source.wrapped, copyEntries: true);
     } else {
       throw ("Can't take values from unknown type ${source.runtimeType}");
     }
   }
 
-  void takeFromMap(Map<String, dynamic> from, {bool copyEntries = true}) {
+  void takeFromMap(Map<String, dynamic>? from, {bool copyEntries = true}) {
     if (from == null) return;
 
     super.takeFromMap(from, copyEntries: copyEntries);
@@ -117,10 +111,8 @@ class DiffLogEntryFields {
 }
 
 class DiffLogEntryPaths {
-  static const JsonPath<List<Change>> changes =
-      JsonPath.internal(["changes"], "/changes");
+  static const JsonPath<List<Change>> changes = JsonPath.internal(["changes"], "/changes");
   static final Set<JsonPath> values = {changes};
 }
 
-const DiffLogEntryRef =
-    MSchemaRef("mverse", "mthing", "diffLogEntry", "0.0.1", "ephemeral");
+const DiffLogEntryRef = MSchemaRef("mverse", "mthing", "diffLogEntry", "0.0.1", "ephemeral");

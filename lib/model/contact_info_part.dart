@@ -1,7 +1,7 @@
 abstract class ContactInfoPart {
-  String get type;
+  String? get type;
 
-  set type(String type);
+  set type(String? type);
 
   /// Returns the value, whatever it is
   dynamic get infoValue;

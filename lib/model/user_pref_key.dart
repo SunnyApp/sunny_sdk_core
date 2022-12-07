@@ -5,7 +5,7 @@ class UserPrefKey extends Equatable {
 
   // final String prefix;
 
-  const UserPrefKey(this.name) : assert(name != null && name != '');
+  const UserPrefKey(this.name) : assert(name != '');
 
   @override
   String toString() => name;

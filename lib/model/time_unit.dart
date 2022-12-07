@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:sunny_dart/json.dart';
+import 'package:dartxx/dartxx.dart';
 
 class TimeUnit extends TimeUnitBase {
   const TimeUnit._internal(String value) : super._internal(value);
@@ -37,7 +37,7 @@ class TimeUnit extends TimeUnitBase {
   // ignore: non_constant_identifier_names
   static const TimeUnit years_ = TimeUnit._internal("YEARS");
 
-  static TimeUnit fromJson(dynamic data) {
+  static TimeUnit? fromJson(dynamic data) {
     if (data == null) return null;
     switch ("$data") {
       case "NANOS":

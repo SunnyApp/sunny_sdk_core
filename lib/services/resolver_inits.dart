@@ -12,29 +12,21 @@ bool _never<T>(T a, T b) => false;
 bool _notEquals<T>(T a, T b) => a != b;
 
 /// Class used for defining container instances
-class Inst<T> {
-  final Type t;
-  final T instance;
-  final InstInitFn<T> factory;
-  final InstDispose<T> dispose;
-  final ShouldNotify<T> shouldUpdate;
+class Inst<T extends Object> {
+  final Type? t;
+  final T? instance;
+  final InstInitFn<T>? factory;
+  final InstDispose<T>? dispose;
+  final ShouldNotify<T>? shouldUpdate;
   final bool skipIfRegistered;
 
   Inst.instance(this.instance,
-      {ShouldNotify<T> shouldNotify, this.skipIfRegistered = true})
+      {ShouldNotify<T>? shouldNotify, this.skipIfRegistered = true})
       : assert(instance != null),
         factory = null,
         this.shouldUpdate = shouldNotify ?? _notEquals,
         dispose = null,
         t = T;
-
-  Inst._(
-      {this.instance,
-      this.t,
-      this.dispose,
-      this.factory,
-      this.shouldUpdate,
-      @required this.skipIfRegistered});
 
   Inst.constant(this.instance, {this.skipIfRegistered = true})
       : assert(instance != null),
@@ -52,7 +44,7 @@ class Inst<T> {
 
   bool get isFactory => factory != null;
 
-  R typed<R>(R passed<X>(Inst<X> inst)) {
+  R typed<R>(R passed<X extends Object>(Inst<X> inst)) {
     return passed<T>(this);
   }
 }

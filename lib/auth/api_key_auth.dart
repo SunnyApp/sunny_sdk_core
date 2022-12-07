@@ -4,14 +4,14 @@ import 'authentication.dart';
 class ApiKeyAuth implements Authentication {
   final String location;
   final String paramName;
-  String apiKey;
-  String apiKeyPrefix;
+  String? apiKey;
+  String? apiKeyPrefix;
 
   ApiKeyAuth(this.location, this.paramName);
 
   @override
-  void applyToParams(QueryParams query, Map<String, String> headers) {
-    String value;
+  void applyToParams(QueryParams query, Map<String, String?> headers) {
+    String? value;
     if (apiKeyPrefix != null) {
       value = '$apiKeyPrefix $apiKey';
     } else {

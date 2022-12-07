@@ -1,5 +1,5 @@
-import 'package:sunny_sdk_core/model.dart';
+import 'package:flexidate/flexidate.dart';
 
-FlexiDate flexiDateOf(dyn) {
-  return FlexiDate.fromJson(dyn);
+FlexiDate? flexiDateOf(dyn) {
+  return FlexiDate.tryFrom(dyn);
 }
