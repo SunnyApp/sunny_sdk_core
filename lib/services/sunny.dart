@@ -14,20 +14,18 @@ export 'package:sunny_dart/sunny_get.dart';
 abstract class BuildContextResolver {
   T resolve<T>(BuildContext? context);
 
-  Widget register(BuildContext context, resolverOrList,
-      {Widget? child, Key? key});
+  Widget register(resolverOrList, {Widget? child, Key? key});
 }
 
 extension BuildContextResolverExt on BuildContextResolver {
-  Widget registerSingleton<T extends Object>(BuildContext context, T item,
+  Widget registerSingleton<T extends Object>(T item,
       {Widget? child, Key? key}) {
-    return register(context, [Inst.constant(item)], child: child, key: key);
+    return register([Inst.constant(item)], child: child, key: key);
   }
 
-  Widget registerBuilder<T extends Object>(
-      BuildContext context, T create(BuildContext? context),
+  Widget registerBuilder<T extends Object>(T create(),
       {Widget? child, Key? key, InstDispose<T>? dispose}) {
-    return register(context, [Inst.factory(create, dispose: dispose)],
+    return register([Inst.factory(create, dispose: dispose)],
         child: child, key: key);
   }
 }
