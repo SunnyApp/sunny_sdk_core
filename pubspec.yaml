@@ -6,18 +6,18 @@ environment:
   sdk: '>=2.17.1 <3.0.0'
   flutter: '>=2.0.0'
 dependencies: 
-  firebase_auth: ^4.1.5
-  buffer: ^1.1.1
+  firebase_auth: ^4.2.5
+  buffer: ^1.2.0
   chunked_stream: ^1.4.1
-  collection: ^1.16.0
+  collection: ^1.17.1
   equatable: ^2.0.5
-  meta: ^1.8.0
-  intl: ^0.17.0
+  meta: ^1.9.0
+  intl: ^0.18.0
   http: ^0.13.5
-  logging: ^1.1.0
-  path_provider: ^2.0.11
+  logging: ^1.1.1
+  path_provider: ^2.0.12
   stream_transform: ^2.1.0
-  timezone: ^0.9.0
+  timezone: ^0.9.1
   dio: ^4.0.6
   collection_diff: 
     path: /Users/ericm/reliveit/checkout/SunnyApp/collection_diff
