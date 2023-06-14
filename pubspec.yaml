@@ -6,28 +6,28 @@ environment:
   sdk: '>=2.17.1 <3.0.0'
   flutter: '>=2.0.0'
 dependencies: 
-  firebase_auth: ^4.2.5
+  firebase_auth: ^4.6.1
   buffer: ^1.2.0
   chunked_stream: ^1.4.1
-  collection: ^1.17.1
+  collection: ^1.17.2
   equatable: ^2.0.5
-  meta: ^1.9.0
-  intl: ^0.18.0
-  http: ^0.13.5
-  logging: ^1.1.1
-  path_provider: ^2.0.12
+  meta: ^1.9.1
+  intl: ^0.18.1
+  http: ^1.0.0
+  logging: 1.2.0
+  path_provider: ^2.0.15
   stream_transform: ^2.1.0
   timezone: ^0.9.1
-  dio: ^4.0.6
+  dio: ^5.2.0+1
   collection_diff: 
-    path: /Users/ericm/reliveit/checkout/SunnyApp/collection_diff
+    path: /Users/ericm/aesthetika/checkout/SunnyApp/collection_diff
   pfile: 
-    path: /Users/ericm/reliveit/checkout/SunnyApp/pfile
+    path: /Users/ericm/aesthetika/checkout/SunnyApp/pfile
   flexidate: 
-    path: /Users/ericm/reliveit/checkout/ericmartineau/flexidate
+    path: /Users/ericm/aesthetika/checkout/ericmartineau/flexidate
   sunny_dart: 
-    path: /Users/ericm/reliveit/checkout/SunnyApp/sunny_dart
+    path: /Users/ericm/aesthetika/checkout/SunnyApp/sunny_dart
   dartxx: 
-    path: /Users/ericm/reliveit/checkout/ericmartineau/dartxx
+    path: /Users/ericm/aesthetika/checkout/ericmartineau/dartxx
   flutter: 
     sdk: flutter

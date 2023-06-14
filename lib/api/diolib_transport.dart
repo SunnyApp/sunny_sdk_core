@@ -50,10 +50,10 @@ class DioLibTransport extends ApiClientTransport {
           ));
       return ApiResponse(
           _resp.statusCode ?? 500, _resp.data?.toString() ?? 'Unknown error');
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return ApiResponse(
         e.response?.statusCode ?? 500,
-        e.response?.data?.toString() ?? e.message,
+        e.response?.data?.toString() ?? e.message ?? 'Unknown error',
       );
     }
   }
@@ -93,10 +93,11 @@ class DioLibTransport extends ApiClientTransport {
       var rdata = _resp.data;
 
       return ApiStreamResponse(_resp.statusCode!, rdata!.stream);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return ApiStreamResponse(
         e.response?.statusCode ?? 500,
-        Stream.value((e.response?.data?.toString() ?? e.message).codeUnits),
+        Stream.value(
+            (e.response?.data?.toString() ?? e.message ?? '').codeUnits),
       );
     }
   }
